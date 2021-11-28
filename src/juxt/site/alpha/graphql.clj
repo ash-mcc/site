@@ -284,6 +284,16 @@
                 :luceneScore (and (number? score?) score?)
                 :_siteQuery (and query (pr-str query)))))
 
+(defn field->type
+  [field]
+  (or (-> field
+          ::g/type-ref
+          ::g/list-type
+          ::g/name)
+      (-> field
+          ::g/type-ref
+          ::g/name)))
+
 (defn infer-query
   [db subject field query args]
   (let [type (field->type field)

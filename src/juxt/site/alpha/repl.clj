@@ -480,3 +480,6 @@
         schema (:juxt.grab.alpha/schema (e (format "%s/_site/graphql" (::site/base-uri config))))
         document (graphql.document/compile-document (graphql.parser/parse q) schema)]
     (graphql/query schema document nil (db))))
+
+(defn history [id]
+  (x/entity-history (db) id :desc {:with-docs? true}))

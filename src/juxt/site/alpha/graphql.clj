@@ -439,14 +439,33 @@
                   (protected-lookup (get argument-values e)
                                     subject db)))
 
+            (get site-args "ref")
+            (let [ref (get site-args "ref")
+                  e (or (get object-value ref)
+                        (get object-value (keyword ref)))
+                  type (field->type field)]
+              (if e
+                (protected-lookup e subject db)
+                (map (comp (fn [e] (protected-lookup e subject db)) first)
+                     (xt/q db {:find ['e]
+                               :where [['e type-k type]
+                                       ['e (keyword ref) (or
+                                                          (get argument-values ref)
+                                                          object-id)]]}))))
+
             (get site-args "q")
             (let [object-id (:xt/id object-value)
                   arg-keys (fn [m] (remove #{"limit" "offset" "orderBy"} (keys m)))
                   in (cond->> (map symbol (arg-keys argument-values))
                        object-id (concat ['object]))
-                  q (assoc
-                     (to-xt-query field site-args argument-values type-k)
-                     :in (if (second in) [in] (vec in)))
+
+                  q (to-xt-query field site-args argument-values)
+                  q (assoc-some
+                     q
+                     :where (when object-id
+                              (edn/read-string
+                               (str/replace (:where q) #"\{\{object-id\}\}" object-id)))
+                     :in (when (seq in) (if (second in) [in] (vec in))))
                   query-args (cond->> (vals argument-values)
                                object-id (concat [object-id]))
                   args (if (second query-args) query-args (first query-args))
@@ -626,6 +645,9 @@
                 (limit-results argument-values result)
                 result))
 
+            (get argument-values "id")
+            (xt/entity db (get argument-values "id"))
+
             (and (field->type field)
                  (not (scalar? (field->type field) types-by-name)))
             (infer-query db
@@ -633,9 +655,6 @@
                          field
                          (to-xt-query field site-args argument-values type-k)
                          argument-values)
-
-            (get argument-values "id")
-            (xt/entity db (get argument-values "id"))
 
             (and (get site-args "aggregate")
                  (get site-args "type"))

@@ -10,6 +10,7 @@
    [jsonista.core :as json]
    [juxt.grab.alpha.execution :refer [execute-request]]
    [juxt.grab.alpha.parser :as parser]
+   [org.httpkit.client :as httpc]
    [juxt.site.alpha.util :refer [assoc-some]]
    [clojure.string :as str]
    [clojure.set :refer [rename-keys]]
@@ -118,9 +119,10 @@
   (= (get-in types-by-name [arg-name ::g/kind]) 'SCALAR))
 
 (defn- args-to-entity
-  [args schema field base-uri site-args type-k]
+  [{:keys [argument-values schema field base-uri site-args type-k old-value] :as opts}]
   (log/tracef "args-to-entity, site-args is %s" (pr-str site-args))
-  (let [types-by-name (:juxt.grab.alpha.schema/types-by-name schema)
+  (let [args argument-values
+        types-by-name (:juxt.grab.alpha.schema/types-by-name schema)
         transform-sym (some-> site-args (get "transform") symbol)
         transform (when transform-sym (requiring-resolve transform-sym))
         _  (when (and transform-sym (not transform))
@@ -147,9 +149,10 @@
                (log/tracef "transform is %s" transform))
 
              (cond
-               arg-type                ; is it a singular (not a LIST)
-               (let [value (or (get args arg-name)
-                               (generate-value generator-args args))
+               arg-type ; is it a singular (not a LIST)
+               (let [value (or (get argument-values arg-name)
+                               (get argument-values (keyword arg-name))
+                               (generate-value generator-args argument-values))
                      value
                      (cond-> value
                        ;; We don't want symbols in XT entities, because this leaks the
@@ -220,9 +223,7 @@
 
       ;; This is special argument that adds Site specific attributes
       (get site-args "methods")
-      (assoc ::http/methods (set (map (comp keyword str/lower-case) (get site-args "methods"))))
-
-      )))
+      (assoc ::http/methods (set (map (comp keyword str/lower-case) (get site-args "methods")))))))
 
 (defn process-xt-results
   [field results]
@@ -264,7 +265,6 @@
           ;;(select-keys ent (apply concat (map :keys acls)))
           ent
           ))
-
       ;; Return unprotected ent
       ent)))
 
@@ -328,6 +328,33 @@
                            (java.util.Date/from))]
     (await-tx xt-node (xt-put (dissoc object :xtdb.api/valid-time) valid-time))))
 
+(defn perform-mutation!
+  [action {:keys [argument-values xt-node lookup-entity] :as opts}]
+  (let [validate-id! (fn [args]
+                       (let [id (get args "id" (:id args))]
+                         (or id (throw (ex-info "This mutation needs an 'id' key"
+                                                {:arg-values argument-values
+                                                 :action action})))))
+        action (or action "put")]
+    (case action
+      "delete"
+      (let [id (validate-id! argument-values)]
+        (await-tx xt-node (xt-delete id))
+        ;; TODO: Allow an argument to correspond to valid-time, via
+        ;; @site(a: "xtdb.api/valid-time").
+        (lookup-entity id))
+      "put"
+      (let [object (args-to-entity opts)]
+        (put-object! xt-node object)
+        object)
+      "update"
+      (let [id (validate-id! argument-values)
+            old-value (lookup-entity id)
+            object (args-to-entity opts)]
+        (def object object)
+        (put-object! xt-node (merge old-value object))
+        object))))
+
 (defn default-for-type
   [type-ref]
   (let [type-name (::g/name type-ref)]
@@ -340,6 +367,37 @@
       ""
       :else
       nil)))
+
+(defn run-lambda!
+  [lambda-opts {:keys [mutation? field-name argument-values subject db] :as opts}]
+  (let [uri (get lambda-opts "uri")
+        to-resolve (get lambda-opts "resolve")
+        resolved (when to-resolve
+                   (for [[k arg-k] to-resolve
+                         :let [e (get argument-values arg-k)
+                               resolved (protected-lookup e subject db)]
+                         :when resolved]
+                     {k (rename-keys resolved {:xt/id :id})}))
+        res
+        @(httpc/post uri {:timeout 2000
+                          :body (json/write-value-as-bytes
+                                 {:field-name field-name
+                                  :arguments (apply merge
+                                                    argument-values
+                                                    resolved)})})
+        body (json/read-value (:body res) json/keyword-keys-object-mapper)
+        errors (or (:error body) (:message body))]
+
+    (cond
+      errors
+      (throw (ex-info (str "Error in lambda call: " errors) body))
+      mutation?
+      (perform-mutation! (get lambda-opts "mutation")
+                         (assoc opts :argument-values body))
+      :else
+      (rename-keys
+       body
+       {:id :xt/id}))))
 
 (defn query [schema document operation-name variable-values
              {::pass/keys [subject]
@@ -365,6 +423,7 @@
 
         (let [types-by-name (::schema/types-by-name schema)
               field (get-in object-type [::schema/fields-by-name field-name])
+              lambda (get-in field [::schema/directives-by-name "lambda" ::g/arguments])
               site-args (get-in field [::schema/directives-by-name "site" ::g/arguments])
               field-kind (or
                           (-> field ::g/type-ref ::g/name types-by-name ::g/kind)
@@ -381,50 +440,42 @@
                                       t/inst))
                    db)
               object-id (:xt/id object-value)
-              ;; TODO: Protected lookup please!
-              lookup-entity (fn [id] (xt/entity db id))]
+              lookup-entity (fn [id] (xt/entity db id))
+              opts {:site-args site-args
+                    :xt-node xt-node
+                    :schema schema
+                    :field field
+                    :mutation? mutation?
+                    :base-uri base-uri
+                    :type-k type-k
+                    :argument-values argument-values
+                    :lookup-entity lookup-entity
+                    :field-resolver-args field-resolver-args
+                    :subject subject
+                    :db db}]
+          (if lambda
+            (run-lambda! lambda opts)
+            (cond
+              mutation? (perform-mutation! (get site-args "mutation") opts)
 
-          (cond
-            mutation?
-            (let [action (or (get site-args "mutation") "put")
-                  validate-id! (fn [args]
-                                 (let [id (get args "id")]
-                                   (or id (throw (ex-info "Delete mutations need an 'id' key"
-                                                          {:arg-values argument-values})))))]
-              (case action
-                "delete"
-                (let [id (validate-id! argument-values)]
-                  (await-tx xt-node (xt-delete id))
-                  ;; TODO: Allow an argument to correspond to valid-time, via
-                  ;; @site(a: "xtdb.api/valid-time").
-                  (lookup-entity id))
-                "put"
-                (let [object (args-to-entity argument-values schema field base-uri site-args type-k)]
-                  (put-object! xt-node object)
-                  object)
-                "update"
-                (let [new-entity (args-to-entity argument-values schema field base-uri site-args type-k)
-                      old-entity (some-> new-entity :xt/id lookup-entity)
-                      new-entity (merge old-entity new-entity)]
-                  (put-object! xt-node new-entity)
-                  new-entity)))
+              (get site-args "typesenseConfig")
+              (typesense/ts-search site-args argument-values)
 
-            (get site-args "history")
-            (if-let [id (get argument-values "id")]
-              (let [limit (get argument-values "limit" 10)
-                    offset (get argument-values "offset" 0)
-                    order (case (get site-args "history")
-                            "desc" :desc
-                            "asc" :asc
-                            :desc)
-                    process-history-item
-                    (fn [{::xt/keys [valid-time doc]}]
-                      (assoc doc :_siteValidTime valid-time))]
-                (with-open [history (xt/open-entity-history db id order {:with-docs? true})]
-                  (->> history
-                       (iterator-seq)
-                       (map process-history-item))))
-              (throw (ex-message "History queries must have an id argument")))
+              (get site-args "history")
+              (if-let [id (get argument-values "id")]
+                (let [limit (get argument-values "limit" 10)
+                      offset (get argument-values "offset" 0)
+                      order (case (get site-args "history")
+                              "desc" :desc
+                              "asc" :asc
+                              :desc)
+                      process-history-item
+                      (fn [{::xt/keys [valid-time doc]}]
+                        (assoc doc :_siteValidTime valid-time))
+                      history-items (xt/entity-history
+                                     db id order {:with-docs? true})]
+                  (map process-history-item history-items))
+                (throw (ex-message "History queries must have an id argument")))
 
             (get site-args "filter")
             (cond
@@ -664,8 +715,8 @@
                         db (to-xt-query
                             (get site-args "type") site-args argument-values type-k))))
 
-            :else
-            (default-for-type (::g/type-ref field)))))})))
+              :else
+              (default-for-type (::g/type-ref field))))))})))
 
 (defn post-handler [{::site/keys [uri xt-node db base-uri]
                      ::pass/keys [subject]

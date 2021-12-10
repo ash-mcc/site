@@ -338,9 +338,7 @@
       (= "String" type-name)
       ""
       :else
-      (do
-        (prn "defaulting to nil, type-ref is " type-ref)
-        nil))))
+      nil)))
 
 (defn query [schema document operation-name variable-values
              {::pass/keys [subject]
@@ -424,8 +422,6 @@
                 (with-open [history (xt/open-entity-history db id order {:with-docs? true})]
                   (->> history
                        (iterator-seq)
-                       (drop offset)
-                       (take limit)
                        (map process-history-item))))
               (throw (ex-message "History queries must have an id argument")))
 

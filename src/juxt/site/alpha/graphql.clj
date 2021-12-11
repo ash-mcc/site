@@ -463,18 +463,15 @@
 
               (get site-args "history")
               (if-let [id (get argument-values "id")]
-                (let [limit (get argument-values "limit" 10)
-                      offset (get argument-values "offset" 0)
-                      order (case (get site-args "history")
+                (let [order (case (get site-args "history")
                               "desc" :desc
                               "asc" :asc
                               :desc)
                       process-history-item
                       (fn [{::xt/keys [valid-time doc]}]
-                        (assoc doc :_siteValidTime valid-time))
-                      history-items (xt/entity-history
-                                     db id order {:with-docs? true})]
-                  (map process-history-item history-items))
+                        (assoc doc :_siteValidTime valid-time))]
+                  (map process-history-item
+                       (xt/entity-history db id order {:with-docs? true})))
                 (throw (ex-message "History queries must have an id argument")))
 
             (get site-args "filter")
@@ -510,7 +507,7 @@
                   in (cond->> (map symbol (arg-keys argument-values))
                        object-id (concat ['object]))
 
-                  q (to-xt-query field site-args argument-values)
+                  q (to-xt-query field site-args argument-values type-k)
                   q (assoc-some
                      q
                      :where (when object-id

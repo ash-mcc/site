@@ -16,7 +16,7 @@ type Mutation {
         a: "xt/id"
         gen: {
           type: TEMPLATE 
-          template: "{{base-uri}}/dcs/pasi/ace/ent/FurnitureDescription/{{category}}/{{subcategory}}"
+          template: "{{base-uri}}/dcs-pasi-ace/ent/FurnitureDescription/{{category}}/{{subcategory}}"
         }
       )
     category: String! @site(a: "{{base-uri}}/dcs-pasi-ace/pred/category")
@@ -34,8 +34,8 @@ type Mutation {
           template: "{{base-uri}}/dcs-pasi-ace/ent/ReusedFurniture/{{from}}"
         }
       )
-      from: DateTime! @site(a: "{{base-uri}}/dcs/pasi/ace/pred/from")
-      itemCount: Int! @site(a: "{{base-uri}}/dcs/pasi/ace/pred/itemCount")
+      from: Date! @site(a: "{{base-uri}}/dcs-pasi-ace/pred/from")
+      itemCount: Int! @site(a: "{{base-uri}}/dcs-pasi-ace/pred/itemCount")
   ): ReusedFurniture @site(mutation: "update")
 }
 
@@ -57,6 +57,6 @@ type FurnitureDescription {
 
 type ReusedFurniture {
   id: ID!
-  from: DateTime! @site(a: "{{base-uri}}/dcs-pasi-ace/pred/from")
+  from: Date! @site(a: "{{base-uri}}/dcs-pasi-ace/pred/from")
   itemCount: Int! @site(a: "{{base-uri}}/dcs-pasi-ace/pred/itemCount")
 }

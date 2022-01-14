@@ -88,23 +88,23 @@
 
 (-> (xt-node)
     xt/db
-    (xt/entity 
-     "http://localhost:2021/dcs-pasi-ace/ent/ReusedFurniture/2022-01-01")
+    (xt/entity
+     "http://localhost:2021/dcs-pasi-ace/ent/FurnitureDescription/Hard/Footstool")
     pp/pprint)
 
 
 (-> (xt-node)
     xt/db
     (xt/q
-      (sparql/sparql->datalog 
-       "SELECT ?s WHERE { ?s <http://localhost:2021/dcs-pasi-ace/pred/type> \"FurnitureDescription\" }")))
+     (sparql/sparql->datalog
+      "SELECT ?s WHERE { ?s <http://localhost:2021/dcs-pasi-ace/pred/type> \"FurnitureDescription\" }")))
 
 (-> (xt-node)
     xt/db
     (xt/q
      (sparql/sparql->datalog
       "SELECT ?s ?subcategory ?itemKg
-       WHERE { ?s <http://localhost:2021/dcs-pasi-ace/pred/category> \"Soft\" ;
+       WHERE { ?s <http://localhost:2021/dcs-pasi-ace/pred/category> \"Hard\" ;
                   <http://localhost:2021/dcs-pasi-ace/pred/subcategory> ?subcategory ;
                   <http://localhost:2021/dcs-pasi-ace/pred/itemKg> ?itemKg . }"))
     pp/pprint)
@@ -133,9 +133,24 @@
             :where [[e ~(keyword "http://localhost:2021/dcs-pasi-ace/pred/type") "ReusedFurniture"]]})
     pp/pprint)
 
+
 (-> (xt-node)
     xt/db
     (xt/q
      (sparql/sparql->datalog
       "SELECT ?s WHERE { ?s <http://localhost:2021/dcs-pasi-ace/pred/type> \"ReusedFurniture\" }"))
     pp/pprint)
+
+
+
+(help)
+
+(status)
+
+(pp/pprint (config))
+
+(pp/pprint (types))
+
+(pp/pprint (cat-type "OpenAPI"))
+
+(pp/pprint (ls))

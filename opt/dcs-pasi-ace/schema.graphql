@@ -1,0 +1,62 @@
+schema @site(type: "{{base-uri}}/dcs-pasi-ace/pred/type") {
+  query: Query
+  mutation: Mutation
+}
+
+# java.time.LocalDate ?
+scalar Date
+
+type Mutation {
+  upsertFurnitureDescription(
+    # I'm likely to replace this composite key approach to enforcing a uniqueness contraint,
+    # by a test-and-set function that can check any constraints while transacting.
+    # (Alex suggests implementing that by using juxt-site's put-code stuff or his WIP lambda stuff.)
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "{{base-uri}}/dcs/pasi/ace/ent/FurnitureDescription/{{category}}/{{subcategory}}"
+        }
+      )
+    category: String! @site(a: "{{base-uri}}/dcs-pasi-ace/pred/category")
+    subcategory: String! @site(a: "{{base-uri}}/dcs-pasi-ace/pred/subcategory")
+    itemKg: Float! @site(a: "{{base-uri}}/dcs-pasi-ace/pred/itemKg")
+  ): FurnitureDescription @site(mutation: "update")
+
+  upsertReusedFurniture(
+
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "{{base-uri}}/dcs-pasi-ace/ent/ReusedFurniture/{{from}}"
+        }
+      )
+      from: DateTime! @site(a: "{{base-uri}}/dcs/pasi/ace/pred/from")
+      itemCount: Int! @site(a: "{{base-uri}}/dcs/pasi/ace/pred/itemCount")
+  ): ReusedFurniture @site(mutation: "update")
+}
+
+type Query {
+  furnitureDescriptions: [FurnitureDescription]!
+  furnitureDescription(id: ID!): FurnitureDescription @site(e: "id")
+}
+
+"""
+ACE description of furniture
+"""
+type FurnitureDescription {
+  id: ID!
+  category: String! @site(a: "{{base-uri}}/dcs-pasi-ace/pred/category")
+  subcategory: String! @site(a: "{{base-uri}}/dcs-pasi-ace/pred/subcategory")
+  itemKg: Float! @site(a: "{{base-uri}}/dcs-pasi-ace/pred/itemKg")
+}
+
+
+type ReusedFurniture {
+  id: ID!
+  from: DateTime! @site(a: "{{base-uri}}/dcs-pasi-ace/pred/from")
+  itemCount: Int! @site(a: "{{base-uri}}/dcs-pasi-ace/pred/itemCount")
+}

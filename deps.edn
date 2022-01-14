@@ -1,6 +1,6 @@
 ;; Copyright © 2021, JUXT LTD.
 
-{:paths ["src"]
+{:paths ["src" "opt/dcs-pasi-ace/src"]
  :deps {org.clojure/clojure {:mvn/version "1.10.1"}
 
         ;; Project skeleton - also see src/config.edn
@@ -13,6 +13,7 @@
         com.xtdb/xtdb-rocksdb {:mvn/version "1.20.0"}
         com.xtdb/xtdb-lucene {:mvn/version "1.20.0"}
         com.xtdb/xtdb-http-server {:mvn/version "1.20.0"}
+        com.xtdb.labs/xtdb-rdf {:mvn/version "1.20.0"}
 
         ;; Jetty
         ring/ring-jetty-adapter {:mvn/version "1.9.1"}

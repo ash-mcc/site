@@ -135,7 +135,7 @@
 (-> (xt-node)
     xt/db
     (xt/q `{:find  [e]
-            :where [[e ~(keyword "http://localhost:2021/pasi/ace/pred/type") "ReusedFurniture"]]})
+            :where [[e ~(keyword "http://localhost:2021/pasi/ace/pred/type") "FurnitureDescription"]]})
     pp/pprint)
 
 
@@ -143,7 +143,7 @@
     xt/db
     (xt/q
      (sparql/sparql->datalog
-      "SELECT ?s WHERE { ?s <http://localhost:2021/pasi/ace/pred/type> \"ReusedFurniture\" }"))
+      "SELECT ?s WHERE { ?s <http://localhost:2021/pasi/ace/pred/type> \"FurnitureDescription\" }"))
     pp/pprint)
 
 
@@ -175,24 +175,7 @@
      "http://localhost:2021/_site/rules/make-public")
     pp/pprint)
 
-(xt/submit-tx
+#_(xt/submit-tx
  (xt-node)
  [[::xt/delete "http://localhost:2021/_site/rules/make-public"]])
 
-
-(-> (xt-node)
-    xt/db
-    (xt/entity
-     "http://localhost:2021/_site/requests/cfdd0a28627968e5693873a4")
-    pp/pprint)
-
-(xt/submit-tx
- (xt-node)
- [[::xt/delete "http://localhost:2021/pasi/ace/graphql"]])
-
-
-
-(put-site-api!)
-(put-auth-resources!)
-(put-superuser-role!)
-(put-superuser! "admin" "Superuser" "admin")

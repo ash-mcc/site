@@ -3,7 +3,7 @@
 
 ;; Copyright © 2021, JUXT LTD.
 
-(ns dcs.pasi.ace.repl-cmds
+(ns dcs.pasi.repl-cmds
   (:require
    clojure.main
    [io.aviso.ansi :as ansi]
@@ -66,7 +66,7 @@
 ;; HTTP endpoints
 ;;   http://localhost:2021
 ;;   http://localhost:2021/_site/graphiql/index.html?url=/_site/graphql
-;;   http://localhost:2021/_site/graphiql/index.html?url=/dcs-pasi-ace/graphql
+;;   http://localhost:2021/_site/graphiql/index.html?url=/pasi/graphql
 ;;   http://localhost:2021/swagger-ui/index.html?url=/_site/apis/site/openapi.json
 ;; To build graphiql
 ;;   cd opt/graphiql  
@@ -89,7 +89,7 @@
 (-> (xt-node)
     xt/db
     (xt/entity
-     "http://localhost:2021/dcs-pasi-ace/ent/FurnitureDescription/Hard/Footstool")
+     "http://localhost:2021/pasi/ace/ent/FurnitureDescription/Hard/Footstool")
     pp/pprint)
 
 
@@ -97,16 +97,16 @@
     xt/db
     (xt/q
      (sparql/sparql->datalog
-      "SELECT ?s WHERE { ?s <http://localhost:2021/dcs-pasi-ace/pred/type> \"FurnitureDescription\" }")))
+      "SELECT ?s WHERE { ?s <http://localhost:2021/pasi/ace/pred/type> \"FurnitureDescription\" }")))
 
 (-> (xt-node)
     xt/db
     (xt/q
      (sparql/sparql->datalog
       "SELECT ?s ?subcategory ?itemKg
-       WHERE { ?s <http://localhost:2021/dcs-pasi-ace/pred/category> \"Hard\" ;
-                  <http://localhost:2021/dcs-pasi-ace/pred/subcategory> ?subcategory ;
-                  <http://localhost:2021/dcs-pasi-ace/pred/itemKg> ?itemKg . }"))
+       WHERE { ?s <http://localhost:2021/pasi/ace/pred/category> \"Hard\" ;
+                  <http://localhost:2021/pasi/ace/pred/subcategory> ?subcategory ;
+                  <http://localhost:2021/pasi/ace/pred/itemKg> ?itemKg . }"))
     pp/pprint)
 
 
@@ -114,23 +114,28 @@
 ;;
 ;; SELECT ?s
 ;;   WHERE {
-;;     SERVICE <http://localhost:2021/_xtdb/sparql> {
-;;       ?s <http://localhost:2021/dcs-pasi-ace/pred/category> "Soft" 
+;;     SERVICE <http://localhost:2021/sparql> {
+;;       ?s <http://localhost:2021/pasi/ace/pred/category> "Soft" 
 ;;     }
 ;; }          
 
 
 ;; A remote SPARQL query ...not working. Endpoint not found. 
 ;;
-;; curl -v -H "Accept:application/sparql-results+json" http://localhost:2021/_xtdb/sparql?query=SELECT%20%3Fs%20WHERE%20%7B%20%3Fs%20%3Chttp%3A%2F%2Flocalhost%3A2021%2Fdcs-pasi-ace%2Fpred%2Fcategory%3E%20%22Soft%22%20%7D
-;; i.e. SELECT ?s WHERE { ?s <http://localhost:2021/dcs-pasi-ace/pred/category> "Soft" }
+;; curl -v -H "Accept:application/sparql-results+json" http://localhost:2021/sparql?query=SELECT%20%3Fs%20WHERE%20%7B%20%3Fs%20%3Chttp%3A%2F%2Flocalhost%3A2021%2Fpasi%2Face%2Fpred%2Fcategory%3E%20%22Soft%22%20%7D
+;; i.e. SELECT ?s WHERE { ?s <http://localhost:2021/pasi/ace/pred/category> "Soft" }
+;;
+;; POSTing a SPARQL query
+;;
+;; curl -v -u admin:admin -H "Accept:application/sparql-results+json" --data-urlencode 'query=SELECT ?s WHERE { ?s <http://localhost:2021/pasi/ace/pred/category> "Soft" }' http://localhost:2021/sparql
+;;
 
 
 
 (-> (xt-node)
     xt/db
     (xt/q `{:find  [e]
-            :where [[e ~(keyword "http://localhost:2021/dcs-pasi-ace/pred/type") "ReusedFurniture"]]})
+            :where [[e ~(keyword "http://localhost:2021/pasi/ace/pred/type") "ReusedFurniture"]]})
     pp/pprint)
 
 
@@ -138,8 +143,11 @@
     xt/db
     (xt/q
      (sparql/sparql->datalog
-      "SELECT ?s WHERE { ?s <http://localhost:2021/dcs-pasi-ace/pred/type> \"ReusedFurniture\" }"))
+      "SELECT ?s WHERE { ?s <http://localhost:2021/pasi/ace/pred/type> \"ReusedFurniture\" }"))
     pp/pprint)
+
+
+
 
 
 
@@ -154,3 +162,37 @@
 (pp/pprint (cat-type "OpenAPI"))
 
 (pp/pprint (ls))
+
+
+
+
+
+
+
+(-> (xt-node)
+    xt/db
+    (xt/entity
+     "http://localhost:2021/_site/rules/make-public")
+    pp/pprint)
+
+(xt/submit-tx
+ (xt-node)
+ [[::xt/delete "http://localhost:2021/_site/rules/make-public"]])
+
+
+(-> (xt-node)
+    xt/db
+    (xt/entity
+     "http://localhost:2021/_site/requests/cfdd0a28627968e5693873a4")
+    pp/pprint)
+
+(xt/submit-tx
+ (xt-node)
+ [[::xt/delete "http://localhost:2021/pasi/ace/graphql"]])
+
+
+
+(put-site-api!)
+(put-auth-resources!)
+(put-superuser-role!)
+(put-superuser! "admin" "Superuser" "admin")

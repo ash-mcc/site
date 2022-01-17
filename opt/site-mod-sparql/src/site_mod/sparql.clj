@@ -1,4 +1,4 @@
-(ns dcs.site.sparql
+(ns site-mod.sparql
   (:require [clojure.string :as str]
             [clojure.tools.logging :as log]
             #_[clojure.pprint :as pp]

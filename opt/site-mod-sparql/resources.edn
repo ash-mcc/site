@@ -3,12 +3,12 @@
  :juxt.pass.alpha/classification "PUBLIC"
 
  ;; For GETing SPARQL queries
- ;TODO :juxt.site.alpha/get-fn dcs.site.sparql/get-handler
+ ;TODO :juxt.site.alpha/get-fn site-mod.sparql/get-handler
 
  ;; For POSTing SPARQL queries
- :juxt.site.alpha/post-fn dcs.site.sparql/post-handler
+ :juxt.site.alpha/post-fn site-mod.sparql/post-handler
 
  :juxt.http.alpha/post-error-representations
  [{:ring.response/status 400
    :juxt.http.alpha/content-type "text/plain"
-   :juxt.site.alpha/body-fn dcs.site.sparql/post-error-text-body}]}
+   :juxt.site.alpha/body-fn site-mod.sparql/post-error-text-body}]}

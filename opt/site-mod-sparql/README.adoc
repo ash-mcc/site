@@ -1,0 +1,37 @@
+= site-mod-sparql
+
+This makes XTDB's SPARQL interface available in Site.
+
+== Install
+
+The `deploy.sh` script uses Site's command line tool.
+You'll probably need to edit `deploy.sh` to set a password.
+
+[source, bash]
+----
+cd opt/site-mod-sparql
+./deploy
+----
+
+== Use
+
+Example...
+
+[source, bash]
+----
+curl -v \
+     -u admin:admin \
+     -H "Accept:application/sparql-results+json" \
+     --data-urlencode \
+     'query=SELECT ?subject WHERE { ?subject <https://mynamespace.org/mypredicate> "My value" }' http://localhost:2021/sparql
+----
+ 
+Notes:
+
+* `/sparql` is the default path (_context_) to which SPARQL should be `POST`-ed.
+* The current implementation only supports `POST` requests.
+* `-u admin:admin` (or similar) is needed unless you have disabled the _auth_ requirement on your Site.
+* Acceptable `Accept` header values are: `application/sparql-results+json`, `application/sparql-results+xml`, or `\*/*`.)
+* The XTDB SPARQL implementation currently fails when marshalling returned object values (as in _subject-predicate-object_) which aren't URIs. 
+See the issue: 
+https://github.com/xtdb/xtdb/issues/1686[SPARQL-over-http should be able to return string values]

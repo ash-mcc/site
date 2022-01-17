@@ -125,6 +125,7 @@
 ;; curl -v -u admin:admin -H "Accept:application/sparql-results+json" --data-urlencode 'query=SELECT ?s WHERE { ?s <http://localhost:2021/pasi/ace/pred/category> "Soft" }' http://localhost:2021/sparql
 ;;
 ;; A remote SPARQL query (from CURL) ....doesn't work when GETed and authenticable (tho' authn isn't needed if I've applied access-all-areas to my sit instance)
+;;                                       because GET hasn't yet been implemented.
 ;;
 ;; curl -v -H "Accept:application/sparql-results+json" http://localhost:2021/sparql?query=SELECT%20%3Fs%20WHERE%20%7B%20%3Fs%20%3Chttp%3A%2F%2Flocalhost%3A2021%2Fpasi%2Face%2Fpred%2Fcategory%3E%20%22Soft%22%20%7D
 ;; 
@@ -193,4 +194,5 @@
 (xt/submit-tx
  (xt-node)
  [[::xt/put access-all-areas]])
+
 

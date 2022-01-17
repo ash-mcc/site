@@ -2,8 +2,8 @@
  :juxt.http.alpha/methods #{:get :post}
  :juxt.pass.alpha/classification "PUBLIC"
 
-  ;; For GETing SPARQL queries
- :juxt.site.alpha/get-fn dcs.site.sparql/get-handler
+ ;; For GETing SPARQL queries
+ ;TODO :juxt.site.alpha/get-fn dcs.site.sparql/get-handler
 
  ;; For POSTing SPARQL queries
  :juxt.site.alpha/post-fn dcs.site.sparql/post-handler

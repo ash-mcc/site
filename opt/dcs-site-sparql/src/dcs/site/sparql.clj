@@ -13,6 +13,7 @@
 (alias 'pass (create-ns 'juxt.pass.alpha))
 
 (def sparql-json-response #'sparql-protocol/sparql-json-response)
+(def sparql-xml-response #'sparql-protocol/sparql-xml-response)
 
 
 ;; TO BE REMOVED / for reference only 
@@ -56,7 +57,6 @@
 
 
 (defn post-handler [{::site/keys [xt-node received-representation] :as req}]
-  
     (println "\n\n ------ SPARQL adaptor --------")
     (log/debug :received-representation received-representation)
     (let [content-type                  (::http/content-type received-representation)
@@ -90,11 +90,3 @@
        (:location error) (str " (line " (-> error :location :row inc) ")")))
    (into ["Query errors"])
    (str/join (System/lineSeparator))))
-
-(defn post-error-json-body [req]
-  (json/write-value-as-string
-   {:errors
-    (for [error (::errors req)
-          :let [location (:location error)]]
-      (cond-> error
-        location (assoc :location location)))}))

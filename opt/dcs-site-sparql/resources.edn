@@ -1,24 +1,14 @@
 {:xt/id "{{base-uri}}/sparql"
- :juxt.http.alpha/content-type "text/plain;charset=utf-8"
- :juxt.http.alpha/methods #{:post}
+ :juxt.http.alpha/methods #{:get :post}
  :juxt.pass.alpha/classification "PUBLIC"
 
- ;; For POSTing GraphQL queries
+  ;; For GETing SPARQL queries
+ :juxt.site.alpha/get-fn dcs.site.sparql/get-handler
+
+ ;; For POSTing SPARQL queries
  :juxt.site.alpha/post-fn dcs.site.sparql/post-handler
+
  :juxt.http.alpha/post-error-representations
  [{:ring.response/status 400
    :juxt.http.alpha/content-type "text/plain"
-   :juxt.site.alpha/body-fn dcs.site.sparql/post-error-text-body}
-  {:ring.response/status 400
-   :juxt.http.alpha/content-type "application/json"
-   :juxt.site.alpha/body-fn jdcs.site.sparql/post-error-json-body}]}
-
-;; bypass authz ...but don't use the following because it breaks the system as it currently is
-
-;{:xt/id "{{base-uri}}/_site/rules/make-public"
-; :juxt.site.alpha/description "TODO check this is applying just to the SPARQL context"
-; :juxt.site.alpha/type "Rule"
-; :juxt.pass.alpha/effect :juxt.pass.alpha/allow
-; :juxt.pass.alpha/target [[request :ring.request/uri "{{base-uri}}/sparql"]
-;                          [request :ring.request/method #{:get :post}]]}
-
+   :juxt.site.alpha/body-fn dcs.site.sparql/post-error-text-body}]}

@@ -104,31 +104,33 @@
     (xt/q
      (sparql/sparql->datalog
       "SELECT ?s ?subcategory ?itemKg
-       WHERE { ?s <http://localhost:2021/pasi/ace/pred/category> \"Hard\" ;
+       WHERE { ?s <http://localhost:2021/pasi/ace/pred/category> \"Soft\" ;
                   <http://localhost:2021/pasi/ace/pred/subcategory> ?subcategory ;
                   <http://localhost:2021/pasi/ace/pred/itemKg> ?itemKg . }"))
     pp/pprint)
 
 
-;; A federated SPARQL query ...not working. My current `site` service ask for authentication
+;; A federated SPARQL query (from my Blazegraph app) ...works when I've aplied access-all-areas to my sit instance
 ;;
 ;; SELECT ?s
-;;   WHERE {
-;;     SERVICE <http://localhost:2021/sparql> {
-;;       ?s <http://localhost:2021/pasi/ace/pred/category> "Soft" 
-;;     }
-;; }          
+;; WHERE {
+;;   SERVICE <http://localhost:2021/sparql> {
+;;     ?s <http://localhost:2021/pasi/ace/pred/category> "Soft" 
+;;   }
+;; }         
 
 
-;; A remote SPARQL query ...not working. Endpoint not found. 
-;;
-;; curl -v -H "Accept:application/sparql-results+json" http://localhost:2021/sparql?query=SELECT%20%3Fs%20WHERE%20%7B%20%3Fs%20%3Chttp%3A%2F%2Flocalhost%3A2021%2Fpasi%2Face%2Fpred%2Fcategory%3E%20%22Soft%22%20%7D
-;; i.e. SELECT ?s WHERE { ?s <http://localhost:2021/pasi/ace/pred/category> "Soft" }
-;;
-;; POSTing a SPARQL query
+;; A remote SPARQL query (from CURL) ....works when POSTed and authenticable (tho' authn isn't needed if I've applied access-all-areas to my sit instance)
 ;;
 ;; curl -v -u admin:admin -H "Accept:application/sparql-results+json" --data-urlencode 'query=SELECT ?s WHERE { ?s <http://localhost:2021/pasi/ace/pred/category> "Soft" }' http://localhost:2021/sparql
 ;;
+;; A remote SPARQL query (from CURL) ....doesn't work when GETed and authenticable (tho' authn isn't needed if I've applied access-all-areas to my sit instance)
+;;
+;; curl -v -H "Accept:application/sparql-results+json" http://localhost:2021/sparql?query=SELECT%20%3Fs%20WHERE%20%7B%20%3Fs%20%3Chttp%3A%2F%2Flocalhost%3A2021%2Fpasi%2Face%2Fpred%2Fcategory%3E%20%22Soft%22%20%7D
+;; 
+;;    ...i.e. SELECT ?s WHERE { ?s <http://localhost:2021/pasi/ace/pred/category> "Soft" }
+;;
+
 
 
 
@@ -178,4 +180,17 @@
 #_(xt/submit-tx
  (xt-node)
  [[::xt/delete "http://localhost:2021/_site/rules/make-public"]])
+
+
+
+(def access-all-areas
+  {:xt/id "http://localhost:2021/access-rule"
+   ::site/description "A rule allowing access everything"
+   ::site/type "Rule"
+   ::pass/target []
+   ::pass/effect ::pass/allow})
+
+(xt/submit-tx
+ (xt-node)
+ [[::xt/put access-all-areas]])
 

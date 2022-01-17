@@ -1,4 +1,4 @@
-schema @site(type: "{{base-uri}}/pasi/ace/pred/type") {
+schema @site(type: "pasi:ace/pred/type") {
   query: Query
   mutation: Mutation
 }
@@ -16,12 +16,12 @@ type Mutation {
         a: "xt/id"
         gen: {
           type: TEMPLATE 
-          template: "{{base-uri}}/pasi/ace/ent/FurnitureDescription/{{category}}/{{subcategory}}"
+          template: "pasi:ace/ent/FurnitureDescription/{{category}}/{{subcategory}}"
         }
       )
-    category: String! @site(a: "{{base-uri}}/pasi/ace/pred/category")
-    subcategory: String! @site(a: "{{base-uri}}/pasi/ace/pred/subcategory")
-    itemKg: Float! @site(a: "{{base-uri}}/pasi/ace/pred/itemKg")
+    category: String! @site(a: "pasi:ace/pred/category")
+    subcategory: String! @site(a: "pasi:ace/pred/subcategory")
+    itemKg: Float! @site(a: "pasi:ace/pred/itemKg")
   ): FurnitureDescription @site(mutation: "update")
 
   upsertReusedFurniture(
@@ -31,11 +31,11 @@ type Mutation {
         a: "xt/id"
         gen: {
           type: TEMPLATE 
-          template: "{{base-uri}}/pasi/ace/ent/ReusedFurniture/{{from}}"
+          template: "pasi:ace/ent/ReusedFurniture/{{from}}"
         }
       )
-      from: Date! @site(a: "{{base-uri}}/pasi/ace/pred/from")
-      itemCount: Int! @site(a: "{{base-uri}}/pasi/ace/pred/itemCount")
+      from: Date! @site(a: "pasi:ace/pred/from")
+      itemCount: Int! @site(a: "pasi:ace/pred/itemCount")
   ): ReusedFurniture @site(mutation: "update")
 }
 
@@ -49,14 +49,14 @@ ACE description of furniture
 """
 type FurnitureDescription {
   id: ID!
-  category: String! @site(a: "{{base-uri}}/pasi/ace/pred/category")
-  subcategory: String! @site(a: "{{base-uri}}/pasi/ace/pred/subcategory")
-  itemKg: Float! @site(a: "{{base-uri}}/pasi/ace/pred/itemKg")
+  category: String! @site(a: "pasi:ace/pred/category")
+  subcategory: String! @site(a: "pasi:ace/pred/subcategory")
+  itemKg: Float! @site(a: "pasi:ace/pred/itemKg")
 }
 
 
 type ReusedFurniture {
   id: ID!
-  from: Date! @site(a: "{{base-uri}}/pasi/ace/pred/from")
-  itemCount: Int! @site(a: "{{base-uri}}/pasi/ace/pred/itemCount")
+  from: Date! @site(a: "pasi:ace/pred/from")
+  itemCount: Int! @site(a: "pasi:ace/pred/itemCount")
 }

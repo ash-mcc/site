@@ -23,7 +23,7 @@ curl -v \
      -u admin:admin \
      -H "Accept:application/sparql-results+json" \
      --data-urlencode \
-     'query=SELECT ?subject WHERE { ?subject <https://mynamespace.org/mypredicate> "My value" }' http://localhost:2021/sparql
+     'query=SELECT ?subject WHERE { ?subject <myscheme:mypredicate> "My value" }' http://localhost:2021/sparql
 ----
  
 Notes:

@@ -103,33 +103,35 @@
     xt/db
     (xt/q
      (sparql/sparql->datalog
-      "SELECT ?s ?subcategory ?itemKg
-       WHERE { ?s <http://localhost:2021/pasi/ace/pred/category> \"Soft\" ;
-                  <http://localhost:2021/pasi/ace/pred/subcategory> ?subcategory ;
-                  <http://localhost:2021/pasi/ace/pred/itemKg> ?itemKg . }"))
+      "PREFIX ace: <pasi:ace/pred/>
+       SELECT ?s ?subcategory ?itemKg
+       WHERE { ?s ace:category \"Soft\" ;
+                  ace:subcategory ?subcategory ;
+                  ace:itemKg ?itemKg . }"))
     pp/pprint)
 
 
-;; A federated SPARQL query (from my Blazegraph app) ...works when I've aplied access-all-areas to my sit instance
+;; A federated SPARQL query (from my Blazegraph app) ...works when I've applied access-all-areas to my sit instance
 ;;
+;; PREFIX ace: <pasi:ace/pred/>
 ;; SELECT ?s
 ;; WHERE {
 ;;   SERVICE <http://localhost:2021/sparql> {
-;;     ?s <http://localhost:2021/pasi/ace/pred/category> "Soft" 
+;;     ?s ace:category "Soft" 
 ;;   }
-;; }         
+;; }       
 
 
 ;; A remote SPARQL query (from CURL) ....works when POSTed and authenticable (tho' authn isn't needed if I've applied access-all-areas to my sit instance)
 ;;
-;; curl -v -u admin:admin -H "Accept:application/sparql-results+json" --data-urlencode 'query=SELECT ?s WHERE { ?s <http://localhost:2021/pasi/ace/pred/category> "Soft" }' http://localhost:2021/sparql
+;; curl -v -u admin:admin -H "Accept:application/sparql-results+json" --data-urlencode 'query=PREFIX ace: <pasi:ace/pred/> SELECT ?s WHERE { ?s ace:category "Soft" }' http://localhost:2021/sparql
 ;;
 ;; A remote SPARQL query (from CURL) ....doesn't work when GETed and authenticable (tho' authn isn't needed if I've applied access-all-areas to my sit instance)
 ;;                                       because GET hasn't yet been implemented.
 ;;
-;; curl -v -H "Accept:application/sparql-results+json" http://localhost:2021/sparql?query=SELECT%20%3Fs%20WHERE%20%7B%20%3Fs%20%3Chttp%3A%2F%2Flocalhost%3A2021%2Fpasi%2Face%2Fpred%2Fcategory%3E%20%22Soft%22%20%7D
+;; curl -v -H "Accept:application/sparql-results+json" http://localhost:2021/sparql?query=PREFIX%20ace%3A%20%3Cpasi%3Aace%2Fpred%2F%3E%20SELECT%20%3Fs%20WHERE%20%7B%20%3Fs%20ace%3Acategory%20%22Soft%22%20%7D
 ;; 
-;;    ...i.e. SELECT ?s WHERE { ?s <http://localhost:2021/pasi/ace/pred/category> "Soft" }
+;;    ...i.e. PREFIX ace: <pasi:ace/pred/> SELECT ?s WHERE { ?s ace:category "Soft" }
 ;;
 
 
@@ -138,7 +140,7 @@
 (-> (xt-node)
     xt/db
     (xt/q `{:find  [e]
-            :where [[e ~(keyword "http://localhost:2021/pasi/ace/pred/type") "FurnitureDescription"]]})
+            :where [[e ~(keyword "pasi:ace/pred/type") "FurnitureDescription"]]})
     pp/pprint)
 
 
@@ -146,7 +148,7 @@
     xt/db
     (xt/q
      (sparql/sparql->datalog
-      "SELECT ?s WHERE { ?s <http://localhost:2021/pasi/ace/pred/type> \"FurnitureDescription\" }"))
+      "SELECT ?s WHERE { ?s <pasi:ace/pred/type> \"FurnitureDescription\" }"))
     pp/pprint)
 
 

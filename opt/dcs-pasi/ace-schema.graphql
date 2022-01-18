@@ -30,7 +30,7 @@ type Mutation {
         a: "xt/id"
         gen: {
           type: TEMPLATE 
-          template: "pasi:ace/ent/ReusedFurniture/{{category}}/{{subcategory}}/{{from}}/{{to}}"
+          template: "pasi:ace/ent/ReusedFurniture/{{from}}/{{to}}/{{category}}/{{subcategory}}"
         }
       )
       from: Date! @site(a: "pasi:ace/pred/from")
@@ -40,11 +40,11 @@ type Mutation {
       description: ID 
         @site(
           a: "pasi:ace/pred/description"
-          q: { find: [e]
-               where: [[e {keyword: "pasi:ace/pred/category"} category]
-                       [e {keyword: "pasi:ace/pred/subcategory"} subcategory]]
-             }
-          )
+          gen: {
+            type: TEMPLATE 
+            template: "pasi:ace/ent/FurnitureDescription/{{category}}/{{subcategory}}"
+          }
+        )
       itemCount: Int! @site(a: "pasi:ace/pred/itemCount")
   ): ReusedFurniture @site(mutation: "update")
 }
@@ -81,8 +81,8 @@ type ReusedFurniture {
   descriptionEntity: FurnitureDescription 
     @site(
       q: { find: [d]
-           where: [[object {keyword: "pasi:ace/pred/description"} d]
-                   [d {keyword: "pasi:ace/pred/itemKg"} x]]
+           where: [[d {keyword: "pasi:ace/pred/type"} "FurnitureDescription"]
+                   [object {keyword: "pasi:ace/pred/description"} d]]
          }
     )
   itemCount: Int! @site(a: "pasi:ace/pred/itemCount")

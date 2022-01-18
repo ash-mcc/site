@@ -154,10 +154,36 @@
 
 (-> (xt-node)
     xt/db
-    (xt/q `{:find  [(count e)]
+    (xt/q `{:find  [e]
             :where [[e ~(keyword "pasi:ace/pred/category") "Soft"]
                     [e ~(keyword "pasi:ace/pred/subcategory") "Pillow"]]})
     pp/pprint)
+
+(-> (xt-node)
+    xt/db
+    (xt/q `{:find  [e fromDate toDate category subcategory itemCount]
+            :where [[e ~(keyword "pasi:ace/pred/type") "ReusedFurniture"]
+                    [e ~(keyword "pasi:ace/pred/from") fromDate]
+                    [e ~(keyword "pasi:ace/pred/to") toDate]
+                    [e ~(keyword "pasi:ace/pred/itemCount") itemCount]
+                    [e ~(keyword "pasi:ace/pred/description") d]
+                    [d ~(keyword "pasi:ace/pred/category") category]
+                    [d ~(keyword "pasi:ace/pred/subcategory") subcategory]]})
+    pp/pprint)
+
+(-> (xt-node)
+    xt/db
+    (xt/q `{:find  [e]
+            :where [[e ~(keyword "pasi:ace/pred/type") any]]})
+    pp/pprint)
+
+
+#_(-> (xt-node)
+    xt/db
+    (xt/q `{:find  [e]
+            :where [[e ~(keyword "pasi:ace/pred/type") any]]})
+    (->>
+     (map #(xt/submit-tx (xt-node) [[::xt/delete (first %)]]))))
 
 
 

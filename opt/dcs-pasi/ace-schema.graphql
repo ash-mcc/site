@@ -73,16 +73,11 @@ type ReusedFurniture {
   id: ID!
   from: Date! @site(a: "pasi:ace/pred/from")
   to: Date! @site(a: "pasi:ace/pred/to")
-  """
-  category: String! @site(a: "pasi:ace/pred/category")
-  subcategory: String! @site(a: "pasi:ace/pred/subcategory")
-  """
-  description: ID! @site(a: "pasi:ace/pred/description")
-  descriptionEntity: FurnitureDescription 
+  description: FurnitureDescription 
     @site(
-      q: { find: [d]
-           where: [[d {keyword: "pasi:ace/pred/type"} "FurnitureDescription"]
-                   [object {keyword: "pasi:ace/pred/description"} d]]
+      q: { find: [e]
+           where: [[e {keyword: "pasi:ace/pred/type"} "FurnitureDescription"]
+                   [object {keyword: "pasi:ace/pred/description"} e]]
          }
     )
   itemCount: Int! @site(a: "pasi:ace/pred/itemCount")

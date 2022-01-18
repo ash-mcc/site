@@ -36,7 +36,7 @@
                      id
                      from
                      to
-                     descriptionEntity {
+                     description {
                        category
                        subcategory
                      }
@@ -54,8 +54,8 @@
         :reusedFurnitures
         (->>
          (map #(assoc %
-                      :category (get-in % [:descriptionEntity :category])
-                      :subcategory (get-in % [:descriptionEntity :subcategory])))
+                      :category (get-in % [:description :category])
+                      :subcategory (get-in % [:description :subcategory])))
          (sort-by (juxt :from :to :category :subcategory))
          (conj [[:id :from :to :category :subcategory :itemCount]])))))
 

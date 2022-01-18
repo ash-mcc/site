@@ -37,17 +37,18 @@ type Mutation {
       to: Date! @site(a: "pasi:ace/pred/to")
       category: String! @site(a: "pasi:ace/pred/category")
       subcategory: String! @site(a: "pasi:ace/pred/subcategory")
-      """
-      description: FurnitureDescription!
+      description: ID 
         @site(
           a: "pasi:ace/pred/description"
           q: { find: [e]
                where: [[e {keyword: "pasi:ace/pred/category"} category]
-                       [e {keyword: "pasi:ace/pred/subcategory"} subcategory]]})
-      """
+                       [e {keyword: "pasi:ace/pred/subcategory"} subcategory]]
+             }
+          )
       itemCount: Int! @site(a: "pasi:ace/pred/itemCount")
   ): ReusedFurniture @site(mutation: "update")
 }
+
 
 
 type Query {
@@ -72,10 +73,17 @@ type ReusedFurniture {
   id: ID!
   from: Date! @site(a: "pasi:ace/pred/from")
   to: Date! @site(a: "pasi:ace/pred/to")
+  """
   category: String! @site(a: "pasi:ace/pred/category")
   subcategory: String! @site(a: "pasi:ace/pred/subcategory")
   """
-  description: FurnitureDescription! @site(a: "pasi:ace/pred/description")
-  """
+  description: ID! @site(a: "pasi:ace/pred/description")
+  descriptionEntity: FurnitureDescription 
+    @site(
+      q: { find: [d]
+           where: [[object {keyword: "pasi:ace/pred/description"} d]
+                   [d {keyword: "pasi:ace/pred/itemKg"} x]]
+         }
+    )
   itemCount: Int! @site(a: "pasi:ace/pred/itemCount")
 }

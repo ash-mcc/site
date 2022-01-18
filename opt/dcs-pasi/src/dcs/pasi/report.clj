@@ -34,10 +34,12 @@
   (let [graphql  "query {
                    reusedFurnitures {
                      id
-                     category
-                     subcategory
                      from
                      to
+                     descriptionEntity {
+                       category
+                       subcategory
+                     }
                      itemCount
                    }
                  }"
@@ -51,6 +53,9 @@
         :data
         :reusedFurnitures
         (->>
-         (sort-by (juxt :category :subcategory :from :to))
-         (conj [[:id :category :subcategory :from :to :itemCount]])))))
+         (map #(assoc %
+                      :category (get-in % [:descriptionEntity :category])
+                      :subcategory (get-in % [:descriptionEntity :subcategory])))
+         (sort-by (juxt :from :to :category :subcategory))
+         (conj [[:id :from :to :category :subcategory :itemCount]])))))
 

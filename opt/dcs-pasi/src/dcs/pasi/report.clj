@@ -8,6 +8,27 @@
    :body    (json/write-value-as-string {:query     graphql
                                          :variables nil})})
 
+(defn zwsCarbonMetric [url]
+  (let [graphql  "query {
+                   carbonMetrics {
+                     id
+                     wasteStream
+                     carbonWeighting
+                   }
+                 }"
+        response (http/post url (shared/->http-request graphql))
+        status   (:status response)]
+    (when (not= 200 status)
+      (throw (Exception. (format "Error code %s" status))))
+    (-> response
+        :body
+        (json/read-value (json/object-mapper {:decode-key-fn true}))
+        :data
+        :carbonMetrics
+        (->>
+         (sort-by :wasteStream)
+         (conj [[:id :wasteStream :carbonWeighting]])))))
+
 (defn aceFurnitureDescription [url]
   (let [graphql  "query {
                    furnitureDescriptions {

@@ -1,0 +1,42 @@
+schema @site(type: "pasi:zws/pred/type") {
+  query: Query
+  mutation: Mutation
+}
+
+# java.time.LocalDate ?
+scalar Date
+
+
+type Mutation {
+
+  upsertCarbonMetric(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:zws/ent/CarbonMetric/{{wasteStream}}"
+        }
+      )
+    wasteStream: String! @site(a: "pasi:zws/pred/wasteStream")
+    carbonWeighting: Float! @site(a: "pasi:zws/pred/carbonWeighting")
+  ): CarbonMetric @site(mutation: "update")
+}
+
+
+type Query {
+  carbonMetrics: [CarbonMetric]!
+  carbonMetric(id: ID!): CarbonMetric @site(e: "id")
+}
+
+
+"""
+ZWS carbon metric
+"""
+type CarbonMetric {
+  id: ID!
+  "The waste stream (material classification)"
+  wasteStream: String! @site(a: "pasi:zws/pred/wasteStream")
+  "A weight multiplier for calculating carbon impact"
+  carbonWeighting: String! @site(a: "pasi:zws/pred/carbonWeighting")
+}

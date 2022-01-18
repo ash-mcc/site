@@ -6,6 +6,16 @@
             [java-http-clj.core :as http]))
 
 
+(defn zwsCarbonMetric-upsert-fn [m]
+  (format "mutation {
+             upsertCarbonMetric(
+               wasteStream: \"%s\",
+               carbonWeighting: %s
+             ) { id }
+           }"
+          (:wasteStream m)
+          (:carbonWeighting m)))
+
 (defn aceFurnitureDescription-upsert-fn [m]
   (format "mutation {
              upsertFurnitureDescription(
@@ -75,4 +85,4 @@
              :upsert-fn
              (apply-upsert url)
              (#(merge upsert-map %))))
-       (conj [[:category :subcategory :id :error]])))
+       (conj [[:id :error]])))

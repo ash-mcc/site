@@ -114,12 +114,14 @@
 ;; A federated SPARQL query (from my Blazegraph app) ...works when I've applied access-all-areas to my sit instance
 ;;
 ;; PREFIX ace: <pasi:ace/pred/>
-;; SELECT ?s
+;; SELECT ?s ?d
 ;; WHERE {
 ;;   SERVICE <http://localhost:2021/sparql> {
-;;     ?s ace:category "Soft" 
+;;     ?s ace:type "ReusedFurniture" ;
+;;        ace:description ?d
 ;;   }
-;; }       
+;; }
+;;
 
 
 ;; A remote SPARQL query (from CURL) ....works when POSTed and authenticable (tho' authn isn't needed if I've applied access-all-areas to my sit instance)

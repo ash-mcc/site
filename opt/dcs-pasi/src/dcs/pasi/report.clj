@@ -8,8 +8,8 @@
    :body    (json/write-value-as-string {:query     graphql
                                          :variables nil})})
 
-(defn ace-furniture-descriptions [url]
-  (let [graphql "query {
+(defn aceFurnitureDescription [url]
+  (let [graphql  "query {
                    furnitureDescriptions {
                      id
                      category
@@ -18,15 +18,39 @@
                    }
                  }"
         response (http/post url (shared/->http-request graphql))
-        status (:status response)]
-    (if (= 200 status)
-      (-> response
-          :body
-          (json/read-value (json/object-mapper {:decode-key-fn true}))
-          :data
-          :furnitureDescriptions
-          (->> 
-           (sort-by (juxt :category :subcategory))
-           (conj [[:id :category :subcategory :itemKg]])))
-      (throw (Exception. (format "Error code %s" status))))))
+        status   (:status response)]
+    (when (not= 200 status)
+      (throw (Exception. (format "Error code %s" status))))
+    (-> response
+        :body
+        (json/read-value (json/object-mapper {:decode-key-fn true}))
+        :data
+        :furnitureDescriptions
+        (->> 
+         (sort-by (juxt :category :subcategory))
+         (conj [[:id :category :subcategory :itemKg]])))))
+
+(defn aceReusedFurniture [url]
+  (let [graphql  "query {
+                   reusedFurnitures {
+                     id
+                     category
+                     subcategory
+                     from
+                     to
+                     itemCount
+                   }
+                 }"
+        response (http/post url (shared/->http-request graphql))
+        status   (:status response)]
+    (when (not= 200 status)
+      (throw (Exception. (format "Error code %s" status))))
+    (-> response
+        :body
+        (json/read-value (json/object-mapper {:decode-key-fn true}))
+        :data
+        :reusedFurnitures
+        (->>
+         (sort-by (juxt :category :subcategory :from :to))
+         (conj [[:id :category :subcategory :from :to :itemCount]])))))
 

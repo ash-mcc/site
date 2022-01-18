@@ -152,7 +152,12 @@
     pp/pprint)
 
 
-
+(-> (xt-node)
+    xt/db
+    (xt/q `{:find  [(count e)]
+            :where [[e ~(keyword "pasi:ace/pred/category") "Soft"]
+                    [e ~(keyword "pasi:ace/pred/subcategory") "Pillow"]]})
+    pp/pprint)
 
 
 

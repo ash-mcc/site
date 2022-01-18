@@ -25,23 +25,36 @@ type Mutation {
   ): FurnitureDescription @site(mutation: "update")
 
   upsertReusedFurniture(
-
     id: ID
       @site(
         a: "xt/id"
         gen: {
           type: TEMPLATE 
-          template: "pasi:ace/ent/ReusedFurniture/{{from}}"
+          template: "pasi:ace/ent/ReusedFurniture/{{category}}/{{subcategory}}/{{from}}/{{to}}"
         }
       )
       from: Date! @site(a: "pasi:ace/pred/from")
+      to: Date! @site(a: "pasi:ace/pred/to")
+      category: String! @site(a: "pasi:ace/pred/category")
+      subcategory: String! @site(a: "pasi:ace/pred/subcategory")
+      """
+      description: FurnitureDescription!
+        @site(
+          a: "pasi:ace/pred/description"
+          q: { find: [e]
+               where: [[e {keyword: "pasi:ace/pred/category"} category]
+                       [e {keyword: "pasi:ace/pred/subcategory"} subcategory]]})
+      """
       itemCount: Int! @site(a: "pasi:ace/pred/itemCount")
   ): ReusedFurniture @site(mutation: "update")
 }
 
+
 type Query {
   furnitureDescriptions: [FurnitureDescription]!
   furnitureDescription(id: ID!): FurnitureDescription @site(e: "id")
+  reusedFurnitures: [ReusedFurniture]!
+  reusedFurniture(id: ID!): ReusedFurniture @site(e: "id")
 }
 
 """
@@ -58,5 +71,11 @@ type FurnitureDescription {
 type ReusedFurniture {
   id: ID!
   from: Date! @site(a: "pasi:ace/pred/from")
+  to: Date! @site(a: "pasi:ace/pred/to")
+  category: String! @site(a: "pasi:ace/pred/category")
+  subcategory: String! @site(a: "pasi:ace/pred/subcategory")
+  """
+  description: FurnitureDescription! @site(a: "pasi:ace/pred/description")
+  """
   itemCount: Int! @site(a: "pasi:ace/pred/itemCount")
 }

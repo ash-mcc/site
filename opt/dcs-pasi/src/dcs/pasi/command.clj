@@ -5,7 +5,9 @@
 
 (def ace-url "http://localhost:2021/pasi/ace/graphql")
 
-(csv/upsert-ace-furniture-description ace-url "Soft" "Pillow" 0.35)
+(apply pp/print-table (report/aceFurnitureDescription ace-url))
+(apply pp/print-table (report/aceReusedFurniture ace-url))
 
-(apply pp/print-table (report/ace-furniture-descriptions ace-url))
-;(apply pp/print-table (report/ace-reused-furniture ace-url))
+(apply pp/print-table (csv/apply-upserts (csv/csv-file->upsert-maps "opt/dcs-pasi/data/aceFurnitureDescription.csv") ace-url))
+(apply pp/print-table (csv/apply-upserts (csv/csv-file->upsert-maps "opt/dcs-pasi/data/aceReusedFurniture.csv") ace-url))
+

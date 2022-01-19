@@ -62,6 +62,30 @@ type Mutation {
       itemCount: Int! @site(a: "pasi:pred/itemCount")
   ): AceReusedFurniture @site(mutation: "update")
 
+  upsertStcmfSource(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/StcmfSource/{{name}}"
+        }
+      )
+    name: String! @site(a: "pasi:pred/name")
+  ): StcmfSource @site(mutation: "update")
+
+  upsertStcmfDestination(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/StcmfDestination/{{name}}"
+        }
+      )
+    name: String! @site(a: "pasi:pred/name")
+  ): StcmfDestination @site(mutation: "update")
+
   upsertOpsAceToRefData(
     id: ID
       @site(
@@ -127,6 +151,8 @@ type Query {
   zwsCarbonMetric: [ZwsCarbonMetric]!
   aceFurnitureDescription: [AceFurnitureDescription]!
   aceReusedFurniture: [AceReusedFurniture]!
+  stcmfSource: [StcmfSource]!
+  stcmfDestination: [StcmfDestination]!
   opsAceToRefData: [OpsAceToRefData]!
   opsOrg: [OpsOrg]!
   opsProcess: [OpsProcess]!
@@ -181,6 +207,24 @@ type AceReusedFurniture {
     )
   "The number of items of furniture reused"
   itemCount: Int! @site(a: "pasi:pred/itemCount")
+}
+
+"""
+STCMF source
+"""
+type StcmfSource {
+  id: ID!
+  "Where the food material came from"
+  name: String! @site(a: "pasi:pred/name")
+}
+
+"""
+STCMF destination
+"""
+type StcmfDestination {
+  id: ID!
+  "How the food material got used"
+  name: String! @site(a: "pasi:pred/name")
 }
 
 """

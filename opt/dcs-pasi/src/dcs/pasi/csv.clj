@@ -44,6 +44,23 @@
           (:endTime m)
           (:itemCount m)))
 
+
+(defn StcmfSource-upsert-fn [m]
+  (format "mutation {
+             upsertStcmfSource(
+               name: \"%s\"
+             ) { id }
+           }"
+          (:name m)))
+
+(defn StcmfDestination-upsert-fn [m]
+  (format "mutation {
+             upsertStcmfDestination(
+               name: \"%s\"
+             ) { id }
+           }"
+          (:name m)))
+
 (defn OpsAceToRefData-upsert-fn [m]
   (format "mutation {
              upsertOpsAceToRefData(

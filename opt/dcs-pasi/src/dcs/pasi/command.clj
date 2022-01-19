@@ -13,6 +13,7 @@
 (apply pp/print-table (report/stcmfIncomingFood url))
 (apply pp/print-table (report/stcmfRedistributedFood url))
 (apply pp/print-table (report/opsAceToRefData url))
+(apply pp/print-table (report/opsStcmfToRefData url))
 (apply pp/print-table (report/opsOrg url))
 (apply pp/print-table (report/opsProcess url))
 
@@ -24,5 +25,6 @@
 (apply pp/print-table (csv/apply-upserts (csv/csv-file->upsert-maps "opt/dcs-pasi/data/StcmfIncomingFood.csv") url))
 (apply pp/print-table (csv/apply-upserts (csv/csv-file->upsert-maps "opt/dcs-pasi/data/StcmfRedistributedFood.csv") url))
 (apply pp/print-table (csv/apply-upserts (csv/csv-file->upsert-maps "opt/dcs-pasi/data/OpsAceToRefData.csv") url))
+(apply pp/print-table (csv/apply-upserts (csv/csv-file->upsert-maps "opt/dcs-pasi/data/OpsStcmfToRefData.csv") url))
 (apply pp/print-table (csv/apply-upserts (csv/csv-file->upsert-maps "opt/dcs-pasi/data/OpsOrg.csv") url))
 (apply pp/print-table (csv/apply-upserts (csv/csv-file->upsert-maps "opt/dcs-pasi/data/OpsProcess.csv") url))

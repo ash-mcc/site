@@ -102,6 +102,20 @@
           (:fraction m)
           (:refMaterial m)))
 
+(defn OpsStcmfToRefData-upsert-fn [m]
+  (format "mutation {
+             upsertOpsStcmfToRefData(
+               destination: \"%s\",
+               fraction: %s,
+               refProcess: \"%s\",
+               refMaterial: \"%s\"
+             ) { id }
+           }"
+          (:destination m)
+          (:fraction m)
+          (:refProcess m)
+          (:refMaterial m)))
+
 (defn OpsOrg-upsert-fn [m]
   (format "mutation {
              upsertOpsOrg(

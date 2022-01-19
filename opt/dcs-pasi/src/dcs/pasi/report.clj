@@ -182,10 +182,10 @@
                        category
                        subcategory
                      }
-                     fraction
                      refMaterial {
                        wasteStream
                      }
+                     fraction
                    }
                  }"
         response (http/post url (shared/->http-request graphql))
@@ -202,8 +202,41 @@
                       :category (get-in % [:description :category])
                       :subcategory (get-in % [:description :subcategory])
                       :wasteStream (get-in % [:refMaterial :wasteStream])))
-         (sort-by (juxt :category :subcategory))
-         (conj [[:id :category :subcategory :fraction :wasteStream]])))))
+         (sort-by (juxt :category :subcategory :wasteStream))
+         (conj [[:id :category :subcategory :wasteStream :fraction]])))))
+
+(defn opsStcmfToRefData [url]
+  (let [graphql  "query {
+                   opsStcmfToRefData {
+                     id
+                     destination {
+                       name
+                     }
+                     refProcess {
+                       name
+                     }
+                     refMaterial {
+                       wasteStream
+                     }
+                     fraction
+                   }
+                 }"
+        response (http/post url (shared/->http-request graphql))
+        status   (:status response)]
+    (when (not= 200 status)
+      (throw (Exception. (format "Error code %s" status))))
+    (-> response
+        :body
+        (json/read-value (json/object-mapper {:decode-key-fn true}))
+        :data
+        :opsStcmfToRefData
+        (->>
+         (map #(assoc %
+                      :destination (get-in % [:destination :name])
+                      :refProcess (get-in % [:refProcess :name])
+                      :refMaterial (get-in % [:refMaterial :wasteStream])))
+         (sort-by (juxt :destination :refProcess :refMaterial))
+         (conj [[:id :destination :refProcess :refMaterial :fraction]])))))
 
 (defn opsOrg [url]
   (let [graphql  "query {

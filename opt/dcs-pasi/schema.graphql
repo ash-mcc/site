@@ -1,0 +1,479 @@
+schema @site(type: "pasi:pred/type") {
+  query: Query
+  mutation: Mutation
+}
+
+
+"---------------------------- Mutations ----------------------------"
+
+type Mutation {
+
+  upsertZwsCarbonMetric(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/ZwsCarbonMetric/{{wasteStream}}"
+        }
+      )
+    wasteStream: String! @site(a: "pasi:pred/wasteStream")
+    carbonWeighting: Float! @site(a: "pasi:pred/carbonWeighting")
+  ): ZwsCarbonMetric @site(mutation: "update")
+
+  upsertAceFurnitureDescription(
+    # I'm likely to replace this composite key approach to enforcing a uniqueness contraint,
+    # by a test-and-set function that can check any constraints while transacting.
+    # (Alex suggests implementing that by using juxt-site's put-code stuff or his WIP lambda stuff.)
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/AceFurnitureDescription/{{category}}/{{subcategory}}"
+        }
+      )
+    category: String! @site(a: "pasi:pred/category")
+    subcategory: String! @site(a: "pasi:pred/subcategory")
+    itemKg: Float! @site(a: "pasi:pred/itemKg")
+  ): AceFurnitureDescription @site(mutation: "update")
+
+  upsertAceReusedFurniture(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/AceReusedFurniture/{{from}}/{{to}}/{{category}}/{{subcategory}}"
+        }
+      )
+      from: Date! @site(a: "pasi:pred/from")
+      to: Date! @site(a: "pasi:pred/to")
+      category: String! @site(a: "pasi:pred/category")
+      subcategory: String! @site(a: "pasi:pred/subcategory")
+      description: ID 
+        @site(
+          a: "pasi:pred/description"
+          gen: {
+            type: TEMPLATE 
+            template: "pasi:ent/AceFurnitureDescription/{{category}}/{{subcategory}}"
+          }
+        )
+      itemCount: Int! @site(a: "pasi:pred/itemCount")
+  ): AceReusedFurniture @site(mutation: "update")
+
+  upsertStcmfSource(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/StcmfSource/{{name}}"
+        }
+      )
+    name: String! @site(a: "pasi:pred/name")
+  ): StcmfSource @site(mutation: "update")
+
+  upsertStcmfDestination(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/StcmfDestination/{{name}}"
+        }
+      )
+    name: String! @site(a: "pasi:pred/name")
+  ): StcmfDestination @site(mutation: "update")
+
+  upsertStcmfIncomingFood(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/StcmfIncomingFood/{{from}}/{{to}}/{{source}}"
+        }
+      )
+      from: Date! @site(a: "pasi:pred/from")
+      to: Date! @site(a: "pasi:pred/to")
+      source: String!
+      sourceRef: ID 
+        @site(
+          a: "pasi:pred/source"
+          gen: {
+            type: TEMPLATE 
+            template: "pasi:ent/StcmfSource/{{source}}"
+          }
+        )
+      batchKg: Float! @site(a: "pasi:pred/batchKg")
+  ): StcmfIncomingFood @site(mutation: "update")
+
+  upsertStcmfRedistributedFood(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/StcmfRedistributedFood/{{from}}/{{to}}/{{destination}}"
+        }
+      )
+      from: Date! @site(a: "pasi:pred/from")
+      to: Date! @site(a: "pasi:pred/to")
+      destination: String!
+      destinationRef: ID 
+        @site(
+          a: "pasi:pred/destination"
+          gen: {
+            type: TEMPLATE 
+            template: "pasi:ent/StcmfDestination/{{destination}}"
+          }
+        )
+      batchKg: Float! @site(a: "pasi:pred/batchKg")
+  ): StcmfRedistributedFood @site(mutation: "update")
+
+  upsertOpsAceToRefData(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/OpsAceToRefData/{{category}}/{{subcategory}}/{{refMaterial}}"
+        }
+      )
+    category: String!
+    subcategory: String!
+    description: ID 
+      @site(
+        a: "pasi:pred/description"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/AceFurnitureDescription/{{category}}/{{subcategory}}"
+        }
+      )
+    fraction: Float! @site(a: "pasi:pred/fraction")
+    refMaterial: String!
+    refMaterialRef: ID 
+      @site(
+        a: "pasi:pred/refMaterial"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/ZwsCarbonMetric/{{refMaterial}}"
+        }
+      )
+  ): OpsAceToRefData @site(mutation: "update")
+
+  upsertOpsStcmfToRefData(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/OpsStcmfToRefData/{{destination}}/{{refProcess}}/{{refMaterial}}"
+        }
+      )
+    destination: String!
+    descriptionRef: ID 
+      @site(
+        a: "pasi:pred/destination"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/StcmfDestination/{{destination}}"
+        }
+      )
+    fraction: Float! @site(a: "pasi:pred/fraction")
+    refProcess: String!
+    refProcessRef: ID 
+      @site(
+        a: "pasi:pred/refProcess"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/OpsProcess/{{refProcess}}"
+        }
+      )
+    refMaterial: String!
+    refMaterialRef: ID 
+      @site(
+        a: "pasi:pred/refMaterial"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/ZwsCarbonMetric/{{refMaterial}}"
+        }
+      )
+  ): OpsStcmfToRefData @site(mutation: "update")
+
+  upsertOpsOrg(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/OpsOrg/{{name}}"
+        }
+      )
+    name: String! @site(a: "pasi:pred/name")
+    qid: String @site(a: "pasi:pred/qid")
+  ): OpsOrg @site(mutation: "update")
+
+  upsertOpsProcess(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/OpsProcess/{{name}}"
+        }
+      )
+    name: String! @site(a: "pasi:pred/name")
+  ): OpsProcess @site(mutation: "update")
+
+}
+
+
+"---------------------------- Queries ----------------------------"
+
+type Query {
+  zwsCarbonMetric: [ZwsCarbonMetric]!
+  aceFurnitureDescription: [AceFurnitureDescription]!
+  aceReusedFurniture: [AceReusedFurniture]!
+  stcmfSource: [StcmfSource]!
+  stcmfDestination: [StcmfDestination]!
+  stcmfIncomingFood: [StcmfIncomingFood]!
+  stcmfRedistributedFood: [StcmfRedistributedFood]!
+  opsAceToRefData: [OpsAceToRefData]!
+  opsStcmfToRefData: [OpsStcmfToRefData]!
+  opsOrg: [OpsOrg]!
+  opsProcess: [OpsProcess]!
+}
+
+
+"---------------------------- Types ----------------------------"
+
+# java.time.LocalDate ?
+scalar Date
+
+"""
+ZWS carbon metric
+"""
+type ZwsCarbonMetric {
+  id: ID!
+  "The waste stream (material classification)"
+  wasteStream: String! @site(a: "pasi:pred/wasteStream")
+  "A weight multiplier for calculating carbon impact"
+  carbonWeighting: String! @site(a: "pasi:pred/carbonWeighting")
+}
+
+"""
+ACE description of furniture
+"""
+type AceFurnitureDescription {
+  id: ID!
+  "The furniture category"
+  category: String! @site(a: "pasi:pred/category")
+  "The furniture sub-category"
+  subcategory: String! @site(a: "pasi:pred/subcategory")
+  "The weight in kilograms of an average item of this furniture subcategory"
+  itemKg: Float! @site(a: "pasi:pred/itemKg")
+}
+
+"""
+ACE reused furniture
+"""
+type AceReusedFurniture {
+  id: ID!
+  "The start of the period, inclusive"
+  from: Date! @site(a: "pasi:pred/from")
+  "The end of the period, exclusive"
+  to: Date! @site(a: "pasi:pred/to")
+  "The description of the reused furniture"
+  description: AceFurnitureDescription 
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "AceFurnitureDescription"]
+                   [object {keyword: "pasi:pred/description"} e]]
+         }
+    )
+  "The number of items of furniture reused"
+  itemCount: Int! @site(a: "pasi:pred/itemCount")
+}
+
+"""
+STCMF source
+"""
+type StcmfSource {
+  id: ID!
+  "Where the food material came from"
+  name: String! @site(a: "pasi:pred/name")
+}
+
+"""
+STCMF destination
+"""
+type StcmfDestination {
+  id: ID!
+  "How the food material got used"
+  name: String! @site(a: "pasi:pred/name")
+}
+
+"""
+STCMF batches of incoming food
+"""
+type StcmfIncomingFood {
+  id: ID!
+  "The start of the period, inclusive"
+  from: Date! @site(a: "pasi:pred/from")
+  "The end of the period, exclusive"
+  to: Date! @site(a: "pasi:pred/to")
+  "The source of the food material"
+  source: StcmfSource
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "StcmfSource"]
+                   [object {keyword: "pasi:pred/source"} e]]
+         }
+    )
+  "The weight in kilograms of this batch of food material"
+  batchKg: Float! @site(a: "pasi:pred/batchKg")
+}
+
+"""
+STCMF batches of redistributed food
+"""
+type StcmfRedistributedFood {
+  id: ID!
+  "The start of the period, inclusive"
+  from: Date! @site(a: "pasi:pred/from")
+  "The end of the period, exclusive"
+  to: Date! @site(a: "pasi:pred/to")
+  "How the food material got used"
+  destination: StcmfDestination
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "StcmfDestination"]
+                   [object {keyword: "pasi:pred/destination"} e]]
+         }
+    )
+  "The weight in kilograms of this batch of food material"
+  batchKg: Float! @site(a: "pasi:pred/batchKg")
+}
+
+"""
+OPS ACE data to reference data
+Aside:
+  OpsAceToRefData (etc.) will need to be better named if we expand on the social impacts.
+  E.g.  OpsAceToRefData -> OpsAceToWasteReductionRefData
+    since if we expand into the accounting of employment reduction as a social impact
+    then we might need an OpsAceToUnemploymentReductionRefData
+"""
+type OpsAceToRefData {
+  id: ID!
+  "The description of the furniture"
+  description: AceFurnitureDescription 
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "AceFurnitureDescription"]
+                   [object {keyword: "pasi:pred/description"} e]]
+         }
+    )
+  "The fraction of this ACE material in 1 of the reference material"
+  fraction: Float! @site(a: "pasi:pred/fraction")
+  "Map to this reference material"
+  refMaterial: ZwsCarbonMetric 
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "ZwsCarbonMetric"]
+                   [object {keyword: "pasi:pred/refMaterial"} e]]
+         }
+    )
+}
+
+"""
+OPS STCMF data to reference data
+"""
+type OpsStcmfToRefData {
+  id: ID!
+  "The description of the furniture"
+  destination: StcmfDestination 
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "StcmfDestination"]
+                   [object {keyword: "pasi:pred/destination"} e]]
+         }
+    )
+  "The fraction of this STCMF material in 1 of the reference material"
+  fraction: Float! @site(a: "pasi:pred/fraction")
+  "Map to this reference process"
+  refProcess: OpsProcess 
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "OpsProcess"]
+                   [object {keyword: "pasi:pred/refProcess"} e]]
+         }
+    )
+  "Map to this reference material"
+  refMaterial: ZwsCarbonMetric 
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "ZwsCarbonMetric"]
+                   [object {keyword: "pasi:pred/refMaterial"} e]]
+         }
+    )
+}
+
+"""
+OPS referenced organisation
+"""
+type OpsOrg {
+  id: ID!
+  "The name of the organisation"
+  name: String! @site(a: "pasi:pred/name")
+  "WikiData's Q Identifier for the organisation"
+  qid: String! @site(a: "pasi:pred/qid")
+}
+
+"""
+OPS waste reduction process
+"""
+type OpsProcess {
+  id: ID!
+  "The name of a means by which waste can be reduced"
+  name: String! @site(a: "pasi:pred/name")
+}
+
+"""
+OPS computed waste reduction
+"""
+type OpsWasteReduction {
+  id: ID!
+  "The start of the period, inclusive"
+  from: Date! @site(a: "pasi:pred/from")
+  "The end of the period, exclusive"
+  to: Date! @site(a: "pasi:pred/to")
+  "The organisation that enabled/was responsible for the waste reduction"
+  enabler: OpsOrg! @site(a: "pasi:pred/enabler")
+  "The means by which waste was reduced"
+  refProcess: OpsProcess 
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "OpsProcess"]
+                   [object {keyword: "pasi:pred/refProcess"} e]]
+         }
+    )
+  "The reference material"
+  refMaterial: ZwsCarbonMetric 
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "ZwsCarbonMetric"]
+                   [object {keyword: "pasi:pred/refMaterial"} e]]
+         }
+    )
+  "The weight in kilograms of this batch of items/material"
+  batchKg: Float! @site(a: "pasi:pred/batchKg")
+  "The carbon-saving (CO2e) in kilograms because this batch was reused/recycled"
+  carbonSaving: Float! @site(a: "pasi:pred/carbonSaving")
+  "The data records which were directly referenced in order to compute this record"
+  "TODO"
+  sourceData: [String]! @site(a: "pasi:pred/sourceData")
+  "Source-specific data that would be useful to propogate"
+  "TODO maybe"
+}

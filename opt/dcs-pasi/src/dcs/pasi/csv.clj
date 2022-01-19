@@ -44,6 +44,30 @@
           (:endTime m)
           (:itemCount m)))
 
+(defn OpsAceToRefData-upsert-fn [m]
+  (format "mutation {
+             upsertOpsAceToRefData(
+               category: \"%s\",
+               subcategory: \"%s\",
+               fraction: %s,
+               refMaterial: \"%s\"
+             ) { id }
+           }"
+          (:category m)
+          (:subcategory m)
+          (:fraction m)
+          (:refMaterial m)))
+
+(defn OpsOrg-upsert-fn [m]
+  (format "mutation {
+             upsertOpsOrg(
+               name: \"%s\",
+               qid: \"%s\"
+             ) { id }
+           }"
+          (:name m)
+          (:qid m)))
+
 (defn- rows->maps [rows]
   (map zipmap
        (repeat (map keyword (first rows)))

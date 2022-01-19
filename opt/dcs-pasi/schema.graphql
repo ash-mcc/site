@@ -439,3 +439,41 @@ type OpsProcess {
   "The name of a means by which waste can be reduced"
   name: String! @site(a: "pasi:pred/name")
 }
+
+"""
+OPS computed waste reduction
+"""
+type OpsWasteReduction {
+  id: ID!
+  "The start of the period, inclusive"
+  from: Date! @site(a: "pasi:pred/from")
+  "The end of the period, exclusive"
+  to: Date! @site(a: "pasi:pred/to")
+  "The organisation that enabled/was responsible for the waste reduction"
+  enabler: OpsOrg! @site(a: "pasi:pred/enabler")
+  "The means by which waste was reduced"
+  refProcess: OpsProcess 
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "OpsProcess"]
+                   [object {keyword: "pasi:pred/refProcess"} e]]
+         }
+    )
+  "The reference material"
+  refMaterial: ZwsCarbonMetric 
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "ZwsCarbonMetric"]
+                   [object {keyword: "pasi:pred/refMaterial"} e]]
+         }
+    )
+  "The weight in kilograms of this batch of items/material"
+  batchKg: Float! @site(a: "pasi:pred/batchKg")
+  "The carbon-saving (CO2e) in kilograms because this batch was reused/recycled"
+  carbonSaving: Float! @site(a: "pasi:pred/carbonSaving")
+  "The data records which were directly referenced in order to compute this record"
+  "TODO"
+  sourceData: [String]! @site(a: "pasi:pred/sourceData")
+  "Source-specific data that would be useful to propogate"
+  "TODO maybe"
+}

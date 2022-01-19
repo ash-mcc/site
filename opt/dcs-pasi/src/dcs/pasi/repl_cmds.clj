@@ -198,8 +198,8 @@
 ;; SPARQL query where:
 ;;   * the predicate is of the form <schema>:<path> 
 ;;   * the predicate isn't declared in a prefix
-;; When called over-HTTP as a federated SPARQL query ()from my Blazegraph app) it:
-;;   * FAILS
+;; When called over-HTTP as a federated SPARQL query (from my Blazegraph app) it:
+;;   * FAILS  (...I suspect that this is an error in Blazegraph)
 ;;
 ;; SELECT ?s 
 ;; WHERE {
@@ -214,7 +214,7 @@
 ;; When called over-HTTP as a federated SPARQL query ()from my Blazegraph app) it:
 ;;   * SUCCEEDS
 ;;
-;; PREFIX pasi: <pasi:pred/>
+;; PREFIX dummy: <dummy:blah/>
 ;; SELECT ?s 
 ;; WHERE {
 ;;   SERVICE <http://localhost:2021/sparql> {

@@ -54,6 +54,8 @@
   :ready)
 
 
+;; ----------------- PASI specific -----------------
+
 ;; Github           
 ;;   https://github.com/juxt/site
 ;; local dir
@@ -86,109 +88,6 @@
 
 ; (update-site-graphql) for use with Alex's alx/insite-console branch
 
-(-> (xt-node)
-    xt/db
-    (xt/entity
-     "http://localhost:2021/pasi/ace/ent/FurnitureDescription/Hard/Footstool")
-    pp/pprint)
-
-
-(-> (xt-node)
-    xt/db
-    (xt/q
-     (sparql/sparql->datalog
-      "SELECT ?s WHERE { ?s <http://localhost:2021/pasi/ace/pred/type> \"FurnitureDescription\" }")))
-
-(-> (xt-node)
-    xt/db
-    (xt/q
-     (sparql/sparql->datalog
-      "PREFIX ace: <pasi:ace/pred/>
-       SELECT ?s ?subcategory ?itemKg
-       WHERE { ?s ace:category \"Soft\" ;
-                  ace:subcategory ?subcategory ;
-                  ace:itemKg ?itemKg . }"))
-    pp/pprint)
-
-
-;; A federated SPARQL query (from my Blazegraph app) ...works when I've applied access-all-areas to my sit instance
-;;
-;; PREFIX ace: <pasi:ace/pred/>
-;; SELECT ?s ?d
-;; WHERE {
-;;   SERVICE <http://localhost:2021/sparql> {
-;;     ?s ace:type "ReusedFurniture" ;
-;;        ace:description ?d
-;;   }
-;; }
-;;
-
-
-;; A remote SPARQL query (from CURL) ....works when POSTed and authenticable (tho' authn isn't needed if I've applied access-all-areas to my sit instance)
-;;
-;; curl -v -u admin:admin -H "Accept:application/sparql-results+json" --data-urlencode 'query=PREFIX ace: <pasi:ace/pred/> SELECT ?s WHERE { ?s ace:category "Soft" }' http://localhost:2021/sparql
-;;
-;; A remote SPARQL query (from CURL) ....doesn't work when GETed and authenticable (tho' authn isn't needed if I've applied access-all-areas to my sit instance)
-;;                                       because GET hasn't yet been implemented.
-;;
-;; curl -v -H "Accept:application/sparql-results+json" http://localhost:2021/sparql?query=PREFIX%20ace%3A%20%3Cpasi%3Aace%2Fpred%2F%3E%20SELECT%20%3Fs%20WHERE%20%7B%20%3Fs%20ace%3Acategory%20%22Soft%22%20%7D
-;; 
-;;    ...i.e. PREFIX ace: <pasi:ace/pred/> SELECT ?s WHERE { ?s ace:category "Soft" }
-;;
-
-
-
-
-(-> (xt-node)
-    xt/db
-    (xt/q `{:find  [e]
-            :where [[e ~(keyword "pasi:ace/pred/type") "FurnitureDescription"]]})
-    pp/pprint)
-
-
-(-> (xt-node)
-    xt/db
-    (xt/q
-     (sparql/sparql->datalog
-      "SELECT ?s WHERE { ?s <pasi:ace/pred/type> \"FurnitureDescription\" }"))
-    pp/pprint)
-
-
-(-> (xt-node)
-    xt/db
-    (xt/q `{:find  [e]
-            :where [[e ~(keyword "pasi:ace/pred/category") "Soft"]
-                    [e ~(keyword "pasi:ace/pred/subcategory") "Pillow"]]})
-    pp/pprint)
-
-(-> (xt-node)
-    xt/db
-    (xt/q `{:find  [e fromDate toDate category subcategory itemCount]
-            :where [[e ~(keyword "pasi:ace/pred/type") "ReusedFurniture"]
-                    [e ~(keyword "pasi:ace/pred/from") fromDate]
-                    [e ~(keyword "pasi:ace/pred/to") toDate]
-                    [e ~(keyword "pasi:ace/pred/itemCount") itemCount]
-                    [e ~(keyword "pasi:ace/pred/description") d]
-                    [d ~(keyword "pasi:ace/pred/category") category]
-                    [d ~(keyword "pasi:ace/pred/subcategory") subcategory]]})
-    pp/pprint)
-
-(-> (xt-node)
-    xt/db
-    (xt/q `{:find  [e]
-            :where [[e ~(keyword "pasi:ace/pred/type") any]]})
-    pp/pprint)
-
-
-#_(-> (xt-node)
-    xt/db
-    (xt/q `{:find  [e]
-            :where [[e ~(keyword "pasi:ace/pred/type") any]]})
-    (->>
-     (map #(xt/submit-tx (xt-node) [[::xt/delete (first %)]]))))
-
-
-
 (help)
 
 (status)
@@ -202,23 +101,9 @@
 (pp/pprint (ls))
 
 
+;; ----------------- authz specific -----------------
 
-
-
-
-
-(-> (xt-node)
-    xt/db
-    (xt/entity
-     "http://localhost:2021/_site/rules/make-public")
-    pp/pprint)
-
-#_(xt/submit-tx
- (xt-node)
- [[::xt/delete "http://localhost:2021/_site/rules/make-public"]])
-
-
-
+; Define an access-all-areas access rule
 (def access-all-areas
   {:xt/id "http://localhost:2021/access-rule"
    ::site/description "A rule allowing access everything"
@@ -226,8 +111,127 @@
    ::pass/target []
    ::pass/effect ::pass/allow})
 
+; Transact the access-all-areas access rule
 (xt/submit-tx
  (xt-node)
  [[::xt/put access-all-areas]])
+
+;; Remove the access-all-areas access rule
+#_(xt/submit-tx
+   (xt-node)
+   [[::xt/delete "http://localhost:2021/access-rule"]])
+
+
+;; ----------------- xtdb.api specific -----------------
+
+(-> (xt-node)
+    xt/db
+    (xt/entity
+     "http://localhost:2021/pasi/ace/ent/FurnitureDescription/Hard/Footstool")
+    pp/pprint)
+
+;; Remove all PASI ents
+#_(-> (xt-node)
+      xt/db
+      (xt/q `{:find  [e]
+              :where [[e ~(keyword "pasi:pred/type") any]]})
+      (->>
+       (map #(xt/submit-tx (xt-node) [[::xt/delete (first %)]]))))
+
+
+;; ----------------- Datalog specific -----------------
+
+(-> (xt-node)
+    xt/db
+    (xt/q `{:find  [e]
+            :where [[e ~(keyword "pasi:pred/type") "AceFurnitureDescription"]]})
+    pp/pprint)
+
+(-> (xt-node)
+    xt/db
+    (xt/q `{:find  [e fromDate toDate category subcategory itemCount]
+            :where [[e ~(keyword "pasi:pred/type") "AceReusedFurniture"]
+                    [e ~(keyword "pasi:pred/from") fromDate]
+                    [e ~(keyword "pasi:pred/to") toDate]
+                    [e ~(keyword "pasi:pred/itemCount") itemCount]
+                    [e ~(keyword "pasi:pred/description") d]
+                    [d ~(keyword "pasi:pred/category") category]
+                    [d ~(keyword "pasi:pred/subcategory") subcategory]]})
+    pp/pprint)
+
+(-> (xt-node)
+    xt/db
+    (xt/q `{:find  [e]
+            :where [[e ~(keyword "pasi:pred/type") any]]})
+    pp/pprint)
+
+
+;; ----------------- SPARQL specific -----------------
+
+;; Add the following into a CURL command if Site's auth hasn't been disabled
+;; -u admin:admin 
+
+;; I'm surfacing XTDB's SPARQL support, on Site using my site-mod-sparql.
+;; But it doesn't yet support the GET method.
+
+;; SPARQL query where:
+;;   * the predicate is of the form <schema>:<path> 
+;;   * the predicate isn't declared in a prefix
+;; When called in-process it:
+;;   * SUCCEEDS
+;;
+(-> (xt-node)
+    xt/db
+    (xt/q
+     (sparql/sparql->datalog
+      "SELECT ?s WHERE { ?s <pasi:pred/type> \"ZwsCarbonMetric\" }")))
+
+;; SPARQL query where:
+;;   * the predicate is of the form <schema>:<path> 
+;;   * the predicate isn't declared in a prefix
+;; When called over-HTTP it:
+;;   * SUCCEEDS
+;;
+;; curl -v -H "Accept:application/sparql-results+json" --data-urlencode 'query=SELECT ?s WHERE {?s <pasi:pred/type> "ZwsCarbonMetric"}' http://localhost:2021/sparql
+
+
+;; SPARQL query where:
+;;   * the predicate is of the form <schema>:<path> 
+;;   * the predicate isn't declared in a prefix
+;; When called over-HTTP as a federated SPARQL query ()from my Blazegraph app) it:
+;;   * FAILS
+;;
+;; SELECT ?s 
+;; WHERE {
+;;   SERVICE <http://localhost:2021/sparql> {
+;;     ?s <pasi:pred/type> "ZwsCarbonMetric"
+;;   }
+;; }
+
+;; SPARQL query where:
+;;   * the predicate is of the form <schema>:<path> 
+;;   * the predicate is declared in a prefix
+;; When called over-HTTP as a federated SPARQL query ()from my Blazegraph app) it:
+;;   * SUCCEEDS
+;;
+;; PREFIX pasi: <pasi:pred/>
+;; SELECT ?s 
+;; WHERE {
+;;   SERVICE <http://localhost:2021/sparql> {
+;;     ?s <pasi:pred/type> "ZwsCarbonMetric"
+;;   }
+;; }
+
+
+(-> (xt-node)
+    xt/db
+    (xt/q
+     (sparql/sparql->datalog
+      "PREFIX pasi: <pasi:pred/>
+       SELECT ?s ?wasteStream ?carbonWeighting
+       WHERE { ?s pasi:type \"ZwsCarbonMetric\" ;
+                  pasi:wasteStream ?wasteStream ;
+                  pasi:carbonWeighting ?carbonWeighting }"))
+    pp/pprint)
 
 

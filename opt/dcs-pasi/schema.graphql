@@ -86,6 +86,52 @@ type Mutation {
     name: String! @site(a: "pasi:pred/name")
   ): StcmfDestination @site(mutation: "update")
 
+  upsertStcmfIncomingFood(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/StcmfIncomingFood/{{from}}/{{to}}/{{source}}"
+        }
+      )
+      from: Date! @site(a: "pasi:pred/from")
+      to: Date! @site(a: "pasi:pred/to")
+      source: String!
+      sourceRef: ID 
+        @site(
+          a: "pasi:pred/source"
+          gen: {
+            type: TEMPLATE 
+            template: "pasi:ent/StcmfSource/{{source}}"
+          }
+        )
+      batchKg: Float! @site(a: "pasi:pred/batchKg")
+  ): StcmfIncomingFood @site(mutation: "update")
+
+  upsertStcmfRedistributedFood(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/StcmfRedistributedFood/{{from}}/{{to}}/{{destination}}"
+        }
+      )
+      from: Date! @site(a: "pasi:pred/from")
+      to: Date! @site(a: "pasi:pred/to")
+      destination: String!
+      destinationRef: ID 
+        @site(
+          a: "pasi:pred/destination"
+          gen: {
+            type: TEMPLATE 
+            template: "pasi:ent/StcmfDestination/{{destination}}"
+          }
+        )
+      batchKg: Float! @site(a: "pasi:pred/batchKg")
+  ): StcmfRedistributedFood @site(mutation: "update")
+
   upsertOpsAceToRefData(
     id: ID
       @site(
@@ -153,6 +199,8 @@ type Query {
   aceReusedFurniture: [AceReusedFurniture]!
   stcmfSource: [StcmfSource]!
   stcmfDestination: [StcmfDestination]!
+  stcmfIncomingFood: [StcmfIncomingFood]!
+  stcmfRedistributedFood: [StcmfRedistributedFood]!
   opsAceToRefData: [OpsAceToRefData]!
   opsOrg: [OpsOrg]!
   opsProcess: [OpsProcess]!
@@ -225,6 +273,48 @@ type StcmfDestination {
   id: ID!
   "How the food material got used"
   name: String! @site(a: "pasi:pred/name")
+}
+
+"""
+STCMF batches of incoming food
+"""
+type StcmfIncomingFood {
+  id: ID!
+  "The start of the period, inclusive"
+  from: Date! @site(a: "pasi:pred/from")
+  "The end of the period, exclusive"
+  to: Date! @site(a: "pasi:pred/to")
+  "The source of the food material"
+  source: StcmfSource
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "StcmfSource"]
+                   [object {keyword: "pasi:pred/source"} e]]
+         }
+    )
+  "The weight in kilograms of this batch of food material"
+  batchKg: Float! @site(a: "pasi:pred/batchKg")
+}
+
+"""
+STCMF batches of redistributed food
+"""
+type StcmfRedistributedFood {
+  id: ID!
+  "The start of the period, inclusive"
+  from: Date! @site(a: "pasi:pred/from")
+  "The end of the period, exclusive"
+  to: Date! @site(a: "pasi:pred/to")
+  "How the food material got used"
+  destination: StcmfDestination
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "StcmfDestination"]
+                   [object {keyword: "pasi:pred/destination"} e]]
+         }
+    )
+  "The weight in kilograms of this batch of food material"
+  batchKg: Float! @site(a: "pasi:pred/batchKg")
 }
 
 """

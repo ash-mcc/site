@@ -44,7 +44,6 @@
           (:endTime m)
           (:itemCount m)))
 
-
 (defn StcmfSource-upsert-fn [m]
   (format "mutation {
              upsertStcmfSource(
@@ -60,6 +59,34 @@
              ) { id }
            }"
           (:name m)))
+
+(defn StcmfIncomingFood-upsert-fn [m]
+  (format "mutation {
+             upsertStcmfIncomingFood(
+               from: \"%s\",
+               to: \"%s\",
+               source: \"%s\",
+               batchKg: %s
+             ) { id }
+           }"
+          (:startTime m)
+          (:endTime m)
+          (:source m)
+          (:batchKg m)))
+
+(defn StcmfRedistributedFood-upsert-fn [m]
+  (format "mutation {
+             upsertStcmfRedistributedFood(
+               from: \"%s\",
+               to: \"%s\",
+               destination: \"%s\",
+               batchKg: %s
+             ) { id }
+           }"
+          (:startTime m)
+          (:endTime m)
+          (:destination m)
+          (:batchKg m)))
 
 (defn OpsAceToRefData-upsert-fn [m]
   (format "mutation {

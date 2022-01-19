@@ -120,6 +120,60 @@
          (sort-by :name)
          (conj [[:id :name]])))))
 
+(defn stcmfIncomingFood [url]
+  (let [graphql  "query {
+                   stcmfIncomingFood {
+                     id
+                     from
+                     to
+                     source {
+                       name
+                     }
+                     batchKg
+                   }
+                 }"
+        response (http/post url (shared/->http-request graphql))
+        status   (:status response)]
+    (when (not= 200 status)
+      (throw (Exception. (format "Error code %s" status))))
+    (-> response
+        :body
+        (json/read-value (json/object-mapper {:decode-key-fn true}))
+        :data
+        :stcmfIncomingFood
+        (->>
+         (map #(assoc %
+                      :source (get-in % [:source :name])))
+         (sort-by (juxt :from :to :source))
+         (conj [[:id :from :to :source :batchKg]])))))
+
+(defn stcmfRedistributedFood [url]
+  (let [graphql  "query {
+                   stcmfRedistributedFood {
+                     id
+                     from
+                     to
+                     destination {
+                       name
+                     }
+                     batchKg
+                   }
+                 }"
+        response (http/post url (shared/->http-request graphql))
+        status   (:status response)]
+    (when (not= 200 status)
+      (throw (Exception. (format "Error code %s" status))))
+    (-> response
+        :body
+        (json/read-value (json/object-mapper {:decode-key-fn true}))
+        :data
+        :stcmfRedistributedFood
+        (->>
+         (map #(assoc %
+                      :destination (get-in % [:destination :name])))
+         (sort-by (juxt :from :to :destination))
+         (conj [[:id :from :to :destination :batchKg]])))))
+
 (defn opsAceToRefData [url]
   (let [graphql  "query {
                    opsAceToRefData {

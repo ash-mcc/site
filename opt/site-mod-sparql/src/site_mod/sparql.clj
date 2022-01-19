@@ -1,13 +1,11 @@
 (ns site-mod.sparql
   (:require [clojure.string :as str]
             [clojure.tools.logging :as log]
-            #_[clojure.pprint :as pp]
             [ring.util.codec :as codec]
             [xtdb.sparql.protocol :as sparql-protocol]
             [xtdb.sparql :as sparql]
             [juxt.clojars-mirrors.ring-core.v1v9v2.ring.util.time :as rt]
-            [xtdb.api :as xt])
-  #_(:import java.net.URLDecoder))
+            [xtdb.api :as xt]))
 
 (alias 'site (create-ns 'juxt.site.alpha))
 (alias 'http (create-ns 'juxt.http.alpha))

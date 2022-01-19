@@ -28,9 +28,9 @@ curl -v \
  
 Notes:
 
-* `/sparql` is the default path (_context_) to which SPARQL should be `POST`-ed.
+* `/sparql` is the default path (_context_) to which SPARQL queries should be `POST`-ed.
 * The current implementation only supports `POST` requests.
-* `-u admin:admin` (or similar) is needed unless you have disabled the _auth_ requirement on your Site.
+* `-u admin:admin` (or similar) is needed unless you have disabled the _auth_ on your Site.
 * Acceptable `Accept` header values are: `application/sparql-results+json`, `application/sparql-results+xml`, or `\*/*`.)
 * The XTDB SPARQL implementation currently fails when marshalling returned object values (as in _subject-predicate-object_) which aren't URIs. 
 See the issue: 

@@ -93,7 +93,7 @@ type Mutation {
       )
   ): OpsAceToRefData @site(mutation: "update")
 
-    upsertOpsOrg(
+  upsertOpsOrg(
     id: ID
       @site(
         a: "xt/id"
@@ -106,6 +106,18 @@ type Mutation {
     qid: String @site(a: "pasi:pred/qid")
   ): OpsOrg @site(mutation: "update")
 
+  upsertOpsProcess(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/OpsProcess/{{name}}"
+        }
+      )
+    name: String! @site(a: "pasi:pred/name")
+  ): OpsProcess @site(mutation: "update")
+
 }
 
 
@@ -117,6 +129,7 @@ type Query {
   aceReusedFurniture: [AceReusedFurniture]!
   opsAceToRefData: [OpsAceToRefData]!
   opsOrg: [OpsOrg]!
+  opsProcess: [OpsProcess]!
 }
 
 
@@ -209,4 +222,13 @@ type OpsOrg {
   name: String! @site(a: "pasi:pred/name")
   "WikiData's Q Identifier for the organisation"
   qid: String! @site(a: "pasi:pred/qid")
+}
+
+"""
+OPS waste reduction process
+"""
+type OpsProcess {
+  id: ID!
+  "The name of a means by which waste can be reduced"
+  name: String! @site(a: "pasi:pred/name")
 }

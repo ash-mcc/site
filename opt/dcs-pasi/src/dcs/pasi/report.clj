@@ -131,3 +131,23 @@
         (->>
          (sort-by :name)
          (conj [[:id :name :qid]])))))
+
+(defn opsProcess [url]
+  (let [graphql  "query {
+                   opsProcess {
+                     id
+                     name
+                   }
+                 }"
+        response (http/post url (shared/->http-request graphql))
+        status   (:status response)]
+    (when (not= 200 status)
+      (throw (Exception. (format "Error code %s" status))))
+    (-> response
+        :body
+        (json/read-value (json/object-mapper {:decode-key-fn true}))
+        :data
+        :opsProcess
+        (->>
+         (sort-by :name)
+         (conj [[:id :name]])))))

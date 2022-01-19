@@ -68,6 +68,14 @@
           (:name m)
           (:qid m)))
 
+(defn OpsProcess-upsert-fn [m]
+  (format "mutation {
+             upsertOpsProcess(
+               name: \"%s\"
+             ) { id }
+           }"
+          (:name m)))
+
 (defn- rows->maps [rows]
   (map zipmap
        (repeat (map keyword (first rows)))

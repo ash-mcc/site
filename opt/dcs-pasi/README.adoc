@@ -1,0 +1,18 @@
+= dcs-pasi
+
+This _installs_ the PASI functionality onto Site.
+
+== Install
+
+The `deploy.sh` script uses Site's command line tool.
+You'll probably need to edit `deploy.sh` to set a password.
+
+[source, bash]
+----
+cd opt/dcs-pasi
+./deploy
+----
+
+== Use
+
+TODO (this is all at a very early, investigatory phase at the moment)

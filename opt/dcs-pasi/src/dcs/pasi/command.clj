@@ -3,14 +3,13 @@
             [dcs.pasi.csv :as csv]
             [dcs.pasi.report :as report]))
 
-(def zws-url "http://localhost:2021/pasi/zws/graphql")
-(def ace-url "http://localhost:2021/pasi/ace/graphql")
+(def url "http://localhost:2021/pasi/graphql")
 
-(apply pp/print-table (report/zwsCarbonMetric zws-url))
-(apply pp/print-table (report/aceFurnitureDescription ace-url))
-(apply pp/print-table (report/aceReusedFurniture ace-url))
+(apply pp/print-table (report/zwsCarbonMetric url))
+(apply pp/print-table (report/aceFurnitureDescription url))
+(apply pp/print-table (report/aceReusedFurniture url))
 
-(apply pp/print-table (csv/apply-upserts (csv/csv-file->upsert-maps "opt/dcs-pasi/data/zwsCarbonMetric.csv") zws-url))
-(apply pp/print-table (csv/apply-upserts (csv/csv-file->upsert-maps "opt/dcs-pasi/data/aceFurnitureDescription.csv") ace-url))
-(apply pp/print-table (csv/apply-upserts (csv/csv-file->upsert-maps "opt/dcs-pasi/data/aceReusedFurniture.csv") ace-url))
+(apply pp/print-table (csv/apply-upserts (csv/csv-file->upsert-maps "opt/dcs-pasi/data/ZwsCarbonMetric.csv") url))
+(apply pp/print-table (csv/apply-upserts (csv/csv-file->upsert-maps "opt/dcs-pasi/data/AceFurnitureDescription.csv") url))
+(apply pp/print-table (csv/apply-upserts (csv/csv-file->upsert-maps "opt/dcs-pasi/data/AceReusedFurniture.csv") url))
 

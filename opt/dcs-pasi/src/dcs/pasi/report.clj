@@ -10,7 +10,7 @@
 
 (defn zwsCarbonMetric [url]
   (let [graphql  "query {
-                   carbonMetrics {
+                   zwsCarbonMetric {
                      id
                      wasteStream
                      carbonWeighting
@@ -24,14 +24,14 @@
         :body
         (json/read-value (json/object-mapper {:decode-key-fn true}))
         :data
-        :carbonMetrics
+        :zwsCarbonMetric
         (->>
          (sort-by :wasteStream)
          (conj [[:id :wasteStream :carbonWeighting]])))))
 
 (defn aceFurnitureDescription [url]
   (let [graphql  "query {
-                   furnitureDescriptions {
+                   aceFurnitureDescription {
                      id
                      category
                      subcategory
@@ -46,14 +46,14 @@
         :body
         (json/read-value (json/object-mapper {:decode-key-fn true}))
         :data
-        :furnitureDescriptions
+        :aceFurnitureDescription
         (->> 
          (sort-by (juxt :category :subcategory))
          (conj [[:id :category :subcategory :itemKg]])))))
 
 (defn aceReusedFurniture [url]
   (let [graphql  "query {
-                   reusedFurnitures {
+                   aceReusedFurniture {
                      id
                      from
                      to
@@ -72,7 +72,7 @@
         :body
         (json/read-value (json/object-mapper {:decode-key-fn true}))
         :data
-        :reusedFurnitures
+        :aceReusedFurniture
         (->>
          (map #(assoc %
                       :category (get-in % [:description :category])

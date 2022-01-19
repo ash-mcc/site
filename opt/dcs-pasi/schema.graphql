@@ -1,0 +1,180 @@
+schema @site(type: "pasi:pred/type") {
+  query: Query
+  mutation: Mutation
+}
+
+# java.time.LocalDate ?
+scalar Date
+
+
+type Mutation {
+
+  upsertZwsCarbonMetric(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/ZwsCarbonMetric/{{wasteStream}}"
+        }
+      )
+    wasteStream: String! @site(a: "pasi:pred/wasteStream")
+    carbonWeighting: Float! @site(a: "pasi:pred/carbonWeighting")
+  ): ZwsCarbonMetric @site(mutation: "update")
+
+  upsertAceFurnitureDescription(
+    # I'm likely to replace this composite key approach to enforcing a uniqueness contraint,
+    # by a test-and-set function that can check any constraints while transacting.
+    # (Alex suggests implementing that by using juxt-site's put-code stuff or his WIP lambda stuff.)
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/AceFurnitureDescription/{{category}}/{{subcategory}}"
+        }
+      )
+    category: String! @site(a: "pasi:pred/category")
+    subcategory: String! @site(a: "pasi:pred/subcategory")
+    itemKg: Float! @site(a: "pasi:pred/itemKg")
+  ): AceFurnitureDescription @site(mutation: "update")
+
+  upsertAceReusedFurniture(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/AceReusedFurniture/{{from}}/{{to}}/{{category}}/{{subcategory}}"
+        }
+      )
+      from: Date! @site(a: "pasi:pred/from")
+      to: Date! @site(a: "pasi:pred/to")
+      category: String! @site(a: "pasi:pred/category")
+      subcategory: String! @site(a: "pasi:pred/subcategory")
+      description: ID 
+        @site(
+          a: "pasi:pred/description"
+          gen: {
+            type: TEMPLATE 
+            template: "pasi:ent/AceFurnitureDescription/{{category}}/{{subcategory}}"
+          }
+        )
+      itemCount: Int! @site(a: "pasi:pred/itemCount")
+  ): AceReusedFurniture @site(mutation: "update")
+
+  upsertOpsAceToRefData(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/OpsAceToRefData/{{category}}/{{subcategory}}"
+        }
+      )
+    category: String!
+    subcategory: String!
+    description: ID 
+      @site(
+        a: "pasi:pred/description"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/AceFurnitureDescription/{{category}}/{{subcategory}}"
+        }
+      )
+    fraction: Float! @site(a: "pasi:pred/fraction")
+    refMaterial: String!
+    refMaterialRef: ID 
+      @site(
+        a: "pasi:pred/refMaterial"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/ZwsCarbonMetric/{{refMaterial}}"
+        }
+      )
+  ): OpsAceToRefData @site(mutation: "update")
+}
+
+
+type Query {
+  zwsCarbonMetric: [ZwsCarbonMetric]!
+  aceFurnitureDescription: [AceFurnitureDescription]!
+  aceReusedFurniture: [AceReusedFurniture]!
+  opsAceToRefData: [OpsAceToRefData]!
+}
+
+
+"""
+ZWS carbon metric
+"""
+type ZwsCarbonMetric {
+  id: ID!
+  "The waste stream (material classification)"
+  wasteStream: String! @site(a: "pasi:pred/wasteStream")
+  "A weight multiplier for calculating carbon impact"
+  carbonWeighting: String! @site(a: "pasi:pred/carbonWeighting")
+}
+
+"""
+ACE description of furniture
+"""
+type AceFurnitureDescription {
+  id: ID!
+  "The furniture category"
+  category: String! @site(a: "pasi:pred/category")
+  "The furniture sub-category"
+  subcategory: String! @site(a: "pasi:pred/subcategory")
+  "The weight in kilograms of an average item of this furniture subcategory"
+  itemKg: Float! @site(a: "pasi:pred/itemKg")
+}
+
+"""
+ACE reused furniture
+"""
+type AceReusedFurniture {
+  id: ID!
+  "The start of the period, inclusive"
+  from: Date! @site(a: "pasi:pred/from")
+  "The end of the period, exclusive"
+  to: Date! @site(a: "pasi:pred/to")
+  "The description of the reused furniture"
+  description: AceFurnitureDescription 
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "AceFurnitureDescription"]
+                   [object {keyword: "pasi:pred/description"} e]]
+         }
+    )
+  "The number of items of furniture reused"
+  itemCount: Int! @site(a: "pasi:pred/itemCount")
+}
+
+"""
+OPS ACE data to reference data
+Aside:
+  OpsAceToRefData (etc.) will need to be better named if we expand on the social impacts.
+  E.g.  OpsAceToRefData -> OpsAceToWasteReductionRefData
+    since if we expand into the accounting of employment reduction as a social impact
+    then we might need an OpsAceToUnemploymentReductionRefData
+"""
+type OpsAceToRefData {
+  id: ID!
+  "The description of the furniture"
+  description: AceFurnitureDescription 
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "AceFurnitureDescription"]
+                   [object {keyword: "pasi:pred/description"} e]]
+         }
+    )
+  "The fraction of this ACE material in 1 of the reference material"
+  fraction: Float! @site(a: "pasi:pred/fraction")
+  "Map to this reference material"
+  refMaterial: ZwsCarbonMetric 
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "ZwsCarbonMetric"]
+                   [object {keyword: "pasi:pred/refMaterial"} e]]
+         }
+    )
+}

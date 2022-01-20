@@ -11,11 +11,8 @@
     (->> coll
        (map #(assoc % :mutation-fn (delete-fn-maker %))))))
 
-(defn ace-waste-reduction-related-reports->upsert-maps 
-  [aceReusedFurniture-coll
-   aceFurnitureDescription-coll
-   opsAceToRefData-coll
-   zwsCarbonMetric-coll]
-  (for [m aceReusedFurniture-coll]
+(defn aceReusedFurniture-withRefData-report->OpsWasteReduction-upsert-maps
+  [coll]
+  (for [m coll]
     {:carbonSaving {:itemCount m} ;;TODO just a placeholder for now
      :sourceRecord {:id m}}))

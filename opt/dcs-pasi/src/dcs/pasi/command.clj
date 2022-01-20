@@ -21,13 +21,11 @@
 
 
 (apply pp/print-table (mutation/apply-mutations (ops/report->delete-maps 
-                                                 (second (report/opsWasteReduction url)) "OpsWasteReduction") 
+                                                 (second (report/opsWasteReduction url)) 
+                                                 "OpsWasteReduction") 
                                                 url))
-(apply pp/print-table (mutation/apply-mutations (ops/ace-waste-reduction-related-reports->upsert-maps
-                                                 (second (report/aceReusedFurniture url))
-                                                 (second (report/aceFurnitureDescription url))
-                                                 (second (report/opsAceToRefData url))
-                                                 (second (report/zwsCarbonMetric url))) 
+(apply pp/print-table (mutation/apply-mutations (ops/aceReusedFurniture-withRefData-report->OpsWasteReduction-upsert-maps
+                                                 (second (report/aceReusedFurniture-withRefData url))) 
                                                 url))
 
 

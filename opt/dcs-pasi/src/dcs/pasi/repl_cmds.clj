@@ -142,7 +142,7 @@
 #_(-> (xt-node)
       xt/db
       (xt/q `{:find  [e]
-              :where [[e :xt/id "pasi:ent/OpsOpsWasteReduction/pasi:ent/StcmfRedistributedFood/2021-01-28/2021-01-29/Used for compost-indiv"]]})
+              :where [[e :xt/id "pasi:ent/OpsOpsWasteReduction/pasi:ent/AceReusedFurniture/2018-03-01/2019-03-01/Furniture/Chair, Kitchen, Dining or Wooden"]]})
       (->>
        (map #(xt/submit-tx (xt-node) [[::xt/delete (first %)]]))))
 

@@ -240,6 +240,10 @@ type Mutation {
     sourceRecord: ID! @site(a: "pasi:pred/sourceRecord")
   ): OpsWasteReduction @site(mutation: "update")
 
+  deleteOpsWasteReduction(
+    id: ID!
+  ): OpsWasteReduction @site(mutation: "delete")
+
 }
 
 

@@ -278,3 +278,55 @@
         (->>
          (sort-by :name)
          (conj [[:id :name]])))))
+
+(defn opsWasteReduction [url]
+  (let [graphql  "query {
+                   opsWasteReduction {
+                     id
+                     sourceRecord {
+                       __typename
+                       ... on AceReusedFurniture {
+                         from
+                         to
+                         itemCount
+                         description {
+                           itemKg
+                         }
+                       }
+                       ... on StcmfRedistributedFood {
+                         from
+                         to
+                         batchKg
+                       }
+                     }
+                     enabler {
+                       name
+                     }
+                     carbonSaving
+                   }
+                 }"
+        response (http/post url (shared/->http-request graphql))
+        status   (:status response)]
+    (when (not= 200 status)
+      (throw (Exception. (format "Error code %s" status))))
+    (-> response
+        :body
+        (json/read-value (json/object-mapper {:decode-key-fn true}))
+        (#(do (println "\n\n" %)
+              (println (count (:opsWasteReduction (:data %))) "\n\n") 
+              %))
+        :data
+        :opsWasteReduction
+        (->>
+         (map #(assoc %
+                      :from (get-in % [:sourceRecord :from])
+                      :to (get-in % [:sourceRecord :to])
+                      :batchKg (if (= "AceReusedFurniture" (get-in % [:sourceRecord :__typename]))
+                                 (* (bigdec (get-in % [:sourceRecord :itemCount])) 
+                                    (bigdec (get-in % [:sourceRecord :description :itemKg])))
+                                 (get-in % [:sourceRecord :batchKg]))
+                      :itemCount (when (= "AceReusedFurniture" (get-in % [:sourceRecord :__typename]))
+                                   (get-in % [:sourceRecord :itemCount]))
+                      :enabler (get-in % [:enabler :name])))
+         (sort-by (juxt :from :to :enabler))
+         (conj [[:id :from :to :enabler :batchKg :itemCount :carbonSaving]])))))

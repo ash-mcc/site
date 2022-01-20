@@ -127,7 +127,7 @@
 (-> (xt-node)
     xt/db
     (xt/entity
-     "http://localhost:2021/pasi/ace/ent/FurnitureDescription/Hard/Footstool")
+     "pasi:ent/StcmfRedistributedFood/2021-01-29/2021-01-30/Used for human-food, bio-etc &amp; sanctuary")
     pp/pprint)
 
 ;; Remove all PASI ents
@@ -135,6 +135,14 @@
       xt/db
       (xt/q `{:find  [e]
               :where [[e ~(keyword "pasi:pred/type") any]]})
+      (->>
+       (map #(xt/submit-tx (xt-node) [[::xt/delete (first %)]]))))
+
+;; Remove a specific ent (I'm sure that there's a better way of coding this)
+#_(-> (xt-node)
+      xt/db
+      (xt/q `{:find  [e]
+              :where [[e :xt/id "pasi:ent/OpsOpsWasteReduction/pasi:ent/StcmfRedistributedFood/2021-01-28/2021-01-29/Used for compost-indiv"]]})
       (->>
        (map #(xt/submit-tx (xt-node) [[::xt/delete (first %)]]))))
 
@@ -163,6 +171,20 @@
     xt/db
     (xt/q `{:find  [e]
             :where [[e ~(keyword "pasi:pred/type") any]]})
+    pp/pprint)
+
+;; Interestingly, it seems like we can use :pasi:pred/type instead of (keyword "pasi:pred/type") 
+;; but this doesn't seem to work for IRIs like "https//myserver/mypath"
+;; Perhaps they can't be respresented as a legal literal in Clojure?
+;; I.e. :https//myserver/mypath is, perhaps, not legal
+;; and instead we have to use (keyword "https//myserver/mypath")
+;; But, I'm not sure that :pasi:pred/type won't be undesireably interpreted in some other Clojure context. 
+(-> (xt-node)
+    xt/db
+    (xt/q '{:find  [e d]
+            :where [[e :pasi:pred/from d]
+                    (or [e :pasi:pred/type "StcmfRedistributedFood"]
+                        [e :pasi:pred/type "AceReusedFurniture"])]})
     pp/pprint)
 
 
@@ -234,3 +256,26 @@
                   pasi:carbonWeighting ?carbonWeighting }"))
     pp/pprint)
 
+(-> (xt-node)
+    xt/db
+    (xt/q
+     (sparql/sparql->datalog
+      "PREFIX pasi: <pasi:pred/>
+       SELECT ?s ?dt
+       WHERE { ?s pasi:destination/pasi:type ?dt }"))
+    pp/pprint)
+
+;; GROUP BY doesn't seem to be supported: 
+;;   No implementation of method: :rdf->clj of protocol: #'xtdb.rdf/RDFToClojure 
+;;   found for class: org.eclipse.rdf4j.query.algebra.Group
+(-> (xt-node)
+    xt/db
+    (xt/q
+     (sparql/sparql->datalog
+      "PREFIX pasi: <pasi:pred/>
+       SELECT DISTINCT ?s (COUNT(?s) AS ?c)
+       WHERE {
+        ?s pasi:type ?type 
+       }
+       GROUP BY ?s"))
+    pp/pprint)

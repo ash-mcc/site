@@ -227,6 +227,19 @@ type Mutation {
     name: String! @site(a: "pasi:pred/name")
   ): OpsProcess @site(mutation: "update")
 
+  upsertOpsWasteReduction(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/OpsWasteReduction/{{sourceRecord}}"
+        }
+      )
+    carbonSaving: Float! @site(a: "pasi:pred/carbonSaving")
+    sourceRecord: ID! @site(a: "pasi:pred/sourceRecord")
+  ): OpsWasteReduction @site(mutation: "update")
+
 }
 
 
@@ -244,6 +257,7 @@ type Query {
   opsStcmfToRefData: [OpsStcmfToRefData]!
   opsOrg: [OpsOrg]!
   opsProcess: [OpsProcess]!
+  opsWasteReduction: [OpsWasteReduction]!
 }
 
 
@@ -442,38 +456,37 @@ type OpsProcess {
 
 """
 OPS computed waste reduction
+
+OpsWasteReduction exists only for convenience and, possibly, performance 
+due to it caching the result of querying and comptation. 
+
+What other information should be cached and surfaced in an OpsWasteReduction:
+the time period, batchKg, refMaterial, refProcess ...?
 """
+union SourceRecord = AceReusedFurniture | StcmfRedistributedFood
 type OpsWasteReduction {
   id: ID!
-  "The start of the period, inclusive"
-  from: Date! @site(a: "pasi:pred/from")
-  "The end of the period, exclusive"
-  to: Date! @site(a: "pasi:pred/to")
+  "The source data that was used in the computation this record"
+  sourceRecord: SourceRecord
+    @site(
+      q: {
+        edn:
+        """
+        {:find [e]
+          :where [(or [e :pasi:pred/type "AceReusedFurniture"]
+                      [e :pasi:pred/type "StcmfRedistributedFood"])
+                  [object :pasi:pred/sourceRecord e]]
+         }
+        """}
+    )
   "The organisation that enabled/was responsible for the waste reduction"
-  enabler: OpsOrg! @site(a: "pasi:pred/enabler")
-  "The means by which waste was reduced"
-  refProcess: OpsProcess 
+  enabler: OpsOrg
     @site(
       q: { find: [e]
-           where: [[e {keyword: "pasi:pred/type"} "OpsProcess"]
-                   [object {keyword: "pasi:pred/refProcess"} e]]
+           where: [[e {keyword: "pasi:pred/type"} "OpsOrg"]
+                   [object {keyword: "pasi:pred/enabler"} e]]
          }
     )
-  "The reference material"
-  refMaterial: ZwsCarbonMetric 
-    @site(
-      q: { find: [e]
-           where: [[e {keyword: "pasi:pred/type"} "ZwsCarbonMetric"]
-                   [object {keyword: "pasi:pred/refMaterial"} e]]
-         }
-    )
-  "The weight in kilograms of this batch of items/material"
-  batchKg: Float! @site(a: "pasi:pred/batchKg")
   "The carbon-saving (CO2e) in kilograms because this batch was reused/recycled"
   carbonSaving: Float! @site(a: "pasi:pred/carbonSaving")
-  "The data records which were directly referenced in order to compute this record"
-  "TODO"
-  sourceData: [String]! @site(a: "pasi:pred/sourceData")
-  "Source-specific data that would be useful to propogate"
-  "TODO maybe"
 }

@@ -3,20 +3,11 @@
             [java-http-clj.core :as http]
             [dcs.pasi.report.shared :as shared]))
 
-(defn ->http-request [graphql]
-  {:headers {"Content-type" "application/json"}
-   :body    (json/write-value-as-string {:query     graphql
-                                         :variables nil})})
 
-(defn zwsCarbonMetric [url]
-  (let [graphql  "query {
-                   zwsCarbonMetric {
-                     id
-                     wasteStream
-                     carbonWeighting
-                   }
-                 }"
-        response (http/post url (shared/->http-request graphql))
+(defn apply-query [^String #_GraphQL query-fn url parse-sort-and-label-fn]
+  (let [response (http/post url {:headers {"Content-type" "application/json"}
+                                 :body    (json/write-value-as-string {:query     query-fn
+                                                                       :variables nil})})
         status   (:status response)]
     (when (not= 200 status)
       (throw (Exception. (format "Error code %s" status))))
@@ -24,13 +15,28 @@
         :body
         (json/read-value (json/object-mapper {:decode-key-fn true}))
         :data
-        :zwsCarbonMetric
+        vals
+        first
         (->>
-         (sort-by :wasteStream)
-         (conj [[:id :wasteStream :carbonWeighting]])))))
+         parse-sort-and-label-fn))))
+
+
+(defn zwsCarbonMetric [url]
+  (apply-query "query {
+                  zwsCarbonMetric {
+                    id
+                    wasteStream
+                    carbonWeighting
+                  }
+                }"
+               url
+               (fn [coll]
+                 (->> coll
+                      (sort-by :wasteStream)
+                      (conj [[:id :wasteStream :carbonWeighting]])))))
 
 (defn aceFurnitureDescription [url]
-  (let [graphql  "query {
+  (apply-query  "query {
                    aceFurnitureDescription {
                      id
                      category
@@ -38,21 +44,14 @@
                      itemKg
                    }
                  }"
-        response (http/post url (shared/->http-request graphql))
-        status   (:status response)]
-    (when (not= 200 status)
-      (throw (Exception. (format "Error code %s" status))))
-    (-> response
-        :body
-        (json/read-value (json/object-mapper {:decode-key-fn true}))
-        :data
-        :aceFurnitureDescription
-        (->>
-         (sort-by (juxt :category :subcategory))
-         (conj [[:id :category :subcategory :itemKg]])))))
+               url
+               (fn [coll]
+                 (->> coll
+                      (sort-by (juxt :category :subcategory))
+                      (conj [[:id :category :subcategory :itemKg]])))))
 
 (defn aceReusedFurniture [url]
-  (let [graphql  "query {
+  (apply-query  "query {
                    aceReusedFurniture {
                      id
                      from
@@ -64,64 +63,43 @@
                      itemCount
                    }
                  }"
-        response (http/post url (shared/->http-request graphql))
-        status   (:status response)]
-    (when (not= 200 status)
-      (throw (Exception. (format "Error code %s" status))))
-    (-> response
-        :body
-        (json/read-value (json/object-mapper {:decode-key-fn true}))
-        :data
-        :aceReusedFurniture
-        (->>
-         (map #(assoc %
-                      :category (get-in % [:description :category])
-                      :subcategory (get-in % [:description :subcategory])))
-         (sort-by (juxt :from :to :category :subcategory))
-         (conj [[:id :from :to :category :subcategory :itemCount]])))))
+                url
+                (fn [coll]
+                  (->> coll
+                       (map #(assoc %
+                                    :category (get-in % [:description :category])
+                                    :subcategory (get-in % [:description :subcategory])))
+                       (sort-by (juxt :from :to :category :subcategory))
+                       (conj [[:id :from :to :category :subcategory :itemCount]])))))
 
 (defn stcmfSource [url]
-  (let [graphql  "query {
+  (apply-query  "query {
                    stcmfSource {
                      id
                      name
                    }
                  }"
-        response (http/post url (shared/->http-request graphql))
-        status   (:status response)]
-    (when (not= 200 status)
-      (throw (Exception. (format "Error code %s" status))))
-    (-> response
-        :body
-        (json/read-value (json/object-mapper {:decode-key-fn true}))
-        :data
-        :stcmfSource
-        (->>
-         (sort-by :name)
-         (conj [[:id :name]])))))
+                url
+                (fn [coll]
+                  (->> coll
+                       (sort-by :name)
+                       (conj [[:id :name]])))))
 
 (defn stcmfDestination [url]
-  (let [graphql  "query {
+  (apply-query  "query {
                    stcmfDestination {
                      id
                      name
                    }
                  }"
-        response (http/post url (shared/->http-request graphql))
-        status   (:status response)]
-    (when (not= 200 status)
-      (throw (Exception. (format "Error code %s" status))))
-    (-> response
-        :body
-        (json/read-value (json/object-mapper {:decode-key-fn true}))
-        :data
-        :stcmfDestination
-        (->>
-         (sort-by :name)
-         (conj [[:id :name]])))))
+                url
+                (fn [coll]
+                  (->> coll
+                       (sort-by :name)
+                       (conj [[:id :name]])))))
 
 (defn stcmfIncomingFood [url]
-  (let [graphql  "query {
+  (apply-query  "query {
                    stcmfIncomingFood {
                      id
                      from
@@ -132,23 +110,16 @@
                      batchKg
                    }
                  }"
-        response (http/post url (shared/->http-request graphql))
-        status   (:status response)]
-    (when (not= 200 status)
-      (throw (Exception. (format "Error code %s" status))))
-    (-> response
-        :body
-        (json/read-value (json/object-mapper {:decode-key-fn true}))
-        :data
-        :stcmfIncomingFood
-        (->>
-         (map #(assoc %
-                      :source (get-in % [:source :name])))
-         (sort-by (juxt :from :to :source))
-         (conj [[:id :from :to :source :batchKg]])))))
+                url
+                (fn [coll]
+                  (->> coll
+                       (map #(assoc %
+                                    :source (get-in % [:source :name])))
+                       (sort-by (juxt :from :to :source))
+                       (conj [[:id :from :to :source :batchKg]])))))
 
 (defn stcmfRedistributedFood [url]
-  (let [graphql  "query {
+  (apply-query  "query {
                    stcmfRedistributedFood {
                      id
                      from
@@ -159,23 +130,16 @@
                      batchKg
                    }
                  }"
-        response (http/post url (shared/->http-request graphql))
-        status   (:status response)]
-    (when (not= 200 status)
-      (throw (Exception. (format "Error code %s" status))))
-    (-> response
-        :body
-        (json/read-value (json/object-mapper {:decode-key-fn true}))
-        :data
-        :stcmfRedistributedFood
-        (->>
-         (map #(assoc %
-                      :destination (get-in % [:destination :name])))
-         (sort-by (juxt :from :to :destination))
-         (conj [[:id :from :to :destination :batchKg]])))))
+                url
+                (fn [coll]
+                  (->> coll
+                       (map #(assoc %
+                                    :destination (get-in % [:destination :name])))
+                       (sort-by (juxt :from :to :destination))
+                       (conj [[:id :from :to :destination :batchKg]])))))
 
 (defn opsAceToRefData [url]
-  (let [graphql  "query {
+  (apply-query  "query {
                    opsAceToRefData {
                      id
                      description {
@@ -188,25 +152,18 @@
                      fraction
                    }
                  }"
-        response (http/post url (shared/->http-request graphql))
-        status   (:status response)]
-    (when (not= 200 status)
-      (throw (Exception. (format "Error code %s" status))))
-    (-> response
-        :body
-        (json/read-value (json/object-mapper {:decode-key-fn true}))
-        :data
-        :opsAceToRefData
-        (->>
-         (map #(assoc %
-                      :category (get-in % [:description :category])
-                      :subcategory (get-in % [:description :subcategory])
-                      :wasteStream (get-in % [:refMaterial :wasteStream])))
-         (sort-by (juxt :category :subcategory :wasteStream))
-         (conj [[:id :category :subcategory :wasteStream :fraction]])))))
+                url
+                (fn [coll]
+                  (->> coll
+                       (map #(assoc %
+                                    :category (get-in % [:description :category])
+                                    :subcategory (get-in % [:description :subcategory])
+                                    :wasteStream (get-in % [:refMaterial :wasteStream])))
+                       (sort-by (juxt :category :subcategory :wasteStream))
+                       (conj [[:id :category :subcategory :wasteStream :fraction]])))))
 
 (defn opsStcmfToRefData [url]
-  (let [graphql  "query {
+  (apply-query  "query {
                    opsStcmfToRefData {
                      id
                      destination {
@@ -221,66 +178,45 @@
                      fraction
                    }
                  }"
-        response (http/post url (shared/->http-request graphql))
-        status   (:status response)]
-    (when (not= 200 status)
-      (throw (Exception. (format "Error code %s" status))))
-    (-> response
-        :body
-        (json/read-value (json/object-mapper {:decode-key-fn true}))
-        :data
-        :opsStcmfToRefData
-        (->>
-         (map #(assoc %
-                      :destination (get-in % [:destination :name])
-                      :refProcess (get-in % [:refProcess :name])
-                      :refMaterial (get-in % [:refMaterial :wasteStream])))
-         (sort-by (juxt :destination :refProcess :refMaterial))
-         (conj [[:id :destination :refProcess :refMaterial :fraction]])))))
+                url
+                (fn [coll]
+                  (->> coll
+                       (map #(assoc %
+                                    :destination (get-in % [:destination :name])
+                                    :refProcess (get-in % [:refProcess :name])
+                                    :refMaterial (get-in % [:refMaterial :wasteStream])))
+                       (sort-by (juxt :destination :refProcess :refMaterial))
+                       (conj [[:id :destination :refProcess :refMaterial :fraction]])))))
 
 (defn opsOrg [url]
-  (let [graphql  "query {
+  (apply-query  "query {
                    opsOrg {
                      id
                      name
                      qid
                    }
                  }"
-        response (http/post url (shared/->http-request graphql))
-        status   (:status response)]
-    (when (not= 200 status)
-      (throw (Exception. (format "Error code %s" status))))
-    (-> response
-        :body
-        (json/read-value (json/object-mapper {:decode-key-fn true}))
-        :data
-        :opsOrg
-        (->>
-         (sort-by :name)
-         (conj [[:id :name :qid]])))))
+                url
+                (fn [coll]
+                  (->> coll
+                       (sort-by :name)
+                       (conj [[:id :name :qid]])))))
 
 (defn opsProcess [url]
-  (let [graphql  "query {
+  (apply-query  "query {
                    opsProcess {
                      id
                      name
                    }
                  }"
-        response (http/post url (shared/->http-request graphql))
-        status   (:status response)]
-    (when (not= 200 status)
-      (throw (Exception. (format "Error code %s" status))))
-    (-> response
-        :body
-        (json/read-value (json/object-mapper {:decode-key-fn true}))
-        :data
-        :opsProcess
-        (->>
-         (sort-by :name)
-         (conj [[:id :name]])))))
+                url
+                (fn [coll]
+                  (->> coll
+                       (sort-by :name)
+                       (conj [[:id :name]])))))
 
 (defn opsWasteReduction [url]
-  (let [graphql  "query {
+  (apply-query  "query {
                    opsWasteReduction {
                      id
                      sourceRecord {
@@ -305,28 +241,18 @@
                      carbonSaving
                    }
                  }"
-        response (http/post url (shared/->http-request graphql))
-        status   (:status response)]
-    (when (not= 200 status)
-      (throw (Exception. (format "Error code %s" status))))
-    (-> response
-        :body
-        (json/read-value (json/object-mapper {:decode-key-fn true}))
-        (#(do (println "\n\n" %)
-              (println (count (:opsWasteReduction (:data %))) "\n\n") 
-              %))
-        :data
-        :opsWasteReduction
-        (->>
-         (map #(assoc %
-                      :from (get-in % [:sourceRecord :from])
-                      :to (get-in % [:sourceRecord :to])
-                      :batchKg (if (= "AceReusedFurniture" (get-in % [:sourceRecord :__typename]))
-                                 (* (bigdec (get-in % [:sourceRecord :itemCount])) 
-                                    (bigdec (get-in % [:sourceRecord :description :itemKg])))
-                                 (get-in % [:sourceRecord :batchKg]))
-                      :itemCount (when (= "AceReusedFurniture" (get-in % [:sourceRecord :__typename]))
-                                   (get-in % [:sourceRecord :itemCount]))
-                      :enabler (get-in % [:enabler :name])))
-         (sort-by (juxt :from :to :enabler))
-         (conj [[:id :from :to :enabler :batchKg :itemCount :carbonSaving]])))))
+                url
+                (fn [coll]
+                  (->> coll
+                       (map #(assoc %
+                                    :from (get-in % [:sourceRecord :from])
+                                    :to (get-in % [:sourceRecord :to])
+                                    :batchKg (if (= "AceReusedFurniture" (get-in % [:sourceRecord :__typename]))
+                                               (* (bigdec (get-in % [:sourceRecord :itemCount]))
+                                                  (bigdec (get-in % [:sourceRecord :description :itemKg])))
+                                               (get-in % [:sourceRecord :batchKg]))
+                                    :itemCount (when (= "AceReusedFurniture" (get-in % [:sourceRecord :__typename]))
+                                                 (get-in % [:sourceRecord :itemCount]))
+                                    :enabler (get-in % [:enabler :name])))
+                       (sort-by (juxt :from :to :enabler))
+                       (conj [[:id :from :to :enabler :batchKg :itemCount :carbonSaving]])))))

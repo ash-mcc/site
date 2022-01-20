@@ -1,45 +1,21 @@
-(ns dcs.pasi.ops
-  (:require [jsonista.core :as json]
-            [java-http-clj.core :as http]))
+(ns dcs.pasi.ops)
 
 
 ;; For now, let's implement ops functionality over the GraphQL interface.
 
 
-(defn OpsWasteReduction-delete-fn [m]
-  (format "mutation {
-             deleteOpsWasteReduction(
-               id: \"%s\"
-             ) { id }
-           }"
-          (:id m)))
+(defn report->delete-maps [coll ent-typename] ;; TODO suss the ent-typename from the contents of coll 
+  (let [delete-fn-maker (resolve (symbol "dcs.pasi.mutation" (str ent-typename "-delete-fn")))]
+    (when (nil? delete-fn-maker)
+      (throw (Exception. (str "Unsupported entity type: " ent-typename)))) ;; i.e. no appropriately named dcs.pasi.mutation/<ent-typename>-delete-fn found
+    (->> coll
+       (map #(assoc % :mutation-fn (delete-fn-maker %))))))
 
-(defn ->mutation-maps [coll]
-  (->> coll
-   (map #(assoc % :mutation-fn (OpsWasteReduction-delete-fn %)))))
-
-
-(defn- apply-mutation [^String #_GraphQL mutation-fn url]
-  (println "\nbody=\n" (json/write-value-as-string {:query     mutation-fn
-                                                    :variables nil}) "\n\n")
-  (let [response (http/post url {:headers {"Content-type" "application/json"}
-                                 :body    (json/write-value-as-string {:query     mutation-fn
-                                                                       :variables nil})})
-        status   (:status response)]
-    (if (= 200 status)
-      {:new-id (-> response
-                   :body
-                   (json/read-value (json/object-mapper {:decode-key-fn true}))
-                   :data
-                   vals
-                   first
-                   :id)}
-      {:error (format "Error %s" status)})))
-
-(defn apply-mutations [mutation-maps url]
-  (->> (for [mutation-map mutation-maps]
-         (-> mutation-map
-             :mutation-fn
-             (apply-mutation url)
-             (#(merge mutation-map %))))
-       (conj [[:id :new-id :error]])))
+(defn ace-waste-reduction-related-reports->upsert-maps 
+  [aceReusedFurniture-coll
+   aceFurnitureDescription-coll
+   opsAceToRefData-coll
+   zwsCarbonMetric-coll]
+  (for [m aceReusedFurniture-coll]
+    {:carbonSaving {:itemCount m} ;;TODO just a placeholder for now
+     :sourceRecord {:id m}}))

@@ -173,7 +173,7 @@ type Mutation {
         }
       )
     destination: String!
-    descriptionRef: ID 
+    destinationRef: ID 
       @site(
         a: "pasi:pred/destination"
         gen: {
@@ -292,6 +292,18 @@ type AceFurnitureDescription {
   subcategory: String! @site(a: "pasi:pred/subcategory")
   "The weight in kilograms of an average item of this furniture subcategory"
   itemKg: Float! @site(a: "pasi:pred/itemKg")
+  "The records for mapping this ACE data to reference data"
+  refDataConnectors: [OpsAceToRefData]
+    @site(
+      q: {
+        edn:
+        """
+        {:find [e]
+          :where [[e :pasi:pred/type "OpsAceToRefData"]
+                  [e :pasi:pred/description object]]
+         }
+        """}
+    )
 }
 
 """
@@ -331,6 +343,18 @@ type StcmfDestination {
   id: ID!
   "How the food material got used"
   name: String! @site(a: "pasi:pred/name")
+  "The records for mapping this STCMF data to reference data"
+  refDataConnectors: [OpsStcmfToRefData]
+    @site(
+      q: {
+        edn:
+        """
+        {:find [e]
+          :where [[e :pasi:pred/type "OpsStcmfToRefData"]
+                  [e :pasi:pred/destination object]]
+         }
+        """}
+    )
 }
 
 """

@@ -227,22 +227,10 @@ type Mutation {
     name: String! @site(a: "pasi:pred/name")
   ): OpsProcess @site(mutation: "update")
 
-  upsertOpsWasteReduction(
-    id: ID
-      @site(
-        a: "xt/id"
-        gen: {
-          type: TEMPLATE 
-          template: "pasi:ent/OpsWasteReduction/{{sourceRecord}}"
-        }
-      )
-    carbonSaving: Float! @site(a: "pasi:pred/carbonSaving")
-    sourceRecord: ID! @site(a: "pasi:pred/sourceRecord")
-  ): OpsWasteReduction @site(mutation: "update")
-
-  deleteOpsWasteReduction(
+  # Just an example of a delete - not yet used
+  deleteOpsProcess(
     id: ID!
-  ): OpsWasteReduction @site(mutation: "delete")
+  ): OpsProcess @site(mutation: "delete")
 
 }
 
@@ -262,6 +250,16 @@ type Query {
   opsOrg: [OpsOrg]!
   opsProcess: [OpsProcess]!
   opsWasteReduction: [OpsWasteReduction]!
+    @site(
+      q: {
+        edn:
+        """
+        {:find [e]
+          :where [(or [e :pasi:pred/type "AceReusedFurniture"]
+                      [e :pasi:pred/type "StcmfRedistributedFood"])]
+         }
+        """}
+    )
 }
 
 
@@ -483,38 +481,7 @@ type OpsProcess {
 }
 
 """
-OPS computed waste reduction
-
-OpsWasteReduction exists only for convenience and, possibly, performance 
-due to it caching the result of querying and comptation. 
-
-What other information should be cached and surfaced in an OpsWasteReduction:
-the time period, batchKg, refMaterial, refProcess ...?
+OPS waste reduction
 """
-union SourceRecord = AceReusedFurniture | StcmfRedistributedFood
-type OpsWasteReduction {
-  id: ID!
-  "The source data that was used in the computation this record"
-  sourceRecord: SourceRecord
-    @site(
-      q: {
-        edn:
-        """
-        {:find [e]
-          :where [(or [e :pasi:pred/type "AceReusedFurniture"]
-                      [e :pasi:pred/type "StcmfRedistributedFood"])
-                  [object :pasi:pred/sourceRecord e]]
-         }
-        """}
-    )
-  "The organisation that enabled/was responsible for the waste reduction"
-  enabler: OpsOrg
-    @site(
-      q: { find: [e]
-           where: [[e {keyword: "pasi:pred/type"} "OpsOrg"]
-                   [object {keyword: "pasi:pred/enabler"} e]]
-         }
-    )
-  "The carbon-saving (CO2e) in kilograms because this batch was reused/recycled"
-  carbonSaving: Float! @site(a: "pasi:pred/carbonSaving")
-}
+union OpsWasteReduction = AceReusedFurniture | StcmfRedistributedFood
+

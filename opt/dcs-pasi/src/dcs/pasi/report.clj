@@ -218,41 +218,77 @@
 (defn opsWasteReduction [url]
   (apply-query  "query {
                    opsWasteReduction {
-                     id
-                     sourceRecord {
-                       __typename
-                       ... on AceReusedFurniture {
-                         from
-                         to
-                         itemCount
-                         description {
-                           itemKg
+                     __typename
+                     ... on AceReusedFurniture {
+                       id
+                       from
+                       to
+                       itemCount
+                       description {
+                         category
+                         subcategory
+                         itemKg
+                         refDataConnectors {
+                           fraction
+                           refMaterial {
+                             wasteStream
+                             carbonWeighting
+                           }
                          }
                        }
-                       ... on StcmfRedistributedFood {
-                         from
-                         to
-                         batchKg
+                     }
+                     ... on StcmfRedistributedFood {
+                       id
+                       from
+                       to
+                       batchKg
+                       destination {
+                         name
+                         refDataConnectors {
+                           fraction
+                           refMaterial {
+                             wasteStream
+                             carbonWeighting
+                           }
+                         }
                        }
                      }
-                     enabler {
-                       name
-                     }
-                     carbonSaving
-                   }
+                   }  
                  }"
                 url
                 (fn [coll]
                   (->> coll
-                       (map #(assoc %
-                                    :from (get-in % [:sourceRecord :from])
-                                    :to (get-in % [:sourceRecord :to])
-                                    :batchKg (if (= "AceReusedFurniture" (get-in % [:sourceRecord :__typename]))
-                                               (* (bigdec (get-in % [:sourceRecord :itemCount]))
-                                                  (bigdec (get-in % [:sourceRecord :description :itemKg])))
-                                               (get-in % [:sourceRecord :batchKg]))
-                                    :itemCount (when (= "AceReusedFurniture" (get-in % [:sourceRecord :__typename]))
-                                                 (get-in % [:sourceRecord :itemCount]))
-                                    :enabler (get-in % [:enabler :name])))
-                       (sort-by (juxt :from :to :enabler))
-                       (conj [[:id :from :to :enabler :batchKg :itemCount :carbonSaving]])))))
+                       (map (fn [m] 
+                              (let [typename (:__typename m)]
+                                (when (not (contains? #{"AceReusedFurniture" "StcmfRedistributedFood"} typename))
+                                  (throw (Exception. (format "Unexpected typename %s" typename))))
+                                (let [m2               (condp = typename
+                                                         "AceReusedFurniture" (assoc m 
+                                                                                     :furnitureCategory (get-in m [:description :category])
+                                                                                     :furnitureSubcategory (get-in m [:description :subcategory])
+                                                                                     :furnitureItemKg (bigdec (get-in m [:description :itemKg]))
+                                                                                     :furnitureItemCount (bigdec (:itemCount m)))
+                                                         "StcmfRedistributedFood" (assoc m
+                                                                                         :foodDestination (get-in m [:destination :name])))
+                                      m3               (assoc m2 
+                                                              :batchKg (condp = typename
+                                                                         "AceReusedFurniture" (* (:furnitureItemKg m2) 
+                                                                                                 (:furnitureItemCount m2))
+                                                                         "StcmfRedistributedFood" (bigdec (:batchKg m2))))
+                                      refdata-mappings (condp = typename
+                                                         "AceReusedFurniture" (get-in m3 [:description :refDataConnectors])
+                                                         "StcmfRedistributedFood" (get-in m3 [:destination :refDataConnectors]))]
+                                  (for [refdata-mapping refdata-mappings]
+                                    (let [m4 (assoc m3
+                                                    :wasteStream (get-in refdata-mapping [:refMaterial :wasteStream])
+                                                    :batchKg (* (:batchKg m3) 
+                                                                (bigdec (:fraction refdata-mapping))))]
+                                      (assoc m4 
+                                             :carbonSavingCo2eKg (* (:batchKg m4) 
+                                                                    (bigdec (get-in refdata-mapping [:refMaterial :carbonWeighting]))))))))))
+                       flatten
+                       (sort-by (juxt :from :to :enabler :process :wasteStream))
+                       (conj [[:from :to :enabler :process :wasteStream :process :batchKg :carbonSavingCo2eKg :furnitureCategory :furnitureSubcategory :foodDestination]])))))
+
+
+

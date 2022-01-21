@@ -2,8 +2,7 @@
   (:require [clojure.pprint :as pp]
             [dcs.pasi.csv :as csv]
             [dcs.pasi.mutation :as mutation]
-            [dcs.pasi.report :as report]
-            [dcs.pasi.ops :as ops]))
+            [dcs.pasi.report :as report]))
 
 (def url "http://localhost:2021/pasi/graphql")
 
@@ -18,16 +17,6 @@
 (apply pp/print-table (mutation/apply-mutations (csv/csv-file->upsert-maps "opt/dcs-pasi/data/OpsStcmfToRefData.csv") url))
 (apply pp/print-table (mutation/apply-mutations (csv/csv-file->upsert-maps "opt/dcs-pasi/data/OpsOrg.csv") url))
 (apply pp/print-table (mutation/apply-mutations (csv/csv-file->upsert-maps "opt/dcs-pasi/data/OpsProcess.csv") url))
-
-
-(apply pp/print-table (mutation/apply-mutations (ops/report->delete-maps 
-                                                 (second (report/opsWasteReduction url)) 
-                                                 "OpsWasteReduction") 
-                                                url))
-(apply pp/print-table (mutation/apply-mutations (ops/aceReusedFurniture-withRefData-report->OpsWasteReduction-upsert-maps
-                                                 (second (report/aceReusedFurniture-withRefData url))) 
-                                                url))
-
 
 (apply pp/print-table (report/zwsCarbonMetric url))
 (apply pp/print-table (report/aceFurnitureDescription url))

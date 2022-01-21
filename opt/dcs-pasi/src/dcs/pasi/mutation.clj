@@ -92,6 +92,7 @@
                category: \"%s\",
                subcategory: \"%s\",
                fraction: %s,
+               refProcess: \"reusing\",
                refMaterial: \"%s\"
              ) { id }
            }"

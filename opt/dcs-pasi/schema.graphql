@@ -152,6 +152,15 @@ type Mutation {
         }
       )
     fraction: Float! @site(a: "pasi:pred/fraction")
+    refProcess: String!
+    refProcessRef: ID 
+      @site(
+        a: "pasi:pred/refProcess"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/OpsProcess/{{refProcess}}"
+        }
+      )
     refMaterial: String!
     refMaterialRef: ID 
       @site(
@@ -417,6 +426,14 @@ type OpsAceToRefData {
     )
   "The fraction of this ACE material in 1 of the reference material"
   fraction: Float! @site(a: "pasi:pred/fraction")
+  "Map to this reference process"
+  refProcess: OpsProcess 
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "OpsProcess"]
+                   [object {keyword: "pasi:pred/refProcess"} e]]
+         }
+    )
   "Map to this reference material"
   refMaterial: ZwsCarbonMetric 
     @site(

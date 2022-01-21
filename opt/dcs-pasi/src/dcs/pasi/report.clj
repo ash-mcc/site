@@ -234,6 +234,9 @@
                              wasteStream
                              carbonWeighting
                            }
+                           refProcess {
+                             name
+                           }
                          }
                        }
                      }
@@ -250,6 +253,9 @@
                              wasteStream
                              carbonWeighting
                            }
+                           refProcess {
+                             name
+                           }                        
                          }
                        }
                      }
@@ -280,6 +286,7 @@
                                                          "StcmfRedistributedFood" (get-in m3 [:destination :refDataConnectors]))]
                                   (for [refdata-mapping refdata-mappings]
                                     (let [m4 (assoc m3
+                                                    :process (get-in refdata-mapping [:refProcess :name])
                                                     :wasteStream (get-in refdata-mapping [:refMaterial :wasteStream])
                                                     :batchKg (* (:batchKg m3) 
                                                                 (bigdec (:fraction refdata-mapping))))]
@@ -288,7 +295,7 @@
                                                                     (bigdec (get-in refdata-mapping [:refMaterial :carbonWeighting]))))))))))
                        flatten
                        (sort-by (juxt :from :to :enabler :process :wasteStream))
-                       (conj [[:from :to :enabler :process :wasteStream :process :batchKg :carbonSavingCo2eKg :furnitureCategory :furnitureSubcategory :foodDestination]])))))
+                       (conj [[:from :to :enabler :process :wasteStream :batchKg :carbonSavingCo2eKg :furnitureCategory :furnitureSubcategory :foodDestination]])))))
 
 
 

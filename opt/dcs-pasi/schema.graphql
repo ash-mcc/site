@@ -170,6 +170,15 @@ type Mutation {
           template: "pasi:ent/ZwsCarbonMetric/{{refMaterial}}"
         }
       )
+    enabler: String!
+    enablerRef: ID 
+      @site(
+        a: "pasi:pred/enabler"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/OpsOrg/{{enabler}}"
+        }
+      )
   ): OpsAceToRefData @site(mutation: "update")
 
   upsertOpsStcmfToRefData(
@@ -207,6 +216,15 @@ type Mutation {
         gen: {
           type: TEMPLATE 
           template: "pasi:ent/ZwsCarbonMetric/{{refMaterial}}"
+        }
+      )
+    enabler: String!
+    enablerRef: ID 
+      @site(
+        a: "pasi:pred/enabler"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/OpsOrg/{{enabler}}"
         }
       )
   ): OpsStcmfToRefData @site(mutation: "update")
@@ -442,6 +460,14 @@ type OpsAceToRefData {
                    [object {keyword: "pasi:pred/refMaterial"} e]]
          }
     )
+  "The organisation that has enabled/facilitated the social impact"
+  enabler: OpsOrg 
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "OpsOrg"]
+                   [object {keyword: "pasi:pred/enabler"} e]]
+         }
+    )
 }
 
 """
@@ -473,6 +499,14 @@ type OpsStcmfToRefData {
       q: { find: [e]
            where: [[e {keyword: "pasi:pred/type"} "ZwsCarbonMetric"]
                    [object {keyword: "pasi:pred/refMaterial"} e]]
+         }
+    )
+  "The organisation that has enabled/facilitated the social impact"
+  enabler: OpsOrg 
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "OpsOrg"]
+                   [object {keyword: "pasi:pred/enabler"} e]]
          }
     )
 }

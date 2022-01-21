@@ -93,7 +93,8 @@
                subcategory: \"%s\",
                fraction: %s,
                refProcess: \"reusing\",
-               refMaterial: \"%s\"
+               refMaterial: \"%s\",
+               enabler: \"Alloa Community Enterprises\"
              ) { id }
            }"
           (:category m)
@@ -107,7 +108,8 @@
                destination: \"%s\",
                fraction: %s,
                refProcess: \"%s\",
-               refMaterial: \"%s\"
+               refMaterial: \"%s\",
+               enabler: \"Stirling Community Food\"
              ) { id }
            }"
           (:destination m)

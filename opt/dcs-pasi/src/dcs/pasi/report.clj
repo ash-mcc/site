@@ -184,9 +184,9 @@
                        (map #(assoc %
                                     :destination (get-in % [:destination :name])
                                     :refProcess (get-in % [:refProcess :name])
-                                    :refMaterial (get-in % [:refMaterial :wasteStream])))
-                       (sort-by (juxt :destination :refProcess :refMaterial))
-                       (conj [[:id :destination :refProcess :refMaterial :fraction]])))))
+                                    :wasteStream (get-in % [:refMaterial :wasteStream])))
+                       (sort-by (juxt :destination :refProcess :wasteStream))
+                       (conj [[:id :destination :refProcess :wasteStream :fraction]])))))
 
 (defn opsOrg [url]
   (apply-query  "query {
@@ -237,6 +237,9 @@
                            refProcess {
                              name
                            }
+                           enabler {
+                             name
+                           }
                          }
                        }
                      }
@@ -254,6 +257,9 @@
                              carbonWeighting
                            }
                            refProcess {
+                             name
+                           }
+                           enabler {
                              name
                            }                        
                          }
@@ -286,6 +292,7 @@
                                                          "StcmfRedistributedFood" (get-in m3 [:destination :refDataConnectors]))]
                                   (for [refdata-mapping refdata-mappings]
                                     (let [m4 (assoc m3
+                                                    :enabler (get-in refdata-mapping [:enabler :name])
                                                     :process (get-in refdata-mapping [:refProcess :name])
                                                     :wasteStream (get-in refdata-mapping [:refMaterial :wasteStream])
                                                     :batchKg (* (:batchKg m3) 

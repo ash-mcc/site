@@ -281,3 +281,59 @@
        }
        GROUP BY ?s"))
     pp/pprint)
+
+
+
+(-> (xt-node)
+    xt/db
+    (xt/q
+     (sparql/sparql->datalog
+      "PREFIX pasi: <pasi:pred/>
+       SELECT DISTINCT ?typename
+       WHERE { 
+         ?_ pasi:type ?typename 
+       }
+       ORDER BY ?typename"))
+    distinct ;; eek, the ORDER BY seems to cancel out the DISTINCT so re-apply a distinct (but in Clojure)
+    (->>
+     (map #(zipmap [:typename] %))
+     pp/print-table))
+
+(-> (xt-node)
+    xt/db
+    (xt/q
+     (sparql/sparql->datalog
+      "PREFIX pasi: <pasi:pred/>
+       SELECT ?from ?to ?enabler ?process ?wasteStream ?batchKg ?carbonSavingCo2eKg ?furnitureCategory ?furnitureSubcategory
+       WHERE {
+         ?aceReusedFurniture pasi:type \"AceReusedFurniture\" ;
+                             pasi:from ?from ;
+                             pasi:to ?to ;
+                             pasi:itemCount ?itemCount ;
+                             pasi:description ?description .
+         ?description pasi:category ?furnitureCategory ;
+                      pasi:subcategory ?furnitureSubcategory ;
+                      pasi:itemKg ?itemKg .
+         ?opsAceToRefData pasi:type \"OpsAceToRefData\" ;
+                          pasi:description ?description ;
+                          pasi:fraction ?fraction ;
+                          pasi:refMaterial/pasi:wasteStream ?wasteStream ;
+                          pasi:refMaterial/pasi:carbonWeighting ?carbonWeighting ;
+                          pasi:refProcess/pasi:name ?process ;
+                          pasi:enabler/pasi:name ?enabler.
+          BIND((?itemCount * ?itemKg) AS ?batchKg)
+          BIND((?batchKg * ?fraction) AS ?batchKgFractionOfRefMaterial)
+          BIND((?batchKgFractionOfRefMaterial * ?carbonWeighting) AS ?carbonSavingCo2eKg)
+       }
+       ORDER BY ?from ?to ?enabler ?process ?wasteStream"))
+    distinct ;; eek, the ORDER BY seems to cancel out the DISTINCT so re-apply a distinct (but in Clojure)
+    (->>
+     (map #(replace {:xtdb.sparql/optional nil} %)) ;; map internal values to human oriented values
+     (map #(zipmap [:from :to :enabler :process :wasteStream :batchKg :carbonSavingCo2eKg :furnitureCategory :furnitureSubcategory] %))
+     (pp/print-table [:from :to :enabler :process :wasteStream :batchKg :carbonSavingCo2eKg :furnitureCategory :furnitureSubcategory])))
+
+
+
+
+         
+        

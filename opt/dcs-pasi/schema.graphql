@@ -132,6 +132,41 @@ type Mutation {
       batchKg: Float! @site(a: "pasi:pred/batchKg")
   ): StcmfRedistributedFood @site(mutation: "update")
 
+  upsertFrshrMaterialCategory(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/FrshrMaterialCategory/{{name}}"
+        }
+      )
+    name: String! @site(a: "pasi:pred/name")
+  ): FrshrMaterialCategory @site(mutation: "update")
+
+  upsertFrshrReusedMaterial(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/FrshrReusedMaterial/{{from}}/{{to}}/{{material}}"
+        }
+      )
+      from: Date! @site(a: "pasi:pred/from")
+      to: Date! @site(a: "pasi:pred/to")
+      material: String!
+      materialRef: ID 
+        @site(
+          a: "pasi:pred/material"
+          gen: {
+            type: TEMPLATE 
+            template: "pasi:ent/FrshrMaterialCategory/{{material}}"
+          }
+        )
+      batchKg: Float! @site(a: "pasi:pred/batchKg")
+  ): FrshrReusedMaterial @site(mutation: "update")
+
   upsertOpsAceToRefData(
     id: ID
       @site(
@@ -229,15 +264,64 @@ type Mutation {
       )
   ): OpsStcmfToRefData @site(mutation: "update")
 
+  upsertOpsFrshrToRefData(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/OpsFrshrToRefData/{{material}}/{{refProcess}}/{{refMaterial}}"
+        }
+      )
+    material: String!
+    materialRef: ID 
+      @site(
+        a: "pasi:pred/material"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/FrshrMaterialCategory/{{material}}"
+        }
+      )
+    fraction: Float! @site(a: "pasi:pred/fraction")
+    refProcess: String!
+    refProcessRef: ID 
+      @site(
+        a: "pasi:pred/refProcess"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/OpsProcess/{{refProcess}}"
+        }
+      )
+    refMaterial: String!
+    refMaterialRef: ID 
+      @site(
+        a: "pasi:pred/refMaterial"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/ZwsCarbonMetric/{{refMaterial}}"
+        }
+      )
+    enabler: String!
+    enablerRef: ID 
+      @site(
+        a: "pasi:pred/enabler"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/OpsOrg/{{enabler}}"
+        }
+      )
+  ): OpsFrshrToRefData @site(mutation: "update")
+
   upsertOpsOrg(
     id: ID
       @site(
         a: "xt/id"
         gen: {
           type: TEMPLATE 
-          template: "pasi:ent/OpsOrg/{{name}}"
+          template: "pasi:ent/OpsOrg/{{abbr}}"
         }
       )
+    abbr: String! @site(a: "pasi:pred/abbr")
     name: String! @site(a: "pasi:pred/name")
     qid: String @site(a: "pasi:pred/qid")
   ): OpsOrg @site(mutation: "update")
@@ -272,8 +356,11 @@ type Query {
   stcmfDestination: [StcmfDestination]!
   stcmfIncomingFood: [StcmfIncomingFood]!
   stcmfRedistributedFood: [StcmfRedistributedFood]!
+  frshrMaterialCategory: [FrshrMaterialCategory]!
+  frshrReusedMaterial: [FrshrReusedMaterial]!
   opsAceToRefData: [OpsAceToRefData]!
   opsStcmfToRefData: [OpsStcmfToRefData]!
+  opsFrshrToRefData: [OpsFrshrToRefData]!
   opsOrg: [OpsOrg]!
   opsProcess: [OpsProcess]!
   opsWasteReduction: [OpsWasteReduction]!
@@ -283,7 +370,8 @@ type Query {
         """
         {:find [e]
           :where [(or [e :pasi:pred/type "AceReusedFurniture"]
-                      [e :pasi:pred/type "StcmfRedistributedFood"])]
+                      [e :pasi:pred/type "StcmfRedistributedFood"]
+                      [e :pasi:pred/type "FrshrReusedMaterial"])]
          }
         """}
     )
@@ -407,11 +495,15 @@ type StcmfIncomingFood {
 STCMF batches of redistributed food
 """
 type StcmfRedistributedFood {
+
   id: ID!
+
   "The start of the period, inclusive"
   from: Date! @site(a: "pasi:pred/from")
+
   "The end of the period, exclusive"
   to: Date! @site(a: "pasi:pred/to")
+
   "How the food material got used"
   destination: StcmfDestination
     @site(
@@ -420,7 +512,58 @@ type StcmfRedistributedFood {
                    [object {keyword: "pasi:pred/destination"} e]]
          }
     )
+    
   "The weight in kilograms of this batch of food material"
+  batchKg: Float! @site(a: "pasi:pred/batchKg")
+}
+
+"""
+FRSHR material (i.e. items) category 
+"""
+type FrshrMaterialCategory {
+
+  id: ID!
+
+  "The name of this category"
+  name: String! @site(a: "pasi:pred/name")
+
+  "The records for mapping this FRSHR data to reference data"
+  refDataConnectors: [OpsFrshrToRefData]
+    @site(
+      q: {
+        edn:
+        """
+        {:find [e]
+          :where [[e :pasi:pred/type "OpsFrshrToRefData"]
+                  [e :pasi:pred/material object]]
+         }
+        """}
+    )
+}
+
+"""
+FRSHR batches of reused material, i.e. batches of a particular category of item, which have been (re)sold
+"""
+type FrshrReusedMaterial {
+
+  id: ID!
+
+  "The start of the period, inclusive"
+  from: Date! @site(a: "pasi:pred/from")
+
+  "The end of the period, exclusive"
+  to: Date! @site(a: "pasi:pred/to")
+
+  "The 'material' (i.e. category of item) that was reused"
+  material: FrshrMaterialCategory
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "FrshrMaterialCategory"]
+                   [object {keyword: "pasi:pred/material"} e]]
+         }
+    )
+    
+  "The weight in kilograms of this batch of reused material"
   batchKg: Float! @site(a: "pasi:pred/batchKg")
 }
 
@@ -512,10 +655,59 @@ type OpsStcmfToRefData {
 }
 
 """
+OPS FRSHR data to reference data
+"""
+type OpsFrshrToRefData {
+
+  id: ID!
+
+  "The 'material' (i.e. category of item) that was reused"
+  material: FrshrMaterialCategory
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "FrshrMaterialCategory"]
+                   [object {keyword: "pasi:pred/material"} e]]
+         }
+    )
+
+  "The fraction of this FRSHR material in 1 of the reference material"
+  fraction: Float! @site(a: "pasi:pred/fraction")
+
+  "Map to this reference process"
+  refProcess: OpsProcess 
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "OpsProcess"]
+                   [object {keyword: "pasi:pred/refProcess"} e]]
+         }
+    )
+
+  "Map to this reference material"
+  refMaterial: ZwsCarbonMetric 
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "ZwsCarbonMetric"]
+                   [object {keyword: "pasi:pred/refMaterial"} e]]
+         }
+    )
+
+  "The organisation that has enabled/facilitated the social impact"
+  enabler: OpsOrg 
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "OpsOrg"]
+                   [object {keyword: "pasi:pred/enabler"} e]]
+         }
+    )
+}
+
+"""
 OPS referenced organisation
 """
 type OpsOrg {
   id: ID!
+  "The abbrevation of the organisation (used as a 'handle')"
+  abbr: String! @site(a: "pasi:pred/abbr")
   "The name of the organisation"
   name: String! @site(a: "pasi:pred/name")
   "WikiData's Q Identifier for the organisation"
@@ -534,5 +726,5 @@ type OpsProcess {
 """
 OPS waste reduction
 """
-union OpsWasteReduction = AceReusedFurniture | StcmfRedistributedFood
+union OpsWasteReduction = AceReusedFurniture | StcmfRedistributedFood | FrshrReusedMaterial
 

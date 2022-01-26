@@ -1,7 +1,7 @@
 (ns dcs.pasi.report
-  (:require [jsonista.core :as json]
-            [java-http-clj.core :as http]
-            [dcs.pasi.report.shared :as shared]))
+  (:require [clojure.set :as set]
+            [jsonista.core :as json]
+            [java-http-clj.core :as http]))
 
 
 (defn apply-query [^String #_GraphQL query-fn url parse-sort-and-label-fn]
@@ -138,6 +138,39 @@
                        (sort-by (juxt :from :to :destination))
                        (conj [[:id :from :to :destination :batchKg]])))))
 
+(defn frshrMaterialCategory [url]
+  (apply-query  "query {
+                   frshrMaterialCategory {
+                     id
+                     name
+                   }
+                 }"
+                url
+                (fn [coll]
+                  (->> coll
+                       (sort-by :name)
+                       (conj [[:id :name]])))))
+
+(defn frshrReusedMaterial [url]
+  (apply-query  "query {
+                   frshrReusedMaterial {
+                     id
+                     from
+                     to
+                     material {
+                       name
+                     }
+                     batchKg
+                   }
+                 }"
+                url
+                (fn [coll]
+                  (->> coll
+                       (map #(assoc %
+                                    :material (get-in % [:material :name])))
+                       (sort-by (juxt :from :to :material))
+                       (conj [[:id :from :to :material :batchKg]])))))
+
 (defn opsAceToRefData [url]
   (apply-query  "query {
                    opsAceToRefData {
@@ -188,10 +221,37 @@
                        (sort-by (juxt :destination :refProcess :wasteStream))
                        (conj [[:id :destination :refProcess :wasteStream :fraction]])))))
 
+(defn opsFrshrToRefData [url]
+  (apply-query  "query {
+                   opsFrshrToRefData {
+                     id
+                     material {
+                       name
+                     }
+                     refProcess {
+                       name
+                     }
+                     refMaterial {
+                       wasteStream
+                     }
+                     fraction
+                   }
+                 }"
+                url
+                (fn [coll]
+                  (->> coll
+                       (map #(assoc %
+                                    :material (get-in % [:material :name])
+                                    :refProcess (get-in % [:refProcess :name])
+                                    :wasteStream (get-in % [:refMaterial :wasteStream])))
+                       (sort-by (juxt :material :refProcess :wasteStream))
+                       (conj [[:id :material :refProcess :wasteStream :fraction]])))))
+
 (defn opsOrg [url]
   (apply-query  "query {
                    opsOrg {
                      id
+                     abbr
                      name
                      qid
                    }
@@ -199,8 +259,8 @@
                 url
                 (fn [coll]
                   (->> coll
-                       (sort-by :name)
-                       (conj [[:id :name :qid]])))))
+                       (sort-by :abbr)
+                       (conj [[:id :abbr :name :qid]])))))
 
 (defn opsProcess [url]
   (apply-query  "query {
@@ -265,6 +325,28 @@
                          }
                        }
                      }
+                     ... on FrshrReusedMaterial {
+                       id
+                       from
+                       to
+                       batchKg
+                       material {
+                         name
+                         refDataConnectors {
+                           fraction
+                           refMaterial {
+                             wasteStream
+                             carbonWeighting
+                           }
+                           refProcess {
+                             name
+                           }
+                           enabler {
+                             name
+                           }                        
+                         }
+                       }
+                     }
                    }  
                  }"
                 url
@@ -272,7 +354,7 @@
                   (->> coll
                        (map (fn [m] 
                               (let [typename (:__typename m)]
-                                (when (not (contains? #{"AceReusedFurniture" "StcmfRedistributedFood"} typename))
+                                (when (not (contains? #{"AceReusedFurniture" "StcmfRedistributedFood" "FrshrReusedMaterial"} typename))
                                   (throw (Exception. (format "Unexpected typename %s" typename))))
                                 (let [m2               (condp = typename
                                                          "AceReusedFurniture" (assoc m 
@@ -281,15 +363,19 @@
                                                                                      :furnitureItemKg (bigdec (get-in m [:description :itemKg]))
                                                                                      :furnitureItemCount (bigdec (:itemCount m)))
                                                          "StcmfRedistributedFood" (assoc m
-                                                                                         :foodDestination (get-in m [:destination :name])))
+                                                                                         :foodDestination (get-in m [:destination :name]))
+                                                         "FrshrReusedMaterial" (assoc m
+                                                                                      :materialCategory (get-in m [:material :name])))
                                       m3               (assoc m2 
                                                               :batchKg (condp = typename
                                                                          "AceReusedFurniture" (* (:furnitureItemKg m2) 
                                                                                                  (:furnitureItemCount m2))
-                                                                         "StcmfRedistributedFood" (bigdec (:batchKg m2))))
+                                                                         "StcmfRedistributedFood" (bigdec (:batchKg m2))
+                                                                         "FrshrReusedMaterial" (bigdec (:batchKg m2))))
                                       refdata-mappings (condp = typename
                                                          "AceReusedFurniture" (get-in m3 [:description :refDataConnectors])
-                                                         "StcmfRedistributedFood" (get-in m3 [:destination :refDataConnectors]))]
+                                                         "StcmfRedistributedFood" (get-in m3 [:destination :refDataConnectors])
+                                                         "FrshrReusedMaterial" (get-in m3 [:material :refDataConnectors]))]
                                   (for [refdata-mapping refdata-mappings]
                                     (let [m4 (assoc m3
                                                     :enabler (get-in refdata-mapping [:enabler :name])
@@ -302,7 +388,14 @@
                                                                     (bigdec (get-in refdata-mapping [:refMaterial :carbonWeighting]))))))))))
                        flatten
                        (sort-by (juxt :from :to :enabler :process :wasteStream))
-                       (conj [[:from :to :enabler :process :wasteStream :batchKg :carbonSavingCo2eKg :furnitureCategory :furnitureSubcategory :foodDestination]])))))
+                       (conj [[:from :to :enabler :process :wasteStream :batchKg :carbonSavingCo2eKg :furnitureCategory :furnitureSubcategory :foodDestination :materialCategory]])))))
 
-
-
+;; This is just for the blog article that I was writing
+(defn opsWasteReduction-stcmfOnly [url]
+  (let [[headings data] (opsWasteReduction url)]
+    [[:enabler :from :to :batchKg :foodDestination :ref_process :ref_wasteStream :ref_carbonSavingCo2eKg]
+     (->> data
+          (filter #(= "Stirling Community Food" (:enabler %)))
+          (map #(set/rename-keys % {:process            :ref_process
+                                    :wasteStream        :ref_wasteStream
+                                    :carbonSavingCo2eKg :ref_carbonSavingCo2eKg})))]))

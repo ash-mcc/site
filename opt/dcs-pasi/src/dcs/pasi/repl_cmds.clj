@@ -14,7 +14,8 @@
    [integrant.core :as ig]
    [xtdb.api :as xt]
    [xtdb.sparql :as sparql]
-   [clojure.pprint :as pp]))
+   [clojure.pprint :as pp])
+  (:import  java.math.RoundingMode))
 
 (apply require clojure.main/repl-requires)
 
@@ -127,7 +128,7 @@
 (-> (xt-node)
     xt/db
     (xt/entity
-     "pasi:ent/StcmfRedistributedFood/2021-01-29/2021-01-30/Used for human-food, bio-etc &amp; sanctuary")
+     "pasi:ent/OpsAceToRefData/Soft Furniture/Mattress, single/Textiles and Footwear")
     pp/pprint)
 
 ;; Remove all PASI ents
@@ -284,6 +285,35 @@
 
 
 
+
+;; This yields an error
+;;   No implementation of method: :rdf->clj of protocol: #'xtdb.rdf/RDFToClojure 
+;;   found for class: org.eclipse.rdf4j.query.algebra.SingletonSet
+(-> (xt-node)
+    xt/db
+    (xt/q
+     (sparql/sparql->datalog
+      "SELECT ?a ?b
+       WHERE {
+        BIND(1 AS ?a)
+        BIND(2 AS ?b)
+       }")))
+
+;; This yields an error
+;;   Find refers to unknown variable: ?syn1
+(-> (xt-node)
+    xt/db
+    (xt/q
+     (sparql/sparql->datalog
+      "PREFIX pasi: <pasi:pred/>
+       SELECT ?actu1 (?actu1 AS ?syn1)
+       WHERE {
+         ?actu1 pasi:type \"AceReusedFurniture\" .
+       }")))
+
+
+;; ----------------- SPARQL specific for an initial note on the PASI work -----------------
+
 (-> (xt-node)
     xt/db
     (xt/q
@@ -298,6 +328,9 @@
     (->>
      (map #(zipmap [:typename] %))
      pp/print-table))
+
+(defn round [x scale]
+  (.setScale (bigdec x) scale RoundingMode/HALF_EVEN))
 
 (-> (xt-node)
     xt/db
@@ -321,9 +354,9 @@
                           pasi:refMaterial/pasi:carbonWeighting ?carbonWeighting ;
                           pasi:refProcess/pasi:name ?process ;
                           pasi:enabler/pasi:name ?enabler.
-          BIND((?itemCount * ?itemKg) AS ?batchKg)
-          BIND((?batchKg * ?fraction) AS ?batchKgFractionOfRefMaterial)
-          BIND((?batchKgFractionOfRefMaterial * ?carbonWeighting) AS ?carbonSavingCo2eKg)
+          BIND((?itemCount * ?itemKg) AS ?origBatchKg)
+          BIND((?origBatchKg * ?fraction) AS ?batchKg)
+          BIND((?batchKg * ?carbonWeighting) AS ?carbonSavingCo2eKg)
        }
        ORDER BY ?from ?to ?enabler ?process ?wasteStream"))
     distinct ;; eek, the ORDER BY seems to cancel out the DISTINCT so re-apply a distinct (but in Clojure)
@@ -332,8 +365,42 @@
      (map #(zipmap [:from :to :enabler :process :wasteStream :batchKg :carbonSavingCo2eKg :furnitureCategory :furnitureSubcategory] %))
      (pp/print-table [:from :to :enabler :process :wasteStream :batchKg :carbonSavingCo2eKg :furnitureCategory :furnitureSubcategory])))
 
+(-> (xt-node)
+    xt/db
+    (xt/q
+     (sparql/sparql->datalog
+      "PREFIX pasi: <pasi:pred/>
+       SELECT ?enabler ?from ?to ?batchKg ?foodDestination ?ref_process ?ref_wasteStream ?ref_carbonSavingCo2eKg 
+       WHERE {
+         ?stcmfRedistributedFood pasi:type \"StcmfRedistributedFood\" ;
+                             pasi:from ?from ;
+                             pasi:to ?to ;
+                             pasi:batchKg ?origBatchKg ;
+                             pasi:destination ?destination .
+         ?destination pasi:name ?foodDestination .
+         ?opsAceToRefData pasi:type \"OpsStcmfToRefData\" ;
+                          pasi:destination ?destination ;
+                          pasi:fraction ?fraction ;
+                          pasi:refMaterial/pasi:wasteStream ?ref_wasteStream ;
+                          pasi:refMaterial/pasi:carbonWeighting ?carbonWeighting ;
+                          pasi:refProcess/pasi:name ?ref_process ;
+                          pasi:enabler/pasi:name ?enabler.
+          BIND((?origBatchKg * ?fraction) AS ?batchKg)
+          BIND((?batchKg * ?carbonWeighting) AS ?ref_carbonSavingCo2eKg)
+       }
+       ORDER BY ?enabler ?from ?to"))
+    distinct ;; eek, the ORDER BY seems to cancel out the DISTINCT so re-apply a distinct (but in Clojure)
+    (->>
+     ;(map #(replace {:xtdb.sparql/optional nil} %)) ;; map internal values to human oriented values
+     (map #(zipmap [:enabler :from :to :batchKg :foodDestination :ref_process :ref_wasteStream :ref_carbonSavingCo2eKg] %))
+     (map #(assoc %
+                  :batchKg (round (:batchKg %) 2)
+                  :ref_carbonSavingCo2eKg (round (:ref_carbonSavingCo2eKg %) 2)))
+     (pp/print-table [:enabler :from :to :batchKg :foodDestination :ref_process :ref_wasteStream :ref_carbonSavingCo2eKg])))
+
+;; But I can't get a UNION of the two queries above (when their ?value names have been sync'd), to work  :-(
 
 
+;; ----------------- New stuff... -----------------
 
-         
-        
+

@@ -86,6 +86,28 @@
           (:destination m)
           (:batchKg m)))
 
+(defn FrshrMaterialCategory-upsert-fn [m]
+  (format "mutation {
+             upsertFrshrMaterialCategory(
+               name: \"%s\"
+             ) { id }
+           }"
+          (:name m)))
+
+(defn FrshrReusedMaterial-upsert-fn [m]
+  (format "mutation {
+             upsertFrshrReusedMaterial(
+               from: \"%s\",
+               to: \"%s\",
+               material: \"%s\",
+               batchKg: %s
+             ) { id }
+           }"
+          (:from m)
+          (:to m)
+          (:material m)
+          (:batchKg m)))
+
 (defn OpsAceToRefData-upsert-fn [m]
   (format "mutation {
              upsertOpsAceToRefData(
@@ -94,7 +116,7 @@
                fraction: %s,
                refProcess: \"reusing\",
                refMaterial: \"%s\",
-               enabler: \"Alloa Community Enterprises\"
+               enabler: \"ACE\"
              ) { id }
            }"
           (:category m)
@@ -109,7 +131,7 @@
                fraction: %s,
                refProcess: \"%s\",
                refMaterial: \"%s\",
-               enabler: \"Stirling Community Food\"
+               enabler: \"STCMF\"
              ) { id }
            }"
           (:destination m)
@@ -117,13 +139,30 @@
           (:refProcess m)
           (:refMaterial m)))
 
+(defn OpsFrshrToRefData-upsert-fn [m]
+  (format "mutation {
+             upsertOpsFrshrToRefData(
+               material: \"%s\",
+               fraction: %s,
+               refProcess: \"%s\",
+               refMaterial: \"%s\",
+               enabler: \"FRSHR\"
+             ) { id }
+           }"
+          (:material m)
+          (:fraction m)
+          (:refProcess m)
+          (:refMaterial m)))
+
 (defn OpsOrg-upsert-fn [m]
   (format "mutation {
              upsertOpsOrg(
+               abbr: \"%s\",
                name: \"%s\",
                qid: \"%s\"
              ) { id }
            }"
+          (:abbr m)
           (:name m)
           (:qid m)))
 

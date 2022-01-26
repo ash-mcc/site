@@ -1,8 +1,9 @@
 ;; Copyright © 2021, JUXT LTD.
 
 {:paths ["src" 
-         "opt/dcs-site-sparql/src" 
-         "opt/dcs-pasi-ace/src"]
+         "opt/site-mod-sparql/src" 
+         "opt/dcs-pasi/src"]
+ 
  :deps {org.clojure/clojure {:mvn/version "1.10.1"}
 
         ;; Project skeleton - also see src/config.edn

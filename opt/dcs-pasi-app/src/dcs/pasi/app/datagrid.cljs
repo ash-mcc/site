@@ -1,4 +1,4 @@
-(ns dcs.pasi.datagrid
+(ns dcs.pasi.app.datagrid
   (:require
    [cljs.core.async :as async]
    [reagent.core :as r]

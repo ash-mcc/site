@@ -17,8 +17,8 @@
    :compiler-options {:externs ["externs.js"]}
 
    :modules
-   {:dcs-pasi ;; <- becomes public/js/dcs-pasi.js
-    {:entries [dcs.pasi.main]}}
+   {:dcs-pasi-app ;; <- becomes public/js/dcs-pasi-app.js
+    {:entries [dcs.pasi.app.main]}}
 
    ;; start a development http server on http://localhost:8020
    :devtools

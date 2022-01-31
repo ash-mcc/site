@@ -1,4 +1,4 @@
-= pasi-ui
+= pasi-app
 
 WARNING: Very much a work-in-progress!
 

@@ -1,6 +1,6 @@
-(ns dcs.pasi.main
+(ns dcs.pasi.app.main
   (:require [reagent.dom :as rdom]
-            [dcs.pasi.datagrid :as datagrid]))
+            [dcs.pasi.app.datagrid :as datagrid]))
 
 (defn page
   []

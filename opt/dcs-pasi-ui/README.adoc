@@ -1,0 +1,49 @@
+= pasi-ui
+
+WARNING: Very much a work-in-progress!
+
+
+---
+
+== Use
+
+=== Setting up the tools, environment, etc.
+
+Prerequisites:
+
+* Git 2.24.0 (_-ish_)
+* npm
+* shadow-cljs
+
+Building and running:
+
+[bash]
+----
+# Install any npm controlled libs (probably need to firstly run: shadow-cljs compile app )
+npm install
+
+# In a *non-fresh* install, I've used the following to 'force' install stuff...
+#     npm install ag-grid-react ag-grid-community
+#  or
+#     npm init -y
+
+# To make shadow-cljs directly available on to the command line...
+#     npm install -g shadow-cljs
+
+
+# Compile a build once and exit
+shadow-cljs compile app
+
+# ! Make sure that dcs-pasi is running on Site before running the webapp
+
+# Compile and watch
+shadow-cljs watch app
+
+# Connect to REPL for the build (available while watch is running)
+shadow-cljs cljs-repl app
+
+# Running a release build optimized for production use
+shadow-cljs release app
+----
+
+

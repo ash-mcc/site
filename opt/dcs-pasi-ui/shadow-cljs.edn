@@ -1,0 +1,27 @@
+;; shadow-cljs configuration
+{:source-paths
+ ["src"]
+
+ :dependencies
+ [[reagent "1.0.0"] ; was "0.8.1"
+  [cljs-http "0.1.46"]
+  [cljsjs/ag-grid-react "21.0.1-1"]
+  [cljsjs/ag-grid-community "21.0.1-1"]
+  ]
+
+ :builds
+ {:app
+  {:target :browser
+   :output-dir "public/js"
+   :asset-path "/js"
+   :compiler-options {:externs ["externs.js"]}
+
+   :modules
+   {:dcs-pasi ;; <- becomes public/js/dcs-pasi.js
+    {:entries [dcs.pasi.main]}}
+
+   ;; start a development http server on http://localhost:8020
+   :devtools
+   {:http-root "public"
+    :http-port 3000}
+   }}}

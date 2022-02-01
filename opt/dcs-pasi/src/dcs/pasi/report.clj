@@ -1,7 +1,8 @@
 (ns dcs.pasi.report
   (:require [clojure.set :as set]
             [jsonista.core :as json]
-            [java-http-clj.core :as http]))
+            [java-http-clj.core :as http]
+            [dcs.pasi.model :as model]))
 
 
 (defn apply-query [^String #_GraphQL query-fn url parse-sort-and-label-fn]
@@ -22,129 +23,70 @@
 
 
 (defn zwsCarbonMetric [url]
-  (apply-query "query {
-                  zwsCarbonMetric {
-                    id
-                    wasteStream
-                    carbonWeighting
-                  }
-                }"
+  (apply-query (-> model/queries :zwsCarbonMetric :graphql)
                url
                (fn [coll]
                  (->> coll
+                      (-> model/queries :zwsCarbonMetric :result-parser)
                       (sort-by :wasteStream)
                       (conj [[:id :wasteStream :carbonWeighting]])))))
 
 (defn aceFurnitureDescription [url]
-  (apply-query  "query {
-                   aceFurnitureDescription {
-                     id
-                     category
-                     subcategory
-                     itemKg
-                   }
-                 }"
+  (apply-query (-> model/queries :aceFurnitureDescription :graphql)
                url
                (fn [coll]
                  (->> coll
+                      (-> model/queries :aceFurnitureDescription :result-parser)
                       (sort-by (juxt :category :subcategory))
                       (conj [[:id :category :subcategory :itemKg]])))))
 
 (defn aceReusedFurniture [url]
-  (apply-query  "query {
-                   aceReusedFurniture {
-                     id
-                     from
-                     to
-                     description {
-                       category
-                       subcategory
-                     }
-                     itemCount
-                   }
-                 }"
+  (apply-query (-> model/queries :aceReusedFurniture :graphql)
                 url
                 (fn [coll]
                   (->> coll
-                       (map #(assoc %
-                                    :category (get-in % [:description :category])
-                                    :subcategory (get-in % [:description :subcategory])))
+                       (-> model/queries :aceReusedFurniture :result-parser)
                        (sort-by (juxt :from :to :category :subcategory))
                        (conj [[:id :from :to :category :subcategory :itemCount]])))))
 
 (defn stcmfSource [url]
-  (apply-query  "query {
-                   stcmfSource {
-                     id
-                     name
-                   }
-                 }"
+  (apply-query (-> model/queries :stcmfSource :graphql)
                 url
                 (fn [coll]
                   (->> coll
+                       (-> model/queries :stcmfSource :result-parser)
                        (sort-by :name)
                        (conj [[:id :name]])))))
 
 (defn stcmfDestination [url]
-  (apply-query  "query {
-                   stcmfDestination {
-                     id
-                     name
-                   }
-                 }"
+  (apply-query (-> model/queries :stcmfDestination :graphql)
                 url
                 (fn [coll]
                   (->> coll
+                       (-> model/queries :stcmfDestination :result-parser)
                        (sort-by :name)
                        (conj [[:id :name]])))))
 
 (defn stcmfIncomingFood [url]
-  (apply-query  "query {
-                   stcmfIncomingFood {
-                     id
-                     from
-                     to
-                     source {
-                       name
-                     }
-                     batchKg
-                   }
-                 }"
+  (apply-query (-> model/queries :stcmfIncomingFood :graphql)
                 url
                 (fn [coll]
                   (->> coll
-                       (map #(assoc %
-                                    :source (get-in % [:source :name])))
+                       (-> model/queries :stcmfIncomingFood :result-parser)
                        (sort-by (juxt :from :to :source))
                        (conj [[:id :from :to :source :batchKg]])))))
 
 (defn stcmfRedistributedFood [url]
-  (apply-query  "query {
-                   stcmfRedistributedFood {
-                     id
-                     from
-                     to
-                     destination {
-                       name
-                     }
-                     batchKg
-                   }
-                 }"
+  (apply-query (-> model/queries :stcmfRedistributedFood :graphql)
                 url
                 (fn [coll]
                   (->> coll
-                       (map #(assoc %
-                                    :destination (get-in % [:destination :name])))
+                       (-> model/queries :stcmfRedistributedFood :result-parser)
                        (sort-by (juxt :from :to :destination))
                        (conj [[:id :from :to :destination :batchKg]])))))
 
 (defn frshrMaterialCategory [url]
-  (apply-query  "query {
-                   frshrMaterialCategory {
-                     id
-                     name
-                   }
-                 }"
+  (apply-query (-> model/queries :frshrMaterialCategory :graphql)
                 url
                 (fn [coll]
                   (->> coll
@@ -152,241 +94,65 @@
                        (conj [[:id :name]])))))
 
 (defn frshrReusedMaterial [url]
-  (apply-query  "query {
-                   frshrReusedMaterial {
-                     id
-                     from
-                     to
-                     material {
-                       name
-                     }
-                     batchKg
-                   }
-                 }"
+  (apply-query (-> model/queries :frshrReusedMaterial :graphql)
                 url
                 (fn [coll]
                   (->> coll
-                       (map #(assoc %
-                                    :material (get-in % [:material :name])))
+                       (-> model/queries :frshrReusedMaterial :result-parser)
                        (sort-by (juxt :from :to :material))
                        (conj [[:id :from :to :material :batchKg]])))))
 
 (defn opsAceToRefData [url]
-  (apply-query  "query {
-                   opsAceToRefData {
-                     id
-                     description {
-                       category
-                       subcategory
-                     }
-                     refMaterial {
-                       wasteStream
-                     }
-                     fraction
-                   }
-                 }"
+  (apply-query (-> model/queries :opsAceToRefData :graphql)
                 url
                 (fn [coll]
                   (->> coll
-                       (map #(assoc %
-                                    :category (get-in % [:description :category])
-                                    :subcategory (get-in % [:description :subcategory])
-                                    :wasteStream (get-in % [:refMaterial :wasteStream])))
+                       (-> model/queries :opsAceToRefData :result-parser)
                        (sort-by (juxt :category :subcategory :wasteStream))
                        (conj [[:id :category :subcategory :wasteStream :fraction]])))))
 
 (defn opsStcmfToRefData [url]
-  (apply-query  "query {
-                   opsStcmfToRefData {
-                     id
-                     destination {
-                       name
-                     }
-                     refProcess {
-                       name
-                     }
-                     refMaterial {
-                       wasteStream
-                     }
-                     fraction
-                   }
-                 }"
+  (apply-query (-> model/queries :opsStcmfToRefData :graphql)
                 url
                 (fn [coll]
                   (->> coll
-                       (map #(assoc %
-                                    :destination (get-in % [:destination :name])
-                                    :refProcess (get-in % [:refProcess :name])
-                                    :wasteStream (get-in % [:refMaterial :wasteStream])))
+                       (-> model/queries :opsStcmfToRefData :result-parser)
                        (sort-by (juxt :destination :refProcess :wasteStream))
                        (conj [[:id :destination :refProcess :wasteStream :fraction]])))))
 
 (defn opsFrshrToRefData [url]
-  (apply-query  "query {
-                   opsFrshrToRefData {
-                     id
-                     material {
-                       name
-                     }
-                     refProcess {
-                       name
-                     }
-                     refMaterial {
-                       wasteStream
-                     }
-                     fraction
-                   }
-                 }"
+  (apply-query (-> model/queries :opsFrshrToRefData :graphql)
                 url
                 (fn [coll]
                   (->> coll
-                       (map #(assoc %
-                                    :material (get-in % [:material :name])
-                                    :refProcess (get-in % [:refProcess :name])
-                                    :wasteStream (get-in % [:refMaterial :wasteStream])))
+                       (-> model/queries :opsFrshrToRefData :result-parser)
                        (sort-by (juxt :material :refProcess :wasteStream))
                        (conj [[:id :material :refProcess :wasteStream :fraction]])))))
 
 (defn opsOrg [url]
-  (apply-query  "query {
-                   opsOrg {
-                     id
-                     abbr
-                     name
-                     qid
-                   }
-                 }"
+  (apply-query (-> model/queries :opsOrg :graphql)
                 url
                 (fn [coll]
                   (->> coll
+                       (-> model/queries :opsOrg :result-parser)
                        (sort-by :abbr)
                        (conj [[:id :abbr :name :qid]])))))
 
 (defn opsProcess [url]
-  (apply-query  "query {
-                   opsProcess {
-                     id
-                     name
-                   }
-                 }"
+  (apply-query (-> model/queries :opsProcess :graphql)
                 url
                 (fn [coll]
                   (->> coll
+                        (-> model/queries :opsProcess :result-parser)
                        (sort-by :name)
                        (conj [[:id :name]])))))
 
 (defn opsWasteReduction [url]
-  (apply-query  "query {
-                   opsWasteReduction {
-                     __typename
-                     ... on AceReusedFurniture {
-                       id
-                       from
-                       to
-                       itemCount
-                       description {
-                         category
-                         subcategory
-                         itemKg
-                         refDataConnectors {
-                           fraction
-                           refMaterial {
-                             wasteStream
-                             carbonWeighting
-                           }
-                           refProcess {
-                             name
-                           }
-                           enabler {
-                             name
-                           }
-                         }
-                       }
-                     }
-                     ... on StcmfRedistributedFood {
-                       id
-                       from
-                       to
-                       batchKg
-                       destination {
-                         name
-                         refDataConnectors {
-                           fraction
-                           refMaterial {
-                             wasteStream
-                             carbonWeighting
-                           }
-                           refProcess {
-                             name
-                           }
-                           enabler {
-                             name
-                           }                        
-                         }
-                       }
-                     }
-                     ... on FrshrReusedMaterial {
-                       id
-                       from
-                       to
-                       batchKg
-                       material {
-                         name
-                         refDataConnectors {
-                           fraction
-                           refMaterial {
-                             wasteStream
-                             carbonWeighting
-                           }
-                           refProcess {
-                             name
-                           }
-                           enabler {
-                             name
-                           }                        
-                         }
-                       }
-                     }
-                   }  
-                 }"
+  (apply-query (-> model/queries :opsWasteReduction :graphql)
                 url
                 (fn [coll]
                   (->> coll
-                       (map (fn [m] 
-                              (let [typename (:__typename m)]
-                                (when (not (contains? #{"AceReusedFurniture" "StcmfRedistributedFood" "FrshrReusedMaterial"} typename))
-                                  (throw (Exception. (format "Unexpected typename %s" typename))))
-                                (let [m2               (condp = typename
-                                                         "AceReusedFurniture" (assoc m 
-                                                                                     :furnitureCategory (get-in m [:description :category])
-                                                                                     :furnitureSubcategory (get-in m [:description :subcategory])
-                                                                                     :furnitureItemKg (bigdec (get-in m [:description :itemKg]))
-                                                                                     :furnitureItemCount (bigdec (:itemCount m)))
-                                                         "StcmfRedistributedFood" (assoc m
-                                                                                         :foodDestination (get-in m [:destination :name]))
-                                                         "FrshrReusedMaterial" (assoc m
-                                                                                      :materialCategory (get-in m [:material :name])))
-                                      m3               (assoc m2 
-                                                              :batchKg (condp = typename
-                                                                         "AceReusedFurniture" (* (:furnitureItemKg m2) 
-                                                                                                 (:furnitureItemCount m2))
-                                                                         "StcmfRedistributedFood" (bigdec (:batchKg m2))
-                                                                         "FrshrReusedMaterial" (bigdec (:batchKg m2))))
-                                      refdata-mappings (condp = typename
-                                                         "AceReusedFurniture" (get-in m3 [:description :refDataConnectors])
-                                                         "StcmfRedistributedFood" (get-in m3 [:destination :refDataConnectors])
-                                                         "FrshrReusedMaterial" (get-in m3 [:material :refDataConnectors]))]
-                                  (for [refdata-mapping refdata-mappings]
-                                    (let [m4 (assoc m3
-                                                    :enabler (get-in refdata-mapping [:enabler :name])
-                                                    :process (get-in refdata-mapping [:refProcess :name])
-                                                    :wasteStream (get-in refdata-mapping [:refMaterial :wasteStream])
-                                                    :batchKg (* (:batchKg m3) 
-                                                                (bigdec (:fraction refdata-mapping))))]
-                                      (assoc m4 
-                                             :carbonSavingCo2eKg (* (:batchKg m4) 
-                                                                    (bigdec (get-in refdata-mapping [:refMaterial :carbonWeighting]))))))))))
-                       flatten
+                       (-> model/queries :opsWasteReduction :result-parser)
                        (sort-by (juxt :from :to :enabler :process :wasteStream))
                        (conj [[:from :to :enabler :process :wasteStream :batchKg :carbonSavingCo2eKg :furnitureCategory :furnitureSubcategory :foodDestination :materialCategory]])))))
 

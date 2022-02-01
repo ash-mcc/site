@@ -3,7 +3,8 @@
    [cljs.core.async :as async]
    [reagent.core :as r]
    [cljs-http.client :as http]
-   ["ag-grid-react" :as ag-grid]))
+   ["ag-grid-react" :as ag-grid]
+   [dcs.pasi.model :as model]))
 
 
 ;; state (and more later)
@@ -21,7 +22,7 @@
       (response-handler response))))
 
 
-(defn response-handler [map-parser params response]
+(defn response-handler [result-parser params response]
   (let [status (:status response)]
     (js/console.log "Status code" status)
     (when (= 200 status)
@@ -36,7 +37,7 @@
                      first)]
         (->> coll
              (keep-indexed (fn [index item] (assoc item :rowId (inc index))))
-             (map map-parser)
+             result-parser
              (#(do 
                  %))
              (#(.successCallback
@@ -49,39 +50,19 @@
 
 
 (defn zwsCarbonMetric [url params]
-  (let [graphql "query {
-                   zwsCarbonMetric {
-                     id
-                     wasteStream
-                     carbonWeighting
-                   } 
-                 }"
-        map-parser identity
+  (let [graphql (-> model/queries :zwsCarbonMetric :graphql)
+        result-parser (-> model/queries :zwsCarbonMetric :result-parser)
         col-defs [{:field "rowId" :filter "agNumberColumnFilter"}
                   {:field "id" :hide  true}
                   {:field "wasteStream"}
                   {:field "carbonWeighting" :editable true}]
-        response-handler' (partial response-handler map-parser params)]
+        response-handler' (partial response-handler result-parser params)]
     (.setColumnDefs @grid-api-component-holder (clj->js col-defs)) ;; hack to set the columnDefs to 'match' the expected data
     (http-call url graphql response-handler')))
 
 (defn aceReusedFurniture [url params]
-  (let [graphql "query {
-                   aceReusedFurniture {
-                     id
-                     from
-                     to
-                     description {
-                       category
-                       subcategory
-                     }
-                     itemCount
-                   }
-                 }"
-        map-parser (fn [m]
-                     (assoc m
-                            :category (get-in m [:description :category])
-                            :subcategory (get-in m [:description :subcategory])))
+  (let [graphql (-> model/queries :aceReusedFurniture :graphql)
+        result-parser (-> model/queries :aceReusedFurniture :result-parser)
         col-defs [{:field "rowId" :filter "agNumberColumnFilter"}
                   {:field "id" :hide  true}
                   {:field "from"}
@@ -89,25 +70,38 @@
                   {:field "category"}
                   {:field "subcategory"}
                   {:field "itemCount" :editable true}]
-        response-handler' (partial response-handler map-parser params)]
+        response-handler' (partial response-handler result-parser params)]
     (.setColumnDefs @grid-api-component-holder (clj->js col-defs)) ;; hack to set the columnDefs to 'match' the expected data
     (http-call url graphql response-handler')))
 
 (defn opsOrg [url params]
-  (let [graphql "query {
-                   opsOrg {
-                     id
-                     abbr
-                     name
-                     qid
-                   }
-                 }"
-        map-parser identity
+  (let [graphql (-> model/queries :opsOrg :graphql)
+        result-parser (-> model/queries :opsOrg :result-parser)
         col-defs [{:field "rowId" :filter "agNumberColumnFilter"}
                   {:field "id" :hide  true}
                   {:field "abbr"}
                   {:field "name" :editable true}]
-        response-handler' (partial response-handler map-parser params)]
+        response-handler' (partial response-handler result-parser params)]
+    (.setColumnDefs @grid-api-component-holder (clj->js col-defs)) ;; hack to set the columnDefs to 'match' the expected data
+    (http-call url graphql response-handler')))
+
+(defn opsWasteReduction [url params]
+  (let [graphql (-> model/queries :opsWasteReduction :graphql)
+        result-parser (-> model/queries :opsWasteReduction :result-parser)
+        col-defs [{:field "rowId" :filter "agNumberColumnFilter"}
+                  {:field "id" :hide  true}
+                  {:field "from"} 
+                  {:field "to"} 
+                  {:field "enabler"} 
+                  {:field "process"} 
+                  {:field "wasteStream"} 
+                  {:field "batchKg"} 
+                  {:field "carbonSavingCo2eKg"} 
+                  {:field "furnitureCategory"} 
+                  {:field "furnitureSubcategory"} 
+                  {:field "foodDestination"} 
+                  {:field "materialCategory"}]
+        response-handler' (partial response-handler result-parser params)]
     (.setColumnDefs @grid-api-component-holder (clj->js col-defs)) ;; hack to set the columnDefs to 'match' the expected data
     (http-call url graphql response-handler')))
 
@@ -117,11 +111,13 @@
   (condp = s
     "zwsCarbonMetric"    zwsCarbonMetric
     "opsOrg"             opsOrg
-    "aceReusedFurniture" aceReusedFurniture))
+    "aceReusedFurniture" aceReusedFurniture
+    "opsWasteReduction"  opsWasteReduction))
 (def opt-list
   [[1 "zwsCarbonMetric"]
    [2 "opsOrg"]
-   [3 "aceReusedFurniture"]])
+   [3 "aceReusedFurniture"]
+   [4 "opsWasteReduction"]])
 
 
 ;; (more) state

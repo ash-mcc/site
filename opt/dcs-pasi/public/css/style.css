@@ -1,0 +1,199 @@
+
+/* Leaflet ------------------------------ */
+
+.leaflet-container {
+    z-index:0;
+    min-height: 600px;
+}
+
+.leaflet-popup-content-wrapper {
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+.leaflet-popup-tip-container {
+    display: none !important;
+}
+
+
+/* The "league" table ------------------------------ */
+
+#league-table {
+    font-size: x-small;
+}
+
+/* The "footnote references" on the regional dashboard page ------------------------------ */
+
+#footnote-ref {
+    font-size: x-small;
+    position: relative;
+    top: -0.5rem;
+    left: 1rem;
+} 
+
+/* The "easier open data" tables ------------------------------ */
+
+#easier-table-fff1e5 {
+    font-size: small;
+    background-color: #fff1e5;
+}
+
+#easier-table-f2dfce {
+    font-size: small;
+    background-color: #f2dfce;
+}
+
+#easier-table-default {
+    font-size: small;
+}
+
+
+
+/* Brand logo ------------------------------ */
+
+.brand-logo {
+ width: 32px;
+ margin-right: 10px;
+}
+
+/* Footer ------------------------------ */
+
+.footer {
+    text-align: center;
+    font-size: x-small;
+    padding: 2rem 1rem 2rem !important;
+}
+
+/* Make a div standout on-hover ------------------------- */
+
+#standout:hover {
+    transform: translate3D(0,-1px,0) scale(1.01); /* move up slightly and zoom in */
+    box-shadow: 2px 6px 12px rgba(39,44,49,.07), 1px 3px 6px rgba(39,44,49,.04);
+    transition: all .4s ease; /* zoom in */
+}
+
+/* For a hero with an image background ------------------------- */
+.hero.has-background {
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-background {
+    position: absolute;
+    object-fit: cover;
+    object-position: center center;
+    width: 100%;
+    height: 100%;
+  }
+  .hero-background.is-transparent {
+    opacity: 0.1;
+  }
+
+
+/* Navbar dynamics ------------------------------ */
+
+/*
+.has-dropdown label[class="navbar-link"]::after {
+	transform: rotate(-135deg);
+	transition: transform 0.2s;
+}
+.has-dropdown label[class="navbar-link is-active"]::after {
+	transform: rotate(-45deg);
+	transition: transform 0.2s;
+}
+*/
+
+
+
+/* Navbar sundry ------------------------------ */
+
+
+/* Specify this using sass instead? */
+.navbar-divider {
+    background-color: #4D4637; /* 'richbrown' */
+}
+
+/*
+.navbar-content {
+    white-space: unset !important;
+    max-width: 400px;
+}
+*/
+
+/* Allow for the navbar area when scrolling-into-view a specific element (doesn't work in Safari) */
+/*Commented out and instead using a JS workaround for Safari
+[id] {
+  scroll-margin-top: 3rem;
+}
+*/
+
+/* Hack to make the line along the bottom border of tabs, show up when the tabs are nested within Bulma's content-type elements */
+.tabs > ul > li {
+    border-bottom: 1px solid;
+}
+
+
+/* Annotation formatting ------------------- */
+
+/* Hack to format a table a bit like in a VL tooltip */
+#vg-tooltip-like {
+    font-size: small;
+    background-color: white;
+    opacity: 0.95;
+    padding: 8px;
+    font-family: sans-serif;
+    font-size: 11px;
+    border-radius: 3px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    border-spacing: 0;
+    background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid #d9d9d9;
+  color: black;
+  width: 370px;
+}
+#vg-tooltip-like tr {
+    border: none;
+}
+#vg-tooltip-like td {
+    overflow: hidden;
+        text-overflow: ellipsis;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        border: 0;
+}
+#vg-tooltip-like td.key {
+    color: #808080;
+          max-width: 150px;
+          text-align: right;
+          padding-right: 4px;
+}
+#vg-tooltip-like td.value {
+    display: block;
+          max-width: 300px;
+          max-height: 12em;
+          text-align: left;
+}
+
+
+/* Hack to make a table td in a real VL tooltip pop-up, a little taller. */ 
+div.vg-tooltip table tbody tr td.value {
+    max-height: 12em !important;
+}
+
+
+/* Hack to size the iframe that pulls a static HTML page that was output by the literal programming tool. */
+.iframe-row-container {
+    display: flex; 
+    width: 100%; 
+    height: 100%; 
+    flex-direction: column; 
+    overflow: hidden;
+}
+.non-iframe-row {
+    background-color: grey; 
+}
+.iframe-row { 
+    flex-grow: 1; 
+    border: none; 
+    margin: 0; 
+    padding: 0; 
+}

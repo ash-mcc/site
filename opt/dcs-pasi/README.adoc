@@ -1,18 +1,78 @@
 = dcs-pasi
 
-This _installs_ the PASI functionality onto Site.
+This repository contains the source code, and the build and deployment instructions for PASI.
 
-== Install
+The development of PASI is one of the outcomes of the Data Commons Scotland research project.
 
-The `deploy.sh` script uses Site's command line tool.
-You'll probably need to edit `deploy.sh` to set a password.
+WARNING: PASI is at an exploratory stage and this is mostly _placeholder_ content.
 
-[source, bash]
+== Server-side 
+
+=== Prerequisites
+
+* Git 2.24.0 (_-ish_)
+* JUXT Site 
+
+=== Run JUXT Site
+
+* Select `../../deps.edn` to start a Clojure REPL with (project type `deps.edn` and alias `:prod`) 
+* Open the `./src/dcs/pasi/repl_cmds.clj` file and (in the REPL) run its form down to and including `(start)` 
+
+=== Deploy PASI's server-side onto a running JUXT Site
+
+[bash]
 ----
-cd opt/dcs-pasi
+# Make it easier to use JUXT Site's command line tool (`site`)
+export PATH=$PATH:/Users/amc/workspace/ash-mcc/site/bin/
+
+# The `deploy.sh` script uses JUXT Site's command line tool
+# You'll probably need to edit `deploy.sh` to set a password
 ./deploy
 ----
 
-== Use
+=== Upload seed data
 
-TODO (this is all at a very early, investigatory phase at the moment)
+* Open the `./src/dcs/pasi/command.clj` file and (in the REPL) run all of its forms 
+
+
+== Webapp 
+
+=== Prerequisites
+
+* Git 2.24.0 (_-ish_)
+* npm
+* shadow-cljs
+
+=== Building and running
+
+[bash]
+----
+cd opt/dcs-pasi
+
+# Install any npm controlled libs (probably need to firstly run: shadow-cljs compile app )
+npm install
+
+# In a *non-fresh* install, I've used the following to 'force' install stuff...
+#     npm install ag-grid-react ag-grid-community
+#  or
+#     npm init -y
+
+# To make shadow-cljs directly available on to the command line...
+#     npm install -g shadow-cljs
+
+
+# Compile a build once and exit
+shadow-cljs compile app
+
+# ! Make sure that dcs-pasi is running on Site before running the webapp
+
+# Compile and watch (the resulting webapp will be at http://localhost:3000 )
+shadow-cljs watch app
+
+# Connect to REPL for the build (available while watch is running)
+shadow-cljs cljs-repl app
+
+# Running a release build optimized for production use
+shadow-cljs release app
+----
+

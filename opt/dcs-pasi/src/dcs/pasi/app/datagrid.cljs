@@ -1,6 +1,7 @@
 (ns dcs.pasi.app.datagrid
   (:require
    [cljs.core.async :as async]
+   [cljs.spec.alpha :as s]
    [reagent.core :as r]
    [cljs-http.client :as http]
    ["ag-grid-react" :as ag-grid]
@@ -49,83 +50,50 @@
 (def url "http://localhost:2021/pasi/graphql")
 
 
-(defn zwsCarbonMetric [url params]
-  (let [graphql (-> model/queries :zwsCarbonMetric :graphql)
-        result-parser (-> model/queries :zwsCarbonMetric :result-parser)
-        col-defs [{:field "rowId" :filter "agNumberColumnFilter"}
-                  {:field "id" :hide  true}
-                  {:field "wasteStream"}
-                  {:field "carbonWeighting" :editable true}]
-        response-handler' (partial response-handler result-parser params)]
-    (.setColumnDefs @grid-api-component-holder (clj->js col-defs)) ;; hack to set the columnDefs to 'match' the expected data
-    (http-call url graphql response-handler')))
-
-(defn aceReusedFurniture [url params]
-  (let [graphql (-> model/queries :aceReusedFurniture :graphql)
-        result-parser (-> model/queries :aceReusedFurniture :result-parser)
-        col-defs [{:field "rowId" :filter "agNumberColumnFilter"}
-                  {:field "id" :hide  true}
-                  {:field "from"}
-                  {:field "to"}
-                  {:field "category"}
-                  {:field "subcategory"}
-                  {:field "itemCount" :editable true}]
-        response-handler' (partial response-handler result-parser params)]
-    (.setColumnDefs @grid-api-component-holder (clj->js col-defs)) ;; hack to set the columnDefs to 'match' the expected data
-    (http-call url graphql response-handler')))
-
-(defn opsOrg [url params]
-  (let [graphql (-> model/queries :opsOrg :graphql)
-        result-parser (-> model/queries :opsOrg :result-parser)
-        col-defs [{:field "rowId" :filter "agNumberColumnFilter"}
-                  {:field "id" :hide  true}
-                  {:field "abbr"}
-                  {:field "name" :editable true}]
-        response-handler' (partial response-handler result-parser params)]
-    (.setColumnDefs @grid-api-component-holder (clj->js col-defs)) ;; hack to set the columnDefs to 'match' the expected data
-    (http-call url graphql response-handler')))
-
-(defn opsWasteReduction [url params]
-  (let [graphql (-> model/queries :opsWasteReduction :graphql)
-        result-parser (-> model/queries :opsWasteReduction :result-parser)
-        col-defs [{:field "rowId" :filter "agNumberColumnFilter"}
-                  {:field "id" :hide  true}
-                  {:field "from"} 
-                  {:field "to"} 
-                  {:field "enabler"} 
-                  {:field "process"} 
-                  {:field "wasteStream"} 
-                  {:field "batchKg"} 
-                  {:field "carbonSavingCo2eKg"} 
-                  {:field "furnitureCategory"} 
-                  {:field "furnitureSubcategory"} 
-                  {:field "foodDestination"} 
-                  {:field "materialCategory"}]
-        response-handler' (partial response-handler result-parser params)]
+(defn query [params type-kw editable-fields url]
+  {:pre [(s/valid? keyword? type-kw)
+         (s/valid? set? editable-fields)
+         (s/valid? string? url)]}
+  (let [model (type-kw model/queries)
+        graphql  (:graphql model)
+        results-parser (:results-parser model)
+        field-order    (:field-order model)
+        col-defs (->> field-order
+                      (remove #(= :id %))
+                      (map #(merge {:field (name %)}
+                                   (when (= :rowId %) {:filter "agNumberColumnFilter"})
+                                   (when (contains? editable-fields %) {:editable true}))))
+        response-handler' (partial response-handler results-parser params)]
     (.setColumnDefs @grid-api-component-holder (clj->js col-defs)) ;; hack to set the columnDefs to 'match' the expected data
     (http-call url graphql response-handler')))
 
 ;; Can't (in general) rely on resolving a string to a function in running cljs code 
 ;; so our wiring has to be hard, and at an appropriate time
-(defn str->fetch-fn [^String s]
-  (condp = s
-    "zwsCarbonMetric"    zwsCarbonMetric
-    "opsOrg"             opsOrg
-    "aceReusedFurniture" aceReusedFurniture
-    "opsWasteReduction"  opsWasteReduction))
-(def opt-list
-  [[1 "zwsCarbonMetric"]
-   [2 "opsOrg"]
-   [3 "aceReusedFurniture"]
-   [4 "opsWasteReduction"]])
+(def types 
+  {:zwsCarbonMetric         {:editable-fields #{:carbonWeighting}}
+   :aceFurnitureDescription {:editable-fields #{:itemKg}}
+   :aceReusedFurniture      {:editable-fields #{:itemCount}}
+   :stcmfSource             {:editable-fields #{}}
+   :stcmfDestination        {:editable-fields #{}}
+   :stcmfIncomingFood       {:editable-fields #{:batchKg}}
+   :stcmfRedistributedFood  {:editable-fields #{:batchKg}}
+   :frshrMaterialCategory   {:editable-fields #{}}
+   :frshrReusedMaterial     {:editable-fields #{:batchKg}}
+   :opsAceToRefData         {:editable-fields #{:fraction}}
+   :opsStcmfToRefData       {:editable-fields #{:fraction}}
+   :opsFrshrToRefData       {:editable-fields #{:fraction}}
+   :opsOrg                  {:editable-fields #{:name :qid}}
+   :opsProcess              {:editable-fields #{}}
+   :opsWasteReduction       {:editable-fields #{}}})
 
 
 ;; (more) state
-(def type-indicator-holder (r/atom (second (first opt-list))))
+(def type-kw-holder (r/atom (first (keys types))))
 
 
-
-(def get-rows (partial aceReusedFurniture url))
+(defn get-rows [params]
+  (let [type-kw @type-kw-holder]
+    (query params type-kw (:editable-fields (type-kw types)) url)))
 
 
 (def grid-options
@@ -161,12 +129,13 @@
                                                     (.preventDefault event)
                                                     (toggle-is-activate :region-dropdown)
                                                     (js/console.log (str "Do something with: " m-code ", " m-name))
-                                                    (js/console.log (str "before: " @type-indicator-holder))
-                                                    (reset! type-indicator-holder m-name)
-                                                    (js/console.log (str "after: " @type-indicator-holder))
-                                                    (let [fetch-fn    (str->fetch-fn @type-indicator-holder)
-                                                          get-rows-fn (partial fetch-fn url)] ;; hack
-                                                      (.setDatasource @grid-api-component-holder #js{:getRows get-rows-fn})) )}
+                                                    (js/console.log (str "before: " @type-kw-holder))
+                                                    (reset! type-kw-holder (keyword m-name))
+                                                    (js/console.log (str "after: " @type-kw-holder))
+                                                    ;; The get-rows defn hasn't changed 
+                                                    ;; - reassinging it only to prompt a re-fetch (which will use the new type-kw).
+                                                    ;; Probably there is a nicer way to force the re-fetch.
+                                                    (.setDatasource @grid-api-component-holder #js{:getRows get-rows}))}
                       m-name])
                    values))]]])
 
@@ -175,7 +144,7 @@
   "Put me on a page"
   []
   [:div
-   [dropdown @type-indicator-holder opt-list]
+   [dropdown @type-kw-holder (keep-indexed (fn [ix k] [ix (name k)]) (keys types))]
    [:div.ag-theme-alpine {:style {:height 500
                                   :width  1000
                                   :color  "purple"}}

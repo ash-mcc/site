@@ -1,71 +1,17 @@
 (ns dcs.pasi.app.datagrid
   (:require
-   [cljs.core.async :as async]
-   [cljs.spec.alpha :as s]
    [reagent.core :as r]
-   [cljs-http.client :as http]
    ["ag-grid-react" :as ag-grid]
-   [dcs.pasi.model :as model]))
+   [dcs.pasi.app.query :as query]
+   [dcs.pasi.app.dropdown :as dropdown]))
 
 
 ;; state (and more later)
 (def grid-api-component-holder (r/atom nil))
 
 
-(defn http-call [url ^String graphql response-handler]
-  (async/go 
-    (let [response (async/<! (http/post 
-                              url 
-                              {:with-credentials? false
-                               :headers           {"Content-type" "application/json"}
-                               :json-params       {:query     graphql
-                                                   :variables nil}}))]
-      (response-handler response))))
-
-
-(defn response-handler [result-parser params response]
-  (let [status (:status response)]
-    (js/console.log "Status code" status)
-    (when (= 200 status)
-      (let [coll (-> response
-                     :body
-                     ;; assume that it was an application/json response 
-                     ;; which will have prompted cljs-http to have 
-                     ;; converted the JSON data in the body, to Clojure data
-                     :data
-                     ;; assume a map with a single entry: get the value of that entry
-                     vals
-                     first)]
-        (->> coll
-             (keep-indexed (fn [index item] (assoc item :rowId (inc index))))
-             result-parser
-             (#(do 
-                 %))
-             (#(.successCallback
-                ^js params
-                (clj->js %)
-                (clj->js (count %)))))))))
-
-
 (def url "http://localhost:2021/pasi/graphql")
 
-
-(defn query [params type-kw editable-fields url]
-  {:pre [(s/valid? keyword? type-kw)
-         (s/valid? set? editable-fields)
-         (s/valid? string? url)]}
-  (let [model (type-kw model/queries)
-        graphql  (:graphql model)
-        results-parser (:results-parser model)
-        field-order    (:field-order model)
-        col-defs (->> field-order
-                      (remove #(= :id %))
-                      (map #(merge {:field (name %)}
-                                   (when (= :rowId %) {:filter "agNumberColumnFilter"})
-                                   (when (contains? editable-fields %) {:editable true}))))
-        response-handler' (partial response-handler results-parser params)]
-    (.setColumnDefs @grid-api-component-holder (clj->js col-defs)) ;; hack to set the columnDefs to 'match' the expected data
-    (http-call url graphql response-handler')))
 
 ;; Can't (in general) rely on resolving a string to a function in running cljs code 
 ;; so our wiring has to be hard, and at an appropriate time
@@ -93,7 +39,7 @@
 
 (defn get-rows [params]
   (let [type-kw @type-kw-holder]
-    (query params type-kw (:editable-fields (type-kw types)) url)))
+    (query/query @grid-api-component-holder params type-kw (:editable-fields (type-kw types)) url)))
 
 
 (def grid-options
@@ -103,48 +49,30 @@
 
 
 
-(defn toggle-is-activate [id]
-  (let [myClass (.-classList (.getElementById js/document (name id)))]
-    (-> myClass (.toggle "is-active"))))
-
-(defn dropdown [prompt values]
-  [:div#region-dropdown.dropdown
-   [:div.dropdown-trigger
-    [:button.button {:aria-haspopup true
-                     :aria-controls :dropdown-menu
-                     :on-click      (fn [event]
-                                      (.preventDefault event)
-                                      (toggle-is-activate :region-dropdown))}
-     [:span prompt]
-     [:span.icon.is-small
-      [:i.fas.fa-angle-down {:aria-hidden true}]]]]
-   [:div.dropdown-menu {:id :dropdown-menu :role :menu}
-    [:div.dropdown-content
-     (sort-by (fn [item]
-                (:name (second item)))
-              (map (fn [[m-code m-name]]
-                     [:a.dropdown-item {:name m-name
-                                        :key m-code
-                                        :on-click (fn [event]
-                                                    (.preventDefault event)
-                                                    (toggle-is-activate :region-dropdown)
-                                                    (js/console.log (str "Do something with: " m-code ", " m-name))
-                                                    (js/console.log (str "before: " @type-kw-holder))
-                                                    (reset! type-kw-holder (keyword m-name))
-                                                    (js/console.log (str "after: " @type-kw-holder))
-                                                    ;; The get-rows defn hasn't changed 
-                                                    ;; - reassinging it only to prompt a re-fetch (which will use the new type-kw).
-                                                    ;; Probably there is a nicer way to force the re-fetch.
-                                                    (.setDatasource @grid-api-component-holder #js{:getRows get-rows}))}
-                      m-name])
-                   values))]]])
+(defn on-click-handler 
+  [dropdown-id event]
+  (.preventDefault event)
+  (dropdown/toggle-is-activate dropdown-id)
+  (let [s (-> event .-target .-name)]
+    (js/console.log "s:" s)
+    (reset! type-kw-holder (keyword s))
+    ;; The get-rows defn hasn't changed 
+    ;; - reassinging it only to prompt a re-fetch (which will use the new type-kw).
+    ;; Probably there is a nicer way to force the re-fetch.
+    (.setDatasource @grid-api-component-holder #js{:getRows get-rows})))
 
 
 (defn root-div
   "Put me on a page"
   []
   [:div
-   [dropdown @type-kw-holder (keep-indexed (fn [ix k] [ix (name k)]) (keys types))]
+   (let [dropdown-id "chooser"
+         prompt @type-kw-holder
+         values (keep-indexed (fn [ix k] 
+                                [ix (name k)]) 
+                              (keys types))
+         on-click-handler' (partial on-click-handler dropdown-id)]
+     [dropdown/dropdown dropdown-id prompt values on-click-handler'])
    [:div.ag-theme-alpine {:style {:height 500
                                   :width  1000
                                   :color  "purple"}}
@@ -154,6 +82,4 @@
 
 
 
-      
-
-
+  

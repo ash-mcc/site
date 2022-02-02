@@ -277,7 +277,7 @@
                                                     (map (fn [m]
                                                            (let [typename (:__typename m)]
                                                              (when (not (contains? #{"AceReusedFurniture" "StcmfRedistributedFood" "FrshrReusedMaterial"} typename))
-                                                               (throw (Exception. (str "Unexpected typename " typename))))
+                                                               (throw (ex-info (str "Unexpected typename: " typename) {})))
                                                              (let [m2               (condp = typename
                                                                                       "AceReusedFurniture" (assoc m
                                                                                                                   :furnitureCategory (get-in m [:description :category])

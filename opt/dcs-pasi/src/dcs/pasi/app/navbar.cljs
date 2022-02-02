@@ -48,7 +48,7 @@
 
        [:div.navbar-brand
         [:a.navbar-item {:href (rfe/href :dcs.pasi.app.router/datagrid-view)}
-         [:img.brand-logo {:src "img/pasi-circle.png" :alt "PASI logo"}]
+         [:img.brand-logo {:src "img/pasi-logo.png" :alt "PASI logo"}]
          "Participatory Accounting of Social Impacts (" [:em "proof-of-concept"] ")"]
         [:a.navbar-item]
 
@@ -126,14 +126,26 @@
           [:div.navbar-dropdown.is-right
            
            [:div.navbar-item
-            [:p.has-text-weight-bold [:span "Participants/roles"]]]
+            [:p.has-text-weight-bold [:span "Choose to be a participant"]]]
            
-           (navbar-clickable "ACE"
-                             [:span "Alloa Community Enterprises"]
-                             (rfe/href :dcs.pasi.app.router/datagrid-view))
-           (navbar-clickable "DCS"
-                             [:span "Data Commons Scotland"]
-                             (rfe/href :dcs.pasi.app.router/datagrid-view))]]
+           (navbar-clickable "ACE Admin"
+                             [:span "Alloa Community Enterprises - Administrator"]
+                             (rfe/href :dcs.pasi.app.router/datagrid-view nil {:participant :ace}))
+           (navbar-clickable "ANON"
+                             [:span "Anonymous public access"]
+                             (rfe/href :dcs.pasi.app.router/datagrid-view nil {:participant :anon}))
+           (navbar-clickable "DCS Admin"
+                             [:span "Data Commons Scotland - Administrator"]
+                             (rfe/href :dcs.pasi.app.router/datagrid-view nil {:participant :dcs}))
+           (navbar-clickable "FRSHR Admin"
+                             [:span "The Fair Share - Administrator"]
+                             (rfe/href :dcs.pasi.app.router/datagrid-view nil {:participant :frshr}))
+           (navbar-clickable "STCMF Admin"
+                             [:span "Stirling Community Food - Administrator"]
+                             (rfe/href :dcs.pasi.app.router/datagrid-view nil {:participant :stcmf}))
+           (navbar-clickable "ZWS Admin"
+                             [:span "Zero Waste Scotland - Administrator"]
+                             (rfe/href :dcs.pasi.app.router/datagrid-view nil {:participant :zws}))]]
 
          ;; Data
          #_[:a.navbar-item

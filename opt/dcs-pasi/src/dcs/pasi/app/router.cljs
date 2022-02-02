@@ -9,7 +9,8 @@
 (def routes
   [["/"
     {:name ::datagrid-view
-     :view datagrid-view/root-div}]
+     :view datagrid-view/root-div
+     :parameters {:query {(ds/opt :participant) string?}}}]
    #_["/todo"
     {:name ::todo-view
      :view todo-view/root-div}]

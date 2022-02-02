@@ -2,6 +2,7 @@
   (:require
    [reagent.core :as r]
    ["ag-grid-react" :as ag-grid]
+   [dcs.pasi.app.state :as state]
    [dcs.pasi.app.query :as query]
    [dcs.pasi.app.view.dropdown :as dropdown]))
 
@@ -60,22 +61,26 @@
 
 
 (defn root-div
-  []
-  [:div
-   
-   (let [dropdown-id "chooser"
-         prompt @type-kw-holder
-         values (keep-indexed (fn [ix k] 
-                                [ix (name k)]) 
-                              (keys types))
-         on-click-handler' (partial on-click-handler dropdown-id)]
-     [dropdown/dropdown dropdown-id prompt values on-click-handler'])
-   
-   [:div.ag-theme-alpine {:style {:height 500
-                                  :width  1000
-                                  :color  "purple"}}
-    [:> ag-grid/AgGridReact
-     {:gridOptions grid-options}]]])
+  [route]
+  (let [participant (some-> route :parameters :query :participant)]
+    (reset! state/participant-cursor participant)
+    (js/console.log "@state/participant-cursor:" @state/participant-cursor)
+    
+    [:div
+     
+     (let [dropdown-id       "chooser"
+           prompt            @type-kw-holder
+           values            (keep-indexed (fn [ix k] 
+                                             [ix (name k)]) 
+                                           (keys types))
+           on-click-handler' (partial on-click-handler dropdown-id)]
+       [dropdown/dropdown dropdown-id prompt values on-click-handler'])
+     
+     [:div.ag-theme-alpine {:style {:height 500
+                                    :width  1000
+                                    :color  "purple"}}
+      [:> ag-grid/AgGridReact
+       {:gridOptions grid-options}]]]))
 
 
 

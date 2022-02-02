@@ -108,9 +108,9 @@
           (:material m)
           (:batchKg m)))
 
-(defn OpsAceToRefData-upsert-fn [m]
+(defn DcsAceToRefData-upsert-fn [m]
   (format "mutation {
-             upsertOpsAceToRefData(
+             upsertDcsAceToRefData(
                category: \"%s\",
                subcategory: \"%s\",
                fraction: %s,
@@ -124,9 +124,9 @@
           (:fraction m)
           (:refMaterial m)))
 
-(defn OpsStcmfToRefData-upsert-fn [m]
+(defn DcsStcmfToRefData-upsert-fn [m]
   (format "mutation {
-             upsertOpsStcmfToRefData(
+             upsertDcsStcmfToRefData(
                destination: \"%s\",
                fraction: %s,
                refProcess: \"%s\",
@@ -139,9 +139,9 @@
           (:refProcess m)
           (:refMaterial m)))
 
-(defn OpsFrshrToRefData-upsert-fn [m]
+(defn DcsFrshrToRefData-upsert-fn [m]
   (format "mutation {
-             upsertOpsFrshrToRefData(
+             upsertDcsFrshrToRefData(
                material: \"%s\",
                fraction: %s,
                refProcess: \"%s\",
@@ -154,9 +154,9 @@
           (:refProcess m)
           (:refMaterial m)))
 
-(defn OpsOrg-upsert-fn [m]
+(defn DcsOrg-upsert-fn [m]
   (format "mutation {
-             upsertOpsOrg(
+             upsertDcsOrg(
                abbr: \"%s\",
                name: \"%s\",
                qid: \"%s\"
@@ -166,17 +166,17 @@
           (:name m)
           (:qid m)))
 
-(defn OpsProcess-upsert-fn [m]
+(defn DcsProcess-upsert-fn [m]
   (format "mutation {
-             upsertOpsProcess(
+             upsertDcsProcess(
                name: \"%s\"
              ) { id }
            }"
           (:name m)))
 
-(defn OpsWasteReduction-upsert-fn [m]
+(defn DcsWasteReduction-upsert-fn [m]
   (format "mutation {
-             upsertOpsWasteReduction(
+             upsertDcsWasteReduction(
                carbonSaving: %s,
                sourceRecord: \"%s\"
              ) { id }
@@ -184,9 +184,9 @@
           (:carbonSaving m)
           (:sourceRecord m)))
 
-(defn OpsWasteReduction-delete-fn [m]
+(defn DcsWasteReduction-delete-fn [m]
   (format "mutation {
-             deleteOpsWasteReduction(
+             deleteDcsWasteReduction(
                id: \"%s\"
              ) { id }
            }"

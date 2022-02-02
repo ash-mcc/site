@@ -128,7 +128,7 @@
 (-> (xt-node)
     xt/db
     (xt/entity
-     "pasi:ent/OpsAceToRefData/Soft Furniture/Mattress, single/Textiles and Footwear")
+     "pasi:ent/DcsAceToRefData/Soft Furniture/Mattress, single/Textiles and Footwear")
     pp/pprint)
 
 ;; Remove all PASI ents
@@ -143,7 +143,7 @@
 #_(-> (xt-node)
       xt/db
       (xt/q `{:find  [e]
-              :where [[e :xt/id "pasi:ent/OpsOpsWasteReduction/pasi:ent/AceReusedFurniture/2018-03-01/2019-03-01/Furniture/Chair, Kitchen, Dining or Wooden"]]})
+              :where [[e :xt/id "pasi:ent/DcsWasteReduction/pasi:ent/AceReusedFurniture/2018-03-01/2019-03-01/Furniture/Chair, Kitchen, Dining or Wooden"]]})
       (->>
        (map #(xt/submit-tx (xt-node) [[::xt/delete (first %)]]))))
 
@@ -347,7 +347,7 @@
          ?description pasi:category ?furnitureCategory ;
                       pasi:subcategory ?furnitureSubcategory ;
                       pasi:itemKg ?itemKg .
-         ?opsAceToRefData pasi:type \"OpsAceToRefData\" ;
+         ?dcsAceToRefData pasi:type \"DcsAceToRefData\" ;
                           pasi:description ?description ;
                           pasi:fraction ?fraction ;
                           pasi:refMaterial/pasi:wasteStream ?wasteStream ;
@@ -378,7 +378,7 @@
                              pasi:batchKg ?origBatchKg ;
                              pasi:destination ?destination .
          ?destination pasi:name ?foodDestination .
-         ?opsAceToRefData pasi:type \"OpsStcmfToRefData\" ;
+         ?dcsAceToRefData pasi:type \"DcsStcmfToRefData\" ;
                           pasi:destination ?destination ;
                           pasi:fraction ?fraction ;
                           pasi:refMaterial/pasi:wasteStream ?ref_wasteStream ;

@@ -6,13 +6,6 @@
    [dcs.pasi.app.dropdown :as dropdown]))
 
 
-;; state (and more later)
-(def grid-api-component-holder (r/atom nil))
-
-
-(def url "http://localhost:2021/pasi/graphql")
-
-
 ;; Can't (in general) rely on resolving a string to a function in running cljs code 
 ;; so our wiring has to be hard, and at an appropriate time
 (def types 
@@ -25,16 +18,20 @@
    :stcmfRedistributedFood  {:editable-fields #{:batchKg}}
    :frshrMaterialCategory   {:editable-fields #{}}
    :frshrReusedMaterial     {:editable-fields #{:batchKg}}
-   :opsAceToRefData         {:editable-fields #{:fraction}}
-   :opsStcmfToRefData       {:editable-fields #{:fraction}}
-   :opsFrshrToRefData       {:editable-fields #{:fraction}}
-   :opsOrg                  {:editable-fields #{:name :qid}}
-   :opsProcess              {:editable-fields #{}}
-   :opsWasteReduction       {:editable-fields #{}}})
+   :dcsAceToRefData         {:editable-fields #{:fraction}}
+   :dcsStcmfToRefData       {:editable-fields #{:fraction}}
+   :dcsFrshrToRefData       {:editable-fields #{:fraction}}
+   :dcsOrg                  {:editable-fields #{:name :qid}}
+   :dcsProcess              {:editable-fields #{}}
+   :dcsWasteReduction       {:editable-fields #{}}})
 
 
-;; (more) state
+;; state 
+(def grid-api-component-holder (r/atom nil))
 (def type-kw-holder (r/atom (first (keys types))))
+
+
+(def url "http://localhost:2021/pasi/graphql")
 
 
 (defn get-rows [params]
@@ -48,8 +45,8 @@
    :onGridReady #(reset! grid-api-component-holder (.-api %))})
 
 
-
 (defn on-click-handler 
+  "controls the grid's datasource"
   [dropdown-id event]
   (.preventDefault event)
   (dropdown/toggle-is-activate dropdown-id)
@@ -63,7 +60,6 @@
 
 
 (defn root-div
-  "Put me on a page"
   []
   [:div
    (let [dropdown-id "chooser"

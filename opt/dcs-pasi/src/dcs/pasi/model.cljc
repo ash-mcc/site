@@ -117,8 +117,8 @@
                                                            :material (get-in % [:material :name]))
                                                    coll))
                              :field-order [:id :from :to :material :batchKg]}
-   :opsAceToRefData         {:graphql "query {
-                   opsAceToRefData {
+   :dcsAceToRefData         {:graphql "query {
+                   dcsAceToRefData {
                      id
                      description {
                        category
@@ -137,8 +137,8 @@
                                                            :wasteStream (get-in % [:refMaterial :wasteStream]))
                                                    coll))
                              :field-order [:id :category :subcategory :wasteStream :fraction]}
-   :opsStcmfToRefData       {:graphql       "query {
-                   opsStcmfToRefData {
+   :dcsStcmfToRefData       {:graphql       "query {
+                   dcsStcmfToRefData {
                      id
                      destination {
                        name
@@ -159,8 +159,8 @@
                                                            :wasteStream (get-in % [:refMaterial :wasteStream]))
                                                    coll))
                              :field-order [:id :destination :refProcess :wasteStream :fraction]}
-   :opsFrshrToRefData       {:graphql "query {
-                   opsFrshrToRefData {
+   :dcsFrshrToRefData       {:graphql "query {
+                   dcsFrshrToRefData {
                      id
                      material {
                        name
@@ -181,8 +181,8 @@
                                                            :wasteStream (get-in % [:refMaterial :wasteStream]))
                                                    coll))
                              :field-order [:id :material :refProcess :wasteStream :fraction]}
-   :opsOrg                  {:graphql "query {
-                   opsOrg {
+   :dcsOrg                  {:graphql "query {
+                   dcsOrg {
                      id
                      abbr
                      name
@@ -191,16 +191,16 @@
                  }"
                              :results-parser identity
                              :field-order [:id :abbr :name :qid]}
-   :opsProcess              {:graphql "query {
-                   opsProcess {
+   :dcsProcess              {:graphql "query {
+                   dcsProcess {
                      id
                      name
                    }
                  }"
                              :results-parser identity
                              :field-order [:id :name]}
-   :opsWasteReduction       {:graphql        "query {
-                   opsWasteReduction {
+   :dcsWasteReduction       {:graphql        "query {
+                   dcsWasteReduction {
                      __typename
                      ... on AceReusedFurniture {
                        id

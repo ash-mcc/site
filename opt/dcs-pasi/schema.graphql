@@ -167,13 +167,13 @@ type Mutation {
       batchKg: Float! @site(a: "pasi:pred/batchKg")
   ): FrshrReusedMaterial @site(mutation: "update")
 
-  upsertOpsAceToRefData(
+  upsertDcsAceToRefData(
     id: ID
       @site(
         a: "xt/id"
         gen: {
           type: TEMPLATE 
-          template: "pasi:ent/OpsAceToRefData/{{category}}/{{subcategory}}/{{refMaterial}}"
+          template: "pasi:ent/DcsAceToRefData/{{category}}/{{subcategory}}/{{refMaterial}}"
         }
       )
     category: String!
@@ -193,7 +193,7 @@ type Mutation {
         a: "pasi:pred/refProcess"
         gen: {
           type: TEMPLATE 
-          template: "pasi:ent/OpsProcess/{{refProcess}}"
+          template: "pasi:ent/DcsProcess/{{refProcess}}"
         }
       )
     refMaterial: String!
@@ -211,18 +211,18 @@ type Mutation {
         a: "pasi:pred/enabler"
         gen: {
           type: TEMPLATE 
-          template: "pasi:ent/OpsOrg/{{enabler}}"
+          template: "pasi:ent/DcsOrg/{{enabler}}"
         }
       )
-  ): OpsAceToRefData @site(mutation: "update")
+  ): DcsAceToRefData @site(mutation: "update")
 
-  upsertOpsStcmfToRefData(
+  upsertDcsStcmfToRefData(
     id: ID
       @site(
         a: "xt/id"
         gen: {
           type: TEMPLATE 
-          template: "pasi:ent/OpsStcmfToRefData/{{destination}}/{{refProcess}}/{{refMaterial}}"
+          template: "pasi:ent/DcsStcmfToRefData/{{destination}}/{{refProcess}}/{{refMaterial}}"
         }
       )
     destination: String!
@@ -241,7 +241,7 @@ type Mutation {
         a: "pasi:pred/refProcess"
         gen: {
           type: TEMPLATE 
-          template: "pasi:ent/OpsProcess/{{refProcess}}"
+          template: "pasi:ent/DcsProcess/{{refProcess}}"
         }
       )
     refMaterial: String!
@@ -259,18 +259,18 @@ type Mutation {
         a: "pasi:pred/enabler"
         gen: {
           type: TEMPLATE 
-          template: "pasi:ent/OpsOrg/{{enabler}}"
+          template: "pasi:ent/DcsOrg/{{enabler}}"
         }
       )
-  ): OpsStcmfToRefData @site(mutation: "update")
+  ): DcsStcmfToRefData @site(mutation: "update")
 
-  upsertOpsFrshrToRefData(
+  upsertDcsFrshrToRefData(
     id: ID
       @site(
         a: "xt/id"
         gen: {
           type: TEMPLATE 
-          template: "pasi:ent/OpsFrshrToRefData/{{material}}/{{refProcess}}/{{refMaterial}}"
+          template: "pasi:ent/DcsFrshrToRefData/{{material}}/{{refProcess}}/{{refMaterial}}"
         }
       )
     material: String!
@@ -289,7 +289,7 @@ type Mutation {
         a: "pasi:pred/refProcess"
         gen: {
           type: TEMPLATE 
-          template: "pasi:ent/OpsProcess/{{refProcess}}"
+          template: "pasi:ent/DcsProcess/{{refProcess}}"
         }
       )
     refMaterial: String!
@@ -307,41 +307,41 @@ type Mutation {
         a: "pasi:pred/enabler"
         gen: {
           type: TEMPLATE 
-          template: "pasi:ent/OpsOrg/{{enabler}}"
+          template: "pasi:ent/DcsOrg/{{enabler}}"
         }
       )
-  ): OpsFrshrToRefData @site(mutation: "update")
+  ): DcsFrshrToRefData @site(mutation: "update")
 
-  upsertOpsOrg(
+  upsertDcsOrg(
     id: ID
       @site(
         a: "xt/id"
         gen: {
           type: TEMPLATE 
-          template: "pasi:ent/OpsOrg/{{abbr}}"
+          template: "pasi:ent/DcsOrg/{{abbr}}"
         }
       )
     abbr: String! @site(a: "pasi:pred/abbr")
     name: String! @site(a: "pasi:pred/name")
     qid: String @site(a: "pasi:pred/qid")
-  ): OpsOrg @site(mutation: "update")
+  ): DcsOrg @site(mutation: "update")
 
-  upsertOpsProcess(
+  upsertDcsProcess(
     id: ID
       @site(
         a: "xt/id"
         gen: {
           type: TEMPLATE 
-          template: "pasi:ent/OpsProcess/{{name}}"
+          template: "pasi:ent/DcsProcess/{{name}}"
         }
       )
     name: String! @site(a: "pasi:pred/name")
-  ): OpsProcess @site(mutation: "update")
+  ): DcsProcess @site(mutation: "update")
 
   # Just an example of a delete - not yet used
-  deleteOpsProcess(
+  deleteDcsProcess(
     id: ID!
-  ): OpsProcess @site(mutation: "delete")
+  ): DcsProcess @site(mutation: "delete")
 
 }
 
@@ -358,12 +358,12 @@ type Query {
   stcmfRedistributedFood: [StcmfRedistributedFood]!
   frshrMaterialCategory: [FrshrMaterialCategory]!
   frshrReusedMaterial: [FrshrReusedMaterial]!
-  opsAceToRefData: [OpsAceToRefData]!
-  opsStcmfToRefData: [OpsStcmfToRefData]!
-  opsFrshrToRefData: [OpsFrshrToRefData]!
-  opsOrg: [OpsOrg]!
-  opsProcess: [OpsProcess]!
-  opsWasteReduction: [OpsWasteReduction]!
+  dcsAceToRefData: [DcsAceToRefData]!
+  dcsStcmfToRefData: [DcsStcmfToRefData]!
+  dcsFrshrToRefData: [DcsFrshrToRefData]!
+  dcsOrg: [DcsOrg]!
+  dcsProcess: [DcsProcess]!
+  dcsWasteReduction: [DcsWasteReduction]!
     @site(
       q: {
         edn:
@@ -406,13 +406,13 @@ type AceFurnitureDescription {
   "The weight in kilograms of an average item of this furniture subcategory"
   itemKg: Float! @site(a: "pasi:pred/itemKg")
   "The records for mapping this ACE data to reference data"
-  refDataConnectors: [OpsAceToRefData]
+  refDataConnectors: [DcsAceToRefData]
     @site(
       q: {
         edn:
         """
         {:find [e]
-          :where [[e :pasi:pred/type "OpsAceToRefData"]
+          :where [[e :pasi:pred/type "DcsAceToRefData"]
                   [e :pasi:pred/description object]]
          }
         """}
@@ -457,13 +457,13 @@ type StcmfDestination {
   "How the food material got used"
   name: String! @site(a: "pasi:pred/name")
   "The records for mapping this STCMF data to reference data"
-  refDataConnectors: [OpsStcmfToRefData]
+  refDataConnectors: [DcsStcmfToRefData]
     @site(
       q: {
         edn:
         """
         {:find [e]
-          :where [[e :pasi:pred/type "OpsStcmfToRefData"]
+          :where [[e :pasi:pred/type "DcsStcmfToRefData"]
                   [e :pasi:pred/destination object]]
          }
         """}
@@ -528,13 +528,13 @@ type FrshrMaterialCategory {
   name: String! @site(a: "pasi:pred/name")
 
   "The records for mapping this FRSHR data to reference data"
-  refDataConnectors: [OpsFrshrToRefData]
+  refDataConnectors: [DcsFrshrToRefData]
     @site(
       q: {
         edn:
         """
         {:find [e]
-          :where [[e :pasi:pred/type "OpsFrshrToRefData"]
+          :where [[e :pasi:pred/type "DcsFrshrToRefData"]
                   [e :pasi:pred/material object]]
          }
         """}
@@ -568,14 +568,14 @@ type FrshrReusedMaterial {
 }
 
 """
-OPS ACE data to reference data
+DCS ACE data to reference data
 Aside:
-  OpsAceToRefData (etc.) will need to be better named if we expand on the social impacts.
-  E.g.  OpsAceToRefData -> OpsAceToWasteReductionRefData
+  DcsAceToRefData (etc.) will need to be better named if we expand on the social impacts.
+  E.g.  DcsAceToRefData -> DcsAceToWasteReductionRefData
     since if we expand into the accounting of employment reduction as a social impact
-    then we might need an OpsAceToUnemploymentReductionRefData
+    then we might need a DcsAceToUnemploymentReductionRefData
 """
-type OpsAceToRefData {
+type DcsAceToRefData {
   id: ID!
   "The description of the furniture"
   description: AceFurnitureDescription 
@@ -588,10 +588,10 @@ type OpsAceToRefData {
   "The fraction of this ACE material in 1 of the reference material"
   fraction: Float! @site(a: "pasi:pred/fraction")
   "Map to this reference process"
-  refProcess: OpsProcess 
+  refProcess: DcsProcess 
     @site(
       q: { find: [e]
-           where: [[e {keyword: "pasi:pred/type"} "OpsProcess"]
+           where: [[e {keyword: "pasi:pred/type"} "DcsProcess"]
                    [object {keyword: "pasi:pred/refProcess"} e]]
          }
     )
@@ -604,19 +604,19 @@ type OpsAceToRefData {
          }
     )
   "The organisation that has enabled/facilitated the social impact"
-  enabler: OpsOrg 
+  enabler: DcsOrg 
     @site(
       q: { find: [e]
-           where: [[e {keyword: "pasi:pred/type"} "OpsOrg"]
+           where: [[e {keyword: "pasi:pred/type"} "DcsOrg"]
                    [object {keyword: "pasi:pred/enabler"} e]]
          }
     )
 }
 
 """
-OPS STCMF data to reference data
+DCS STCMF data to reference data
 """
-type OpsStcmfToRefData {
+type DcsStcmfToRefData {
   id: ID!
   "The description of the furniture"
   destination: StcmfDestination 
@@ -629,10 +629,10 @@ type OpsStcmfToRefData {
   "The fraction of this STCMF material in 1 of the reference material"
   fraction: Float! @site(a: "pasi:pred/fraction")
   "Map to this reference process"
-  refProcess: OpsProcess 
+  refProcess: DcsProcess 
     @site(
       q: { find: [e]
-           where: [[e {keyword: "pasi:pred/type"} "OpsProcess"]
+           where: [[e {keyword: "pasi:pred/type"} "DcsProcess"]
                    [object {keyword: "pasi:pred/refProcess"} e]]
          }
     )
@@ -645,19 +645,19 @@ type OpsStcmfToRefData {
          }
     )
   "The organisation that has enabled/facilitated the social impact"
-  enabler: OpsOrg 
+  enabler: DcsOrg 
     @site(
       q: { find: [e]
-           where: [[e {keyword: "pasi:pred/type"} "OpsOrg"]
+           where: [[e {keyword: "pasi:pred/type"} "DcsOrg"]
                    [object {keyword: "pasi:pred/enabler"} e]]
          }
     )
 }
 
 """
-OPS FRSHR data to reference data
+DCS FRSHR data to reference data
 """
-type OpsFrshrToRefData {
+type DcsFrshrToRefData {
 
   id: ID!
 
@@ -674,10 +674,10 @@ type OpsFrshrToRefData {
   fraction: Float! @site(a: "pasi:pred/fraction")
 
   "Map to this reference process"
-  refProcess: OpsProcess 
+  refProcess: DcsProcess 
     @site(
       q: { find: [e]
-           where: [[e {keyword: "pasi:pred/type"} "OpsProcess"]
+           where: [[e {keyword: "pasi:pred/type"} "DcsProcess"]
                    [object {keyword: "pasi:pred/refProcess"} e]]
          }
     )
@@ -692,19 +692,19 @@ type OpsFrshrToRefData {
     )
 
   "The organisation that has enabled/facilitated the social impact"
-  enabler: OpsOrg 
+  enabler: DcsOrg 
     @site(
       q: { find: [e]
-           where: [[e {keyword: "pasi:pred/type"} "OpsOrg"]
+           where: [[e {keyword: "pasi:pred/type"} "DcsOrg"]
                    [object {keyword: "pasi:pred/enabler"} e]]
          }
     )
 }
 
 """
-OPS referenced organisation
+DCS referenced organisation
 """
-type OpsOrg {
+type DcsOrg {
   id: ID!
   "The abbrevation of the organisation (used as a 'handle')"
   abbr: String! @site(a: "pasi:pred/abbr")
@@ -715,16 +715,16 @@ type OpsOrg {
 }
 
 """
-OPS waste reduction process
+DCS waste reduction process
 """
-type OpsProcess {
+type DcsProcess {
   id: ID!
   "The name of a means by which waste can be reduced"
   name: String! @site(a: "pasi:pred/name")
 }
 
 """
-OPS waste reduction
+DCS waste reduction
 """
-union OpsWasteReduction = AceReusedFurniture | StcmfRedistributedFood | FrshrReusedMaterial
+union DcsWasteReduction = AceReusedFurniture | StcmfRedistributedFood | FrshrReusedMaterial
 

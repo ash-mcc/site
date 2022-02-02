@@ -35,8 +35,8 @@
 
 
 ;; This is just for the blog article that I was writing
-#_(defn opsWasteReduction-stcmfOnly [url]
-  (let [[headings data] (opsWasteReduction url)]
+#_(defn dcsWasteReduction-stcmfOnly [url]
+  (let [[headings data] (dcsWasteReduction url)]
     [[:enabler :from :to :batchKg :foodDestination :ref_process :ref_wasteStream :ref_carbonSavingCo2eKg]
      (->> data
           (filter #(= "Stirling Community Food" (:enabler %)))

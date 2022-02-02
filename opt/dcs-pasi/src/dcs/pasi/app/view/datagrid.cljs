@@ -1,9 +1,9 @@
-(ns dcs.pasi.app.datagrid
+(ns dcs.pasi.app.view.datagrid
   (:require
    [reagent.core :as r]
    ["ag-grid-react" :as ag-grid]
    [dcs.pasi.app.query :as query]
-   [dcs.pasi.app.dropdown :as dropdown]))
+   [dcs.pasi.app.view.dropdown :as dropdown]))
 
 
 ;; Can't (in general) rely on resolving a string to a function in running cljs code 
@@ -62,6 +62,7 @@
 (defn root-div
   []
   [:div
+   
    (let [dropdown-id "chooser"
          prompt @type-kw-holder
          values (keep-indexed (fn [ix k] 
@@ -69,6 +70,7 @@
                               (keys types))
          on-click-handler' (partial on-click-handler dropdown-id)]
      [dropdown/dropdown dropdown-id prompt values on-click-handler'])
+   
    [:div.ag-theme-alpine {:style {:height 500
                                   :width  1000
                                   :color  "purple"}}

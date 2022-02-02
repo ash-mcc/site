@@ -1,17 +1,18 @@
 (ns dcs.pasi.app.main
   (:require [reagent.dom :as rdom]
-            [dcs.pasi.app.datagrid :as datagrid]))
+            [dcs.pasi.app.state :as state]
+            [dcs.pasi.app.router :as router]
+            [dcs.pasi.app.navbar :as navbar]))
 
 (defn page
   []
   [:div
-       ;[navbar/root]
-       ;[status/root]
-   #_(let [route @state/route-match-cursor
-           view  (-> route :data :view)]
-       (js/console.log "page route=" route)
-       [view route])
-   [datagrid/root-div]
+   [navbar/root]
+   ;[status/root]
+   (let [route @state/route-match-cursor
+         view  (-> route :data :view)]
+     (js/console.log "page route=" route)
+     [view route])
    [:footer.footer
     [:p "Built by the " [:strong "Data Commons Scotland"] " project."]]])
 
@@ -19,7 +20,7 @@
 (defn ^:dev/after-load start
   []
   (js/console.log "Starting router")
-      ;(router/init)
+  (router/init)
   (js/console.log "Starting render")
   (rdom/render [page] (.getElementById js/document "app")))
 

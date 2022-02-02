@@ -1,27 +1,23 @@
 ;; shadow-cljs configuration
-{:source-paths
- ["src"]
+{:source-paths ["src"]
 
- :dependencies
- [[reagent "1.0.0"] ; was "0.8.1"
-  [cljs-http "0.1.46"]
-  [cljsjs/ag-grid-react "21.0.1-1"]
-  [cljsjs/ag-grid-community "21.0.1-1"]
-  ]
+ :dependencies [[reagent "1.0.0"] ; was "0.8.1"
+                [cljs-http "0.1.46"]
+                [cljsjs/ag-grid-react "21.0.1-1"]
+                [cljsjs/ag-grid-community "21.0.1-1"]
+                [metosin/reitit-frontend "0.5.12"]
+                [metosin/reitit-spec "0.5.12"]
+                ]
 
- :builds
- {:app
-  {:target :browser
-   :output-dir "public/js"
-   :asset-path "/js"
-   :compiler-options {:externs ["externs.js"]}
+ :builds       {:app {:target           :browser
+                      :output-dir       "public/js"
+                      :asset-path       "/js"
+                      :compiler-options {:externs ["externs.js"]}
 
-   :modules
-   {:dcs-pasi-app ;; <- becomes public/js/dcs-pasi-app.js
-    {:entries [dcs.pasi.app.main]}}
+                      :modules          {:dcs-pasi-app ;; <- becomes public/js/dcs-pasi-app.js
+                                         {:entries [dcs.pasi.app.main]}}
 
-   ;; start a development http server on http://localhost:8020
-   :devtools
-   {:http-root "public"
-    :http-port 3000}
-   }}}
+                      ;; start a development http server on http://localhost:8020
+                      :devtools         {:http-root "public"
+                                         :http-port 3000}
+                      }}}

@@ -11,7 +11,7 @@
   
   [:div
 
-   [:div.container.is-max-desktop.pt-4
+   [:div.container.is-max-desktop.pt-4.pb-4
     [:div.notification.is-danger
      [:div.columns.is-flex.is-vcentered
       [:div.column.is-2

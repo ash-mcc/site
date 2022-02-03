@@ -76,22 +76,22 @@
            
            (navbar-clickable "ACE Admin"
                              [:span "Alloa Community Enterprises - Administrator"]
-                             (rfe/href :dcs.pasi.app.router/home-view nil {:participant :ace}))
+                             (rfe/href :dcs.pasi.app.router/ace-view nil {:participant :ace}))
            (navbar-clickable "ANON"
                              [:span "Anonymous public access"]
-                             (rfe/href :dcs.pasi.app.router/home-view nil {:participant :anon}))
+                             (rfe/href :dcs.pasi.app.router/anon-view nil {:participant :anon}))
            (navbar-clickable "DCS Admin"
                              [:span "Data Commons Scotland - Administrator"]
                              (rfe/href :dcs.pasi.app.router/dcs-view nil {:participant :dcs}))
            (navbar-clickable "FRSHR Admin"
                              [:span "The Fair Share - Administrator"]
-                             (rfe/href :dcs.pasi.app.router/home-view nil {:participant :frshr}))
+                             (rfe/href :dcs.pasi.app.router/frshr-view nil {:participant :frshr}))
            (navbar-clickable "STCMF Admin"
                              [:span "Stirling Community Food - Administrator"]
                              (rfe/href :dcs.pasi.app.router/stcmf-view))
            (navbar-clickable "ZWS Admin"
                              [:span "Zero Waste Scotland - Administrator"]
-                             (rfe/href :dcs.pasi.app.router/home-view nil {:participant :zws}))]]
+                             (rfe/href :dcs.pasi.app.router/zws-view nil {:participant :zws}))]]
 
                               
          ;; About

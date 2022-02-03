@@ -1,4 +1,4 @@
-(ns dcs.pasi.app.view.stcmf
+(ns dcs.pasi.app.view.frshr
   (:require [reagent.core :as r]
             [dcs.pasi.app.util :as util]
             [dcs.pasi.app.state :as state]
@@ -7,22 +7,22 @@
 
 (defn root []
   (r/after-render (util/scroll-fn))
-  (reset! state/participant-cursor :stcmf)
-
+  (reset! state/participant-cursor :frshr)
+  
   [:div
 
    [:div.container.is-max-desktop.pt-4.pb-4
-    [:div.notification.is-primary 
+    [:div.notification.is-warning
      [:div.columns.is-flex.is-vcentered
       [:div.column.is-2
        [:figure.image.is-2by1
-        [:img {:src "img/stirling-community-food.png"
-               :alt "Stirling Community Food image"}]]]
+        [:img {:src "img/fairshare.png"
+               :alt "The Fair Share image"}]]]
       [:div.column
        [:div.content
-        [:h1.title.is-5 "Stirling Community Food"]
-        [:h2.subtitle.is-6.has-text-black "A mock-up of a webapp which Stirling Community Food might use to access PASI"]]]]]]
-   
+        [:h1.title.is-5 "The Fair Share"]
+        [:h2.subtitle.is-6.has-text-black "A mock-up of a webapp which The Fair Share might use to access PASI"]]]]]]
+
    [:div.columns
     [:div.column.is-8.ml-2
      [datagrid/root @state/participant-cursor]]
@@ -33,4 +33,6 @@
      [:figure.image.is-2by1.m-1
       [:img {:src "img/no-such-image.png"
              :alt "map for the grid data - TODO"}]]]]])
+
+
 

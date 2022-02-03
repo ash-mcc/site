@@ -10,13 +10,21 @@
 
 (defn lookup-grid-api-component-cursor []
   (condp = @state/participant-cursor
+    :ace state/ace-grid-api-component-cursor
+    :anon state/anon-grid-api-component-cursor
     :dcs state/dcs-grid-api-component-cursor
-    :stcmf state/stcmf-grid-api-component-cursor))
+    :frshr state/frshr-grid-api-component-cursor
+    :stcmf state/stcmf-grid-api-component-cursor
+    :zws state/zws-grid-api-component-cursor))
 
 (defn lookup-type-kw-cursor []
   (condp = @state/participant-cursor
+    :ace state/ace-type-kw-cursor
+    :anon state/anon-type-kw-cursor
     :dcs state/dcs-type-kw-cursor
-    :stcmf state/stcmf-type-kw-cursor))
+    :frshr state/frshr-type-kw-cursor
+    :stcmf state/stcmf-type-kw-cursor
+    :zws state/zws-type-kw-cursor))
 
 
 ;; Can't (in general) rely on resolving a string to a function in running cljs code 
@@ -43,10 +51,12 @@
           (s/valid? keyword? participant)]
     :post [(s/valid? map? %)]}
   (let [participant-name (name participant)]
-    (->> types_
+    (if (= :anon participant)
+      {:zwsCarbonMetric         {:editable-fields #{}}
+       :dcsWasteReduction       {:editable-fields #{}}}
+      (->> types_
          (filter (fn [[k _v]] (str/starts-with? (name k) participant-name)))
-         (#(do (js/console.log "filtered types:" (str %)) %))
-         (into {}))))
+         (into {})))))
 
 
 (def labels

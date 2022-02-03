@@ -73,23 +73,24 @@
            [:div.navbar-item
             [:p.has-text-weight-bold [:span "Choose to be one of the following"
                                       [:br] "participants..."]]]
+          
            
-           (navbar-clickable "ACE Admin"
+           (navbar-clickable [:span.icon-text [:span.icon.has-text-info [:i.fas.fa-circle]] [:span "ACE Admin"]]
                              [:span "Alloa Community Enterprises - Administrator"]
                              (rfe/href :dcs.pasi.app.router/ace-view nil {:participant :ace}))
-           (navbar-clickable "ANON"
+           (navbar-clickable [:span.icon-text [:span.icon.has-text-warning-dark [:i.fas.fa-circle.is-warning-dark]] [:span "ANON User"]]
                              [:span "Anonymous public access"]
                              (rfe/href :dcs.pasi.app.router/anon-view nil {:participant :anon}))
-           (navbar-clickable "DCS Admin"
+           (navbar-clickable [:span.icon-text [:span.icon.has-text-danger [:i.fas.fa-circle]] [:span "DCS Admin"]]
                              [:span "Data Commons Scotland - Administrator"]
                              (rfe/href :dcs.pasi.app.router/dcs-view nil {:participant :dcs}))
-           (navbar-clickable "FRSHR Admin"
+           (navbar-clickable [:span.icon-text [:span.icon.has-text-warning [:i.fas.fa-circle]] [:span "FRSHR Admin"]]
                              [:span "The Fair Share - Administrator"]
                              (rfe/href :dcs.pasi.app.router/frshr-view nil {:participant :frshr}))
-           (navbar-clickable "STCMF Admin"
+           (navbar-clickable [:span.icon-text [:span.icon.has-text-primary [:i.fas.fa-circle]] [:span "STCMF Admin"]]
                              [:span "Stirling Community Food - Administrator"]
                              (rfe/href :dcs.pasi.app.router/stcmf-view))
-           (navbar-clickable "ZWS Admin"
+           (navbar-clickable [:span.icon-text [:span.icon.has-text-black [:i.fas.fa-circle]] [:span "ZWS Admin"]]
                              [:span "Zero Waste Scotland - Administrator"]
                              (rfe/href :dcs.pasi.app.router/zws-view nil {:participant :zws}))]]
 

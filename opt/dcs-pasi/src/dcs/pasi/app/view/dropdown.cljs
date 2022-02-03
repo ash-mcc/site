@@ -25,6 +25,7 @@
               (map (fn [[m-code m-name]]
                      [:a.dropdown-item {:name     m-name
                                         :key      m-code
+                                        :id       m-code
                                         :on-click on-click-handler}
                       m-name])
                    values))]]])

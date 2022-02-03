@@ -4,22 +4,25 @@
             [reitit.frontend.easy :as rfe]
             [spec-tools.data-spec :as ds]
             [dcs.pasi.app.state :as state]
-            [dcs.pasi.app.view.datagrid :as datagrid-view]))
+            [dcs.pasi.app.view.dcs :as dcs-view]
+            [dcs.pasi.app.view.stcmf :as stcmf-view]))
 
 (def routes
   [["/"
-    {:name ::datagrid-view
-     :view datagrid-view/root-div
-     :parameters {:query {(ds/opt :participant) string?}}}]
-   #_["/todo"
-    {:name ::todo-view
-     :view todo-view/root-div}]
+    {:name ::home-view
+     :view dcs-view/root}]
+   ["/dcs"
+    {:name ::dcs-view
+     :view dcs-view/root}]
+   ["/stcmf"
+    {:name ::stcmf-view
+     :view stcmf-view/root}]
    #_["/x"
     {:name ::experiment-view
      :view experiment-view/root-div}]
    ["*path"
     {:name ::catch-all
-     :view datagrid-view/root-div}]])
+     :view dcs-view/root}]])
 
 (defn init
       []

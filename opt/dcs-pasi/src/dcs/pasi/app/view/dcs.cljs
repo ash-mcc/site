@@ -11,7 +11,7 @@
   
   [:div
 
-  [:section.hero.is-small.is-danger
+   [:section.hero.is-small.is-danger
     [:div.hero-body 
      [:div.container.is-max-desktop
       [:div.notification.is-danger.p-0
@@ -25,16 +25,23 @@
           [:h1.title.is-5 "Data Commons Scotland"]
           [:h2.subtitle.is-6.has-text-black "A mock-up of a webapp which Data Commons Scotland might use to access PASI"]]]]]]]]
 
-   [:div.columns
-    [:div.column.is-10.ml-2 
-     [datagrid/root @state/participant-cursor]]
-    [:div.column
-     [:figure.image.is-2by1.m-1
-      [:img.pt-6 {:src "img/no-such-image.png"
-                  :alt "graph for the grid data - TODO"}]]
-     [:figure.image.is-2by1.m-1
-      [:img {:src "img/no-such-image.png"
-             :alt "map for the grid data - TODO"}]]]]])
+   [:div.container.is-fullhd.mt-2.mb-6
+    [datagrid/root @state/participant-cursor 500]]
+   
+   [:div.container.is-fullhd
+    [:div.columns
+     [:div.column.is-6 
+      [:figcaption [:span "Reuse/recycling rates"]]
+      [:figure.image.is-3by1 
+       [:img {:src "img/dcs-upwards.png"
+              :alt "graph for the grid data - TODO"}]]]
+     [:div.column
+      [:figcaption [:span "Waste reduction instances over space & time"]]
+      [:figure.image.is-3x2 
+       [:img {:src 
+              ;; NYC subway example
+              "https://piratefsh.github.io/assets/images/subway/subway-visualizer.gif"
+              :alt "map for the grid data - TODO"}]]]]]])
 
 
 

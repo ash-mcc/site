@@ -125,9 +125,9 @@
       {:gridOptions grid-options}]]))
 
 
-(defn root [participant]
+(defn root [participant height]
   (js/console.log "datagrid root participant:" participant)
-  [:div {:style {:height 500 :width 1200}}
+  [:div {:style {:height height}}
    [type-chooser]
    [grid]
    ])

@@ -25,16 +25,8 @@
           [:h1.title.is-5 "Zero Waste Scotland"]
           [:h2.subtitle.is-6.has-text-white "A mock-up of a webapp which Zero Waste Scotland might use to access PASI"]]]]]]]]
 
-   [:div.columns
-    [:div.column.is-8.ml-2
-     [datagrid/root @state/participant-cursor]]
-    [:div.column
-     [:figure.image.is-2by1.m-1
-      [:img.pt-6 {:src "img/no-such-image.png"
-                  :alt "graph for the grid data - TODO"}]]
-     [:figure.image.is-2by1.m-1
-      [:img {:src "img/no-such-image.png"
-             :alt "map for the grid data - TODO"}]]]]])
+    [:div.container.is-fullhd.mt-2.mb-6
+     [datagrid/root @state/participant-cursor 800]]])
 
 
 

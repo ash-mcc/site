@@ -58,7 +58,7 @@
                                  (map #(merge {:field (name %)}
                                               (when (= :rowId %) {:filter "agNumberColumnFilter"})
                                               (when (contains? editable-fields %) {:editable true})
-                                              ;; hack in some minWidth settings
+                                              ;; hack in some maxWidth settings
                                               (when (contains? #{:from :to :process :refProcess :batchKg :itemCount :itemKg :fraction :abbr :qid :source} %) {:maxWidth 100})
                                               (when (contains? #{:category :furnitureCategory :materialCategory :carbonWeighting} %) {:maxWidth 130})
                                               (when (contains? #{:carbonSavingCo2eKg} %) {:maxWidth 160}))))

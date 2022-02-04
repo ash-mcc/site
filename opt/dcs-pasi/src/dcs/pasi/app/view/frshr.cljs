@@ -11,8 +11,10 @@
   
   [:div
 
-   [:div.container.is-max-desktop.pt-4.pb-4
-    [:div.notification.is-warning
+   [:section.hero.is-small.is-warning
+    [:div.hero-body 
+   [:div.container.is-max-desktop
+    [:div.notification.is-warning.p-0
      [:div.columns.is-flex.is-vcentered
       [:div.column.is-2
        [:figure.image.is-2by1
@@ -21,7 +23,7 @@
       [:div.column
        [:div.content
         [:h1.title.is-5 "The Fair Share"]
-        [:h2.subtitle.is-6.has-text-black "A mock-up of a webapp which The Fair Share might use to access PASI"]]]]]]
+        [:h2.subtitle.is-6.has-text-black "A mock-up of a webapp which The Fair Share might use to access PASI"]]]]]]]]
 
    [:div.columns
     [:div.column.is-8.ml-2

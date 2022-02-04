@@ -11,17 +11,19 @@
   
   [:div
 
-   [:div.container.is-max-desktop.pt-4.pb-4
-    [:div.notification.has-background-warning-dark
-     [:div.columns.is-flex.is-vcentered
-      [:div.column.is-2
-       [:figure.image.is-48x48
-        [:img {:src "img/anon.png"
-               :alt "Anonymous image"}]]]
-      [:div.column
-       [:div.content
-        [:h1.title.is-5 "Anonymous access"]
-        [:h2.subtitle.is-6.has-text-white "A mock-up of a webapp which an anonymous user might use to access PASI"]]]]]]
+   [:section.hero.is-small.has-background-warning-dark
+    [:div.hero-body 
+     [:div.container.is-max-desktop
+      [:div.notification.has-background-warning-dark.p-0
+       [:div.columns.is-flex.is-vcentered
+        [:div.column.is-1
+         [:figure.image.is-64x64
+          [:img {:src "img/anon.png"
+                 :alt "Anonymous image"}]]]
+        [:div.column
+         [:div.content
+          [:h1.title.is-5 "Anonymous access"]
+          [:h2.subtitle.is-6.has-text-white "A mock-up of a webapp which an anonymous user might use to access PASI"]]]]]]]]
 
    [:div.columns
     [:div.column.is-8.ml-2

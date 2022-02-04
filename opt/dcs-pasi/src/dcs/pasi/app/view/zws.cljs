@@ -11,17 +11,19 @@
   
   [:div
 
-   [:div.container.is-max-desktop.pt-4.pb-4
-    [:div.notification.is-black
-     [:div.columns.is-flex.is-vcentered
-      [:div.column.is-2
-       [:figure.image.is-64x64
-        [:img {:src "img/zerowaste-white-logo.png"
-               :alt "Zero Waste Scotland image"}]]]
-      [:div.column
-       [:div.content
-        [:h1.title.is-5 "Zero Waste Scotland"]
-        [:h2.subtitle.is-6.has-text-white "A mock-up of a webapp which Zero Waste Scotland might use to access PASI"]]]]]]
+   [:section.hero.is-small.is-black
+    [:div.hero-body 
+     [:div.container.is-max-desktop
+      [:div.notification.is-black.p-0
+       [:div.columns.is-flex.is-vcentered
+        [:div.column.is-1
+         [:figure.image.is-64x64
+          [:img {:src "img/zerowaste-white-logo.png"
+                 :alt "Zero Waste Scotland image"}]]]
+        [:div.column
+         [:div.content
+          [:h1.title.is-5 "Zero Waste Scotland"]
+          [:h2.subtitle.is-6.has-text-white "A mock-up of a webapp which Zero Waste Scotland might use to access PASI"]]]]]]]]
 
    [:div.columns
     [:div.column.is-8.ml-2

@@ -118,8 +118,8 @@
         grid-options {:rowModelType "infinite" ;; define with otherwise :datasource with :getRows won't work
                       :datasource   {:getRows get-rows}
                       :onGridReady  #(reset! (lookup-grid-api-component-cursor) (.-api %))}]
-    [:div.ag-theme-alpine {:style {:height 500
-                                   :width  1000
+    [:div.ag-theme-balham {:style {:height "100%"
+                                   :width  "100%"
                                    :color  "purple"}}
      [:> ag-grid/AgGridReact
       {:gridOptions grid-options}]]))
@@ -127,7 +127,7 @@
 
 (defn root [participant]
   (js/console.log "datagrid root participant:" participant)
-  [:div
+  [:div {:style {:height 500 :width 1200}}
    [type-chooser]
    [grid]
    ])

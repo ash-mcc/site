@@ -57,7 +57,11 @@
                                  (remove #(= :id %))
                                  (map #(merge {:field (name %)}
                                               (when (= :rowId %) {:filter "agNumberColumnFilter"})
-                                              (when (contains? editable-fields %) {:editable true}))))
+                                              (when (contains? editable-fields %) {:editable true})
+                                              ;; hack in some minWidth settings
+                                              (when (contains? #{:from :to :process :refProcess :batchKg :itemCount :itemKg :fraction :abbr :qid :source} %) {:maxWidth 100})
+                                              (when (contains? #{:category :furnitureCategory :materialCategory :carbonWeighting} %) {:maxWidth 130})
+                                              (when (contains? #{:carbonSavingCo2eKg} %) {:maxWidth 160}))))
           response-handler' (partial response-handler results-parser params)]
       (.setColumnDefs grid-api-component (clj->js col-defs)) ;; hack to set the columnDefs to 'match' the expected data
       (http-call url graphql response-handler'))))

@@ -11,20 +11,22 @@
   
   [:div
 
-   [:div.container.is-max-desktop.pt-4.pb-4
-    [:div.notification.is-danger
-     [:div.columns.is-flex.is-vcentered
-      [:div.column.is-2
-       [:figure.image.is-64x64
-        [:img {:src "img/dcs-circle.png"
-               :alt "Data Commons Scotland image"}]]]
-      [:div.column
-       [:div.content
-        [:h1.title.is-5 "Data Commons Scotland"]
-        [:h2.subtitle.is-6.has-text-black "A mock-up of a webapp which Data Commons Scotland might use to access PASI"]]]]]]
+  [:section.hero.is-small.is-danger
+    [:div.hero-body 
+     [:div.container.is-max-desktop
+      [:div.notification.is-danger.p-0
+       [:div.columns.is-flex.is-vcentered
+        [:div.column.is-1
+         [:figure.image.is-64x64
+          [:img {:src "img/dcs-circle.png"
+                 :alt "Data Commons Scotland image"}]]]
+        [:div.column
+         [:div.content
+          [:h1.title.is-5 "Data Commons Scotland"]
+          [:h2.subtitle.is-6.has-text-black "A mock-up of a webapp which Data Commons Scotland might use to access PASI"]]]]]]]]
 
    [:div.columns
-    [:div.column.is-8.ml-2
+    [:div.column.is-10.ml-2 
      [datagrid/root @state/participant-cursor]]
     [:div.column
      [:figure.image.is-2by1.m-1

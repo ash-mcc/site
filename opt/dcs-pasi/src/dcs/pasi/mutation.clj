@@ -108,6 +108,30 @@
           (:material m)
           (:batchKg m)))
 
+(defn StcilBin-upsert-fn [m]
+  (format "mutation {
+             upsertStcilBin(
+               name: \"%s\"
+             ) { id }
+           }"
+          (:name m)))
+
+(defn StcilKerbsideRecycling-upsert-fn [m]
+  (format "mutation {
+             upsertStcilKerbsideRecycling(
+               from: \"%s\",
+               to: \"%s\",
+               bin: \"%s\",
+               route: \"%s\",
+               batchTonnes: %s
+             ) { id }
+           }"
+          (:startTime m)
+          (:endTime m)
+          (:bin m)
+          (:route m)
+          (:batchTonnes m)))
+
 (defn DcsAceToRefData-upsert-fn [m]
   (format "mutation {
              upsertDcsAceToRefData(
@@ -150,6 +174,21 @@
              ) { id }
            }"
           (:material m)
+          (:fraction m)
+          (:refProcess m)
+          (:refMaterial m)))
+
+(defn DcsStcilToRefData-upsert-fn [m]
+  (format "mutation {
+             upsertDcsStcilToRefData(
+               bin: \"%s\",
+               fraction: %s,
+               refProcess: \"%s\",
+               refMaterial: \"%s\",
+               enabler: \"STCIL\"
+             ) { id }
+           }"
+          (:bin m)
           (:fraction m)
           (:refProcess m)
           (:refMaterial m)))

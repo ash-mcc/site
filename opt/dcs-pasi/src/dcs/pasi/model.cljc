@@ -117,6 +117,31 @@
                                                            :material (get-in % [:material :name]))
                                                    coll))
                              :field-order [:id :from :to :material :batchKg]}
+   :stcilBin   {:graphql "query {
+                   stcilBin {
+                     id
+                     name
+                   }
+                 }"
+                             :results-parser identity
+                             :field-order [:id :name]}
+   :stcilKerbsideRecycling     {:graphql "query {
+                   stcilKerbsideRecycling {
+                     id
+                     from
+                     to
+                     bin {
+                       name
+                     }
+                     route
+                     batchTonnes
+                   }
+                 }"
+                             :results-parser (fn [coll]
+                                               (map #(assoc %
+                                                            :bin (get-in % [:bin :name]))
+                                                    coll))
+                             :field-order [:id :from :to :bin :route :batchTonnes]}
    :dcsAceToRefData         {:graphql "query {
                    dcsAceToRefData {
                      id
@@ -181,6 +206,28 @@
                                                            :wasteStream (get-in % [:refMaterial :wasteStream]))
                                                    coll))
                              :field-order [:id :material :refProcess :wasteStream :fraction]}
+   :dcsStcilToRefData       {:graphql "query {
+                   dcsStcilToRefData {
+                     id
+                     bin {
+                       name
+                     }
+                     refProcess {
+                       name
+                     }
+                     refMaterial {
+                       wasteStream
+                     }
+                     fraction
+                   }
+                 }"
+                             :results-parser (fn [coll]
+                                               (map #(assoc %
+                                                            :bin (get-in % [:bin :name])
+                                                            :refProcess (get-in % [:refProcess :name])
+                                                            :wasteStream (get-in % [:refMaterial :wasteStream]))
+                                                    coll))
+                             :field-order [:id :bin :refProcess :wasteStream :fraction]}
    :dcsOrg                  {:graphql "query {
                    dcsOrg {
                      id
@@ -270,13 +317,36 @@
                          }
                        }
                      }
+                     ... on StcilKerbsideRecycling {
+                       id
+                       from
+                       to
+                       batchTonnes
+                       bin {
+                         name
+                         refDataConnectors {
+                           fraction
+                           refMaterial {
+                             wasteStream
+                             carbonWeighting
+                           }
+                           refProcess {
+                             name
+                           }
+                           enabler {
+                             name
+                           }                        
+                         }
+                       }
+                       route
+                     }
                    }  
                  }"
                              :results-parser (fn [coll]
                                                (->> coll
                                                     (map (fn [m]
                                                            (let [typename (:__typename m)]
-                                                             (when (not (contains? #{"AceReusedFurniture" "StcmfRedistributedFood" "FrshrReusedMaterial"} typename))
+                                                             (when (not (contains? #{"AceReusedFurniture" "StcmfRedistributedFood" "FrshrReusedMaterial" "StcilKerbsideRecycling"} typename))
                                                                (throw (ex-info (str "Unexpected typename: " typename) {})))
                                                              (let [m2               (condp = typename
                                                                                       "AceReusedFurniture" (assoc m
@@ -287,17 +357,22 @@
                                                                                       "StcmfRedistributedFood" (assoc m
                                                                                                                       :foodDestination (get-in m [:destination :name]))
                                                                                       "FrshrReusedMaterial" (assoc m
-                                                                                                                   :materialCategory (get-in m [:material :name])))
+                                                                                                                   :materialCategory (get-in m [:material :name]))
+                                                                                      "StcilKerbsideRecycling" (assoc m
+                                                                                                                      :binType (get-in m [:bin :name])))
                                                                    m3               (assoc m2
                                                                                            :batchKg (condp = typename
                                                                                                       "AceReusedFurniture" (* (:furnitureItemKg m2)
                                                                                                                               (:furnitureItemCount m2))
                                                                                                       "StcmfRedistributedFood" (decimal (:batchKg m2))
-                                                                                                      "FrshrReusedMaterial" (decimal (:batchKg m2))))
+                                                                                                      "FrshrReusedMaterial" (decimal (:batchKg m2))
+                                                                                                      "StcilKerbsideRecycling" (* (decimal (:batchTonnes m2))
+                                                                                                                                  1000)))
                                                                    refdata-mappings (condp = typename
                                                                                       "AceReusedFurniture" (get-in m3 [:description :refDataConnectors])
                                                                                       "StcmfRedistributedFood" (get-in m3 [:destination :refDataConnectors])
-                                                                                      "FrshrReusedMaterial" (get-in m3 [:material :refDataConnectors]))]
+                                                                                      "FrshrReusedMaterial" (get-in m3 [:material :refDataConnectors])
+                                                                                      "StcilKerbsideRecycling" (get-in m3 [:bin :refDataConnectors]))]
                                                                (for [refdata-mapping refdata-mappings]
                                                                  (let [m4 (assoc m3
                                                                                  :enabler (get-in refdata-mapping [:enabler :name])
@@ -309,4 +384,4 @@
                                                                           :carbonSavingCo2eKg (* (:batchKg m4)
                                                                                                  (decimal (get-in refdata-mapping [:refMaterial :carbonWeighting]))))))))))
                                                     flatten))
-                             :field-order    [:from :to :enabler :process :wasteStream :batchKg :carbonSavingCo2eKg :furnitureCategory :furnitureSubcategory :foodDestination :materialCategory]}})
+                             :field-order    [:from :to :enabler :process :wasteStream :batchKg :carbonSavingCo2eKg :furnitureCategory :furnitureSubcategory :foodDestination :materialCategory :binType :route]}})

@@ -167,6 +167,42 @@ type Mutation {
       batchKg: Float! @site(a: "pasi:pred/batchKg")
   ): FrshrReusedMaterial @site(mutation: "update")
 
+  upsertStcilBin(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/StcilBin/{{name}}"
+        }
+      )
+    name: String! @site(a: "pasi:pred/name")
+  ): StcilBin @site(mutation: "update")
+
+  upsertStcilKerbsideRecycling(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/StcilKerbsideRecycling/{{from}}/{{to}}/{{bin}}/{{route}}"
+        }
+      )
+      from: Date! @site(a: "pasi:pred/from")
+      to: Date! @site(a: "pasi:pred/to")
+      bin: String!
+      binRef: ID 
+        @site(
+          a: "pasi:pred/bin"
+          gen: {
+            type: TEMPLATE 
+            template: "pasi:ent/StcilBin/{{bin}}"
+          }
+        )
+      route: String! @site(a: "pasi:pred/route")
+      batchTonnes: Float! @site(a: "pasi:pred/batchTonnes")
+  ): StcilKerbsideRecycling @site(mutation: "update")
+
   upsertDcsAceToRefData(
     id: ID
       @site(
@@ -312,6 +348,54 @@ type Mutation {
       )
   ): DcsFrshrToRefData @site(mutation: "update")
 
+  upsertDcsStcilToRefData(
+    id: ID
+      @site(
+        a: "xt/id"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/DcsStcilToRefData/{{bin}}/{{refProcess}}/{{refMaterial}}"
+        }
+      )
+    bin: String!
+    binRef: ID 
+      @site(
+        a: "pasi:pred/bin"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/StcilBin/{{bin}}"
+        }
+      )
+    fraction: Float! @site(a: "pasi:pred/fraction")
+    refProcess: String!
+    refProcessRef: ID 
+      @site(
+        a: "pasi:pred/refProcess"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/DcsProcess/{{refProcess}}"
+        }
+      )
+    refMaterial: String!
+    refMaterialRef: ID 
+      @site(
+        a: "pasi:pred/refMaterial"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/ZwsCarbonMetric/{{refMaterial}}"
+        }
+      )
+    enabler: String!
+    enablerRef: ID 
+      @site(
+        a: "pasi:pred/enabler"
+        gen: {
+          type: TEMPLATE 
+          template: "pasi:ent/DcsOrg/{{enabler}}"
+        }
+      )
+  ): DcsStcilToRefData @site(mutation: "update")
+
   upsertDcsOrg(
     id: ID
       @site(
@@ -358,9 +442,12 @@ type Query {
   stcmfRedistributedFood: [StcmfRedistributedFood]!
   frshrMaterialCategory: [FrshrMaterialCategory]!
   frshrReusedMaterial: [FrshrReusedMaterial]!
+  stcilBin: [StcilBin]!
+  stcilKerbsideRecycling: [StcilKerbsideRecycling]!
   dcsAceToRefData: [DcsAceToRefData]!
   dcsStcmfToRefData: [DcsStcmfToRefData]!
   dcsFrshrToRefData: [DcsFrshrToRefData]!
+  dcsStcilToRefData: [DcsStcilToRefData]!
   dcsOrg: [DcsOrg]!
   dcsProcess: [DcsProcess]!
   dcsWasteReduction: [DcsWasteReduction]!
@@ -371,7 +458,8 @@ type Query {
         {:find [e]
           :where [(or [e :pasi:pred/type "AceReusedFurniture"]
                       [e :pasi:pred/type "StcmfRedistributedFood"]
-                      [e :pasi:pred/type "FrshrReusedMaterial"])]
+                      [e :pasi:pred/type "FrshrReusedMaterial"]
+                      [e :pasi:pred/type "StcilKerbsideRecycling"])]
          }
         """}
     )
@@ -568,12 +656,65 @@ type FrshrReusedMaterial {
 }
 
 """
+STCIL bin types 
+"""
+type StcilBin {
+
+  id: ID!
+
+  "The type of bin"
+  name: String! @site(a: "pasi:pred/name")
+
+  "The records for mapping this STCIL data to reference data"
+  refDataConnectors: [DcsStcilToRefData]
+    @site(
+      q: {
+        edn:
+        """
+        {:find [e]
+          :where [[e :pasi:pred/type "DcsStcilToRefData"]
+                  [e :pasi:pred/bin object]]
+         }
+        """}
+    )
+}
+
+"""
+STCIL batches of material, collected from kerbside bins and recycled 
+"""
+type StcilKerbsideRecycling {
+
+  id: ID!
+
+  "The start of the period, inclusive"
+  from: Date! @site(a: "pasi:pred/from")
+
+  "The end of the period, exclusive"
+  to: Date! @site(a: "pasi:pred/to")
+
+  "The bin type"
+  bin: StcilBin
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "StcilBin"]
+                   [object {keyword: "pasi:pred/bin"} e]]
+         }
+    )
+
+  "The collection route"
+  route: String! @site(a: "pasi:pred/route")
+    
+  "The weight in tonnes of this batch of reused material"
+  batchTonnes: Float! @site(a: "pasi:pred/batchTonnes")
+}
+
+"""
 DCS ACE data to reference data
 Aside:
   DcsAceToRefData (etc.) will need to be better named if we expand on the social impacts.
-  E.g.  DcsAceToRefData -> DcsAceToWasteReductionRefData
+  E.g.  DcsAceToRefData -> DcsAceToWasteReductionStd (i.e. to a 'standard' measure)
     since if we expand into the accounting of employment reduction as a social impact
-    then we might need a DcsAceToUnemploymentReductionRefData
+    then we might need a DcsAceToUnemploymentReductionStd
 """
 type DcsAceToRefData {
   id: ID!
@@ -702,6 +843,53 @@ type DcsFrshrToRefData {
 }
 
 """
+DCS STCIL data to reference data
+"""
+type DcsStcilToRefData {
+
+  id: ID!
+
+  "The bin type"
+  bin: StcilBin
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "StcilBin"]
+                   [object {keyword: "pasi:pred/bin"} e]]
+         }
+    )
+
+  "The fraction of this STCIL batch in 1 of the reference material"
+  fraction: Float! @site(a: "pasi:pred/fraction")
+
+  "Map to this reference process"
+  refProcess: DcsProcess 
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "DcsProcess"]
+                   [object {keyword: "pasi:pred/refProcess"} e]]
+         }
+    )
+
+  "Map to this reference material"
+  refMaterial: ZwsCarbonMetric 
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "ZwsCarbonMetric"]
+                   [object {keyword: "pasi:pred/refMaterial"} e]]
+         }
+    )
+
+  "The organisation that has enabled/facilitated the social impact"
+  enabler: DcsOrg 
+    @site(
+      q: { find: [e]
+           where: [[e {keyword: "pasi:pred/type"} "DcsOrg"]
+                   [object {keyword: "pasi:pred/enabler"} e]]
+         }
+    )
+}
+
+"""
 DCS referenced organisation
 """
 type DcsOrg {
@@ -726,5 +914,5 @@ type DcsProcess {
 """
 DCS waste reduction
 """
-union DcsWasteReduction = AceReusedFurniture | StcmfRedistributedFood | FrshrReusedMaterial
+union DcsWasteReduction = AceReusedFurniture | StcmfRedistributedFood | FrshrReusedMaterial | StcilKerbsideRecycling
 

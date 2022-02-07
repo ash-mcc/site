@@ -42,6 +42,7 @@
    :dcsAceToRefData         {:editable-fields #{:fraction}}
    :dcsStcmfToRefData       {:editable-fields #{:fraction}}
    :dcsFrshrToRefData       {:editable-fields #{:fraction}}
+   :dcsStcilToRefData       {:editable-fields #{:fraction}}
    :dcsOrg                  {:editable-fields #{:name :qid}}
    :dcsProcess              {:editable-fields #{}}
    :dcsWasteReduction       {:editable-fields #{}}})
@@ -69,9 +70,10 @@
    :stcmfRedistributedFood  "Batches of redistributed food"
    :frshrMaterialCategory   "Item categories"
    :frshrReusedMaterial     "Batches of resold/reused items"
-   :dcsAceToRefData         "Map ACE measurements to reference measurements"
-   :dcsStcmfToRefData       "Map STCMF measurements to common measurements"
-   :dcsFrshrToRefData       "Map FRSHR measurements to common measurements"
+   :dcsAceToRefData         "Map ACE measure to standard measure"
+   :dcsStcmfToRefData       "Map STCMF measure to standard measure"
+   :dcsFrshrToRefData       "Map FRSHR measure to standard measure"
+   :dcsStcilToRefData       "Map STCIL measure to standard measure"
    :dcsOrg                  "Organisations"
    :dcsProcess              "Processes which reduce waste"
    :dcsWasteReduction       "Calculated instances of waste reduction"})

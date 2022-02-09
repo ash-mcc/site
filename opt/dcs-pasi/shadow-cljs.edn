@@ -1,14 +1,4 @@
-;; shadow-cljs configuration
-{:source-paths ["src"]
-
- :dependencies [[reagent "1.0.0"] ; was "0.8.1"
-                [cljs-http "0.1.46"]
-                [cljsjs/ag-grid-react "21.0.1-1"]
-                [cljsjs/ag-grid-community "21.0.1-1"]
-                [metosin/reitit-frontend "0.5.12"]
-                [metosin/reitit-spec "0.5.12"]
-                ]
-
+{:deps true
  :builds       {:app {:target           :browser
                       :output-dir       "public/js"
                       :asset-path       "/js"

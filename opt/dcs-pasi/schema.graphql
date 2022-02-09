@@ -712,8 +712,8 @@ type StcilKerbsideRecycling {
 DCS ACE data to reference data
 Aside:
   DcsAceToRefData (etc.) will need to be better named if we expand on the social impacts.
-  E.g.  DcsAceToRefData -> DcsAceToWasteReductionStd (i.e. to a 'standard' measure)
-    since if we expand into the accounting of employment reduction as a social impact
+  E.g.  DcsAceToRefData -> DcsAceToWasteReductionStd (i.e. to a 'standard' measure) 
+    since if we expand into the accounting of unemployment reduction as a social impact
     then we might need a DcsAceToUnemploymentReductionStd
 """
 type DcsAceToRefData {

@@ -10,4 +10,7 @@
                (when (or (not (empty? only-in-a))
                          (not (empty? only-in-b))))
                (when-let [component @state/x-grid-api-component-cursor]
+                 ;; neither of the next 2 lines do what we want
+                 ;(.refreshCells component (clj->js {:force? true}))
+                 ;(.redrawRows component)
                  (.setRowData component (clj->js new-state))))))

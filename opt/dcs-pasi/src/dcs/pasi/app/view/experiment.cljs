@@ -1,8 +1,11 @@
 (ns dcs.pasi.app.view.experiment
   (:require    [cljs.spec.alpha :as s]
+               [clojure.string :as str]
                [reagent.core :as r]
                ["ag-grid-react" :as ag-grid]
                [oz.core :as oz]
+               [cljs-time.core :as t]
+               [cljs-time.format :as tf]
                [dcs.pasi.app.util :as util]
                [dcs.pasi.app.state :as state]
                [dcs.pasi.model :as model]
@@ -50,15 +53,51 @@
                                       :format ".0f"}]}}]
    :config    {:axisX {:grid false}}})
 
+(defn editable [e]
+  ;(js/console.log e)
+  (let [row-map (js->clj (.-data e) :keywordize-keys true)]
+    (str/starts-with? (:id row-map) "new-")))
+
+(def date-format (tf/formatter "yyyy-MM-dd"))
+
+(defn valid-date? [s]
+  (tf/parse date-format s))
+
+(defn add-new [current-value-of-atom _not-used]
+  (conj current-value-of-atom
+        {:id (str "new-" (->> current-value-of-atom
+                              (map :id)
+                              (filter #(str/starts-with? % "new-"))
+                              (map #(js/parseInt (subs % 4)))
+                              sort 
+                              last
+                              inc))}))
+
+(defn upsert [current-value-of-atom row-map]
+  (conj (remove #(= (:id %) (:id row-map))
+                current-value-of-atom)
+        row-map))
+
+(defn onCellValueChanged [e]
+  (js/console.log e)
+  (let [row-map   (js->clj (.-data e) :keywordize-keys true)
+        old-value (.-oldValue e)
+        new-value (.-newValue e)
+        col       (.-field (.-colDef e))]
+    ;; if all needed values are present then add it to the backing data 
+    (when (and (valid-date? (:to row-map)))
+      (swap! state/x-ds-cursor upsert row-map))
+    ))
+
 
 (defn grid [ds]
   (let [spec {:defaultColDef {:resizable true}
-              :columnDefs    [;{:field "id"}
-                              {:field "from"}
-                              {:field "to"}
-                              {:field "category"}
-                              {:field "subcategory"}
-                              {:field "itemCount" :type "rightAligned"}]
+              :columnDefs    [{:field "id"}
+                              {:field "from" :editable editable :onCellValueChanged onCellValueChanged}
+                              {:field "to" :editable editable :onCellValueChanged onCellValueChanged}
+                              {:field "category" :editable editable :onCellValueChanged onCellValueChanged}
+                              {:field "subcategory" :editable editable :onCellValueChanged onCellValueChanged}
+                              {:field "itemCount" :type "rightAligned" :editable true :onCellValueChanged onCellValueChanged}]
               :immutableData true
               :animateRows   true
               :rowData       ds
@@ -109,7 +148,7 @@
   (conj coll (get mock-rows (rand-int 4))))
 
 
-(defn push-to-test []
+(defn download-from-server []
   [:button.button 
    {:on-click (fn [_e]
                 (let [url "http://localhost:2021/pasi/graphql"
@@ -134,11 +173,21 @@
                                                           add-mock-row)]
                                              (reset! state/x-ds-cursor coll))))]
                   (query/http-call url graphql response-handler)))} 
-   "Push-to-test"])
+   "Download from server"])
+
+(defn new-row []
+  [:button.button
+   {:on-click (fn [_e]
+                (swap! state/x-ds-cursor add-new {:placeholder :not-used}))}
+   "New row"])
 
 (defn root []
   (r/after-render (util/scroll-fn))
   [:div
+   
+   [:div.container.is-fullhd.mt-2
+    [download-from-server]
+    [new-row]]
    
    [:div.container.is-fullhd.mt-2.mb-6
     [:div {:style {:height 250}}
@@ -156,4 +205,4 @@
        [:img {:src "img/ace-trend.png"
               :alt "graph for the grid data - TODO"}]]]]]
 
-   [push-to-test]])
+   ])

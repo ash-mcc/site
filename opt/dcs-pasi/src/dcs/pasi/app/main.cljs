@@ -1,5 +1,6 @@
 (ns dcs.pasi.app.main
   (:require [reagent.dom :as rdom]
+            [dcs.pasi.app.watch]
             [dcs.pasi.app.state :as state]
             [dcs.pasi.app.router :as router]
             [dcs.pasi.app.navbar :as navbar]))

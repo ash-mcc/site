@@ -9,13 +9,16 @@
                                             :dcs   nil
                                             :frshr nil
                                             :stcmf nil
-                                            :zws   nil}
+                                            :zws   nil
+                                            :x     nil}
                        :type-kw            {:ace   :aceReusedFurniture
                                             :anon  :dcsWasteReduction
                                             :dcs   :dcsWasteReduction
                                             :frshr :frshrReusedMaterial
                                             :stcmf :stcmfRedistributedFood
-                                            :zws   :zwsCarbonMetric}}))
+                                            :zws   :zwsCarbonMetric}
+                       
+                       :x-ds               nil}))
 
 (defonce route-match-cursor (r/cursor root [:route-match]))
 (defonce participant-cursor (r/cursor root [:participant]))
@@ -26,6 +29,7 @@
 (def frshr-grid-api-component-cursor (r/cursor root [:grid-api-component :frshr]))
 (def stcmf-grid-api-component-cursor (r/cursor root [:grid-api-component :stcmf]))
 (def zws-grid-api-component-cursor (r/cursor root [:grid-api-component :zws]))
+(def x-grid-api-component-cursor (r/cursor root [:grid-api-component :x]))
 
 (def ace-type-kw-cursor (r/cursor root [:type-kw :ace]))
 (def anon-type-kw-cursor (r/cursor root [:type-kw :anon]))
@@ -33,6 +37,8 @@
 (def frshr-type-kw-cursor (r/cursor root [:type-kw :frshr]))
 (def stcmf-type-kw-cursor (r/cursor root [:type-kw :stcmf]))
 (def zws-type-kw-cursor (r/cursor root [:type-kw :zws]))
+
+(def x-ds-cursor (r/cursor root [:x-ds]))
 
 
 ;; -----------------

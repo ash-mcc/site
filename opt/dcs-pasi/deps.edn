@@ -1,11 +1,16 @@
 {:paths ["src"]
- :deps  {thheller/shadow-cljs        {:mvn/version "2.17.0"}
-         reagent/reagent             {:mvn/version "1.0.0"} ; was "0.8.1"
-         cljs-http/cljs-http         {:mvn/version "0.1.46"}
-         cljsjs/ag-grid-react        {:mvn/version "21.0.1-1"}
-         cljsjs/ag-grid-community    {:mvn/version "21.0.1-1"}
-         metosin/reitit-frontend     {:mvn/version "0.5.12"}
-         metosin/reitit-spec         {:mvn/version "0.5.12"}
+ :deps  {thheller/shadow-cljs     {:mvn/version "2.17.0"}
+         reagent/reagent          {:mvn/version "1.0.0"} ; was "0.8.1"
+         cljs-http/cljs-http      {:mvn/version "0.1.46"}
+         cljsjs/ag-grid-react     {:mvn/version "21.0.1-1"}
+         cljsjs/ag-grid-community {:mvn/version "21.0.1-1"}
+         metosin/reitit-frontend  {:mvn/version "0.5.12"}
+         metosin/reitit-spec      {:mvn/version "0.5.12"}
+
+         metasoarous/oz           {:mvn/version "1.6.0-alpha35-SNAPSHOT"} ; was "1.6.0-alpha34"
+         cljsjs/vega-lite         {:mvn/version "4.17.0-0"}
+
+         kixi/stats               {:mvn/version "0.5.4"}
 
          ;; Alex's data table
          ;armincerf/reagent-datatable {:git/url "https://github.com/armincerf/reagent-datatable"

@@ -26,7 +26,7 @@
                       :source   false
                       :compiled false
                       :editor   false}
-   :downloadFileName "WasteMattersScotland-visualisation"
+   :downloadFileName "PASI-visualisation"
    :scaleFactor      2
    ;; experiment to access and use Vega's View API, requires metasoarous/oz 1.6.0-alpha35-SNAPSHOT (or later)
    #_:view-callback #_(fn [view]

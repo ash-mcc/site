@@ -25,8 +25,8 @@
           [:h1.title.is-5 "Alloa Community Enterprises"]
           [:h2.subtitle.is-6.has-text-black "A mock-up of a webapp which Alloa Community Enterprises might use to access PASI"]]]]]]]]
 
-      [:div.container.is-fullhd.mt-2.mb-6
-       [datagrid/root @state/participant-cursor 200]]
+   [:div.container.is-fullhd.mt-2.mb-6
+    [datagrid/root @state/participant-cursor 200]]
    
    [:div.container.is-fullhd
     [:div.columns

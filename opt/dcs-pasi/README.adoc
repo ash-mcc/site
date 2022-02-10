@@ -54,11 +54,13 @@ npm install
 
 # In a *non-fresh* install, I've used the following to 'force' install stuff...
 #     npm install ag-grid-react ag-grid-community
+#     npm install vega vega-lite vega-embed
+#     npm install leaflet react-leaflet
 #  or
 #     npm init -y
 
 # To make shadow-cljs directly available on to the command line...
-#     npm install -g shadow-cljs
+#     npm install shadow-cljs
 
 
 # Compile a build once and exit

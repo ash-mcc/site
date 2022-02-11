@@ -87,12 +87,25 @@
         old-value (.-oldValue e)
         new-value (.-newValue e)
         col       (.-field (.-colDef e))
+        row-map   (if (and (= col "from")
+                           (not (t/before? (tf/parse date-format (:from row-map)) (tf/parse date-format (:to row-map)))))
+                    (assoc row-map :to nil)
+                    row-map)
+        row-map   (if (and (= col "to")
+                           (not (t/before? (tf/parse date-format (:from row-map)) (tf/parse date-format (:to row-map)))))
+                    (assoc row-map :from nil)
+                    row-map)
         row-map   (if (and (= col "category")
                            (not= new-value old-value))
-                    (assoc row-map :subcategory nil))]
+                    (assoc row-map :subcategory nil)
+                    row-map)]
      ;; if all needed values are present then add it to the backing data 
-    (when (and (valid-date? (:to row-map))
-               (valid-date? (:from row-map)))
+     ;; ...actually no - suspend this validity check here - perhaps do it on upload
+    (when true #_(and (valid-date? (:to row-map))
+               (valid-date? (:from row-map))
+               (some? (:category row-map))
+               (some? (:subcategory row-map))
+               (int? (js/parseInt (:itemCount row-map))))
       (swap! state/x-ds-cursor upsert row-map))
     ))
 

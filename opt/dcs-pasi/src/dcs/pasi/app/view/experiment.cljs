@@ -92,12 +92,31 @@
 
 (defn grid [ds]
   (let [spec {:defaultColDef {:resizable true}
+              :components {:datePicker (js/getDatePicker)}
               :columnDefs    [{:field "id"}
-                              {:field "from" :editable editable :onCellValueChanged onCellValueChanged}
-                              {:field "to" :editable editable :onCellValueChanged onCellValueChanged}
-                              {:field "category" :editable editable :onCellValueChanged onCellValueChanged}
-                              {:field "subcategory" :editable editable :onCellValueChanged onCellValueChanged}
-                              {:field "itemCount" :type "rightAligned" :editable true :onCellValueChanged onCellValueChanged}]
+                              {:field              "from"
+                               :editable           editable
+                               :onCellValueChanged onCellValueChanged
+                               :cellEditor         "datePicker"
+                               :cellEditorPopup    true}
+                              {:field              "to"
+                               :editable           editable
+                               :onCellValueChanged onCellValueChanged
+                               :cellEditor         "datePicker"
+                               :cellEditorPopup    true}
+                              {:field              "category"
+                               :editable           editable
+                               :onCellValueChanged onCellValueChanged
+                               :cellEditor         "agPopupSelectCellEditor" ;"agRichSelectCellEditor" but need enterprise edition 
+                               :cellEditorPopup    true
+                               :cellEditorParams   {:values ["Furniture", "Soft Furniture"]}}
+                              {:field              "subcategory"
+                               :editable           editable
+                               :onCellValueChanged onCellValueChanged}
+                              {:field              "itemCount"
+                               :type               "rightAligned"
+                               :editable           true
+                               :onCellValueChanged onCellValueChanged}]
               :immutableData true
               :animateRows   true
               :rowData       ds
@@ -148,7 +167,7 @@
   (conj coll (get mock-rows (rand-int 4))))
 
 
-(defn download-from-server []
+(defn load-from-server []
   [:button.button 
    {:on-click (fn [_e]
                 (let [url "http://localhost:2021/pasi/graphql"
@@ -173,7 +192,7 @@
                                                           add-mock-row)]
                                              (reset! state/x-ds-cursor coll))))]
                   (query/http-call url graphql response-handler)))} 
-   "Download from server"])
+   "Load from server"])
 
 (defn new-row []
   [:button.button
@@ -181,13 +200,22 @@
                 (swap! state/x-ds-cursor add-new {:placeholder :not-used}))}
    "New row"])
 
+(defn save-to-server []
+  [:button.button
+   {:on-click (fn [_e]
+                (let [url "http://localhost:2021/pasi/graphql"
+                      ]
+                  (js/console.log "TODO save-to-server")))}
+   "Save to server"])
+
 (defn root []
   (r/after-render (util/scroll-fn))
   [:div
    
    [:div.container.is-fullhd.mt-2
-    [download-from-server]
-    [new-row]]
+    [load-from-server]
+    [new-row]
+    [save-to-server]]
    
    [:div.container.is-fullhd.mt-2.mb-6
     [:div {:style {:height 250}}
@@ -204,5 +232,11 @@
       [:figure.image.is-5by3
        [:img {:src "img/ace-trend.png"
               :alt "graph for the grid data - TODO"}]]]]]
+   
+
 
    ])
+
+
+
+

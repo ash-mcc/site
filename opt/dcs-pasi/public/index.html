@@ -41,8 +41,15 @@
     rel="stylesheet"
     href="https://unpkg.com/@ag-grid-community/all-modules@26.2.0/dist/styles/ag-theme-balham.css" />
 
-    
-  
+    <!--
+    <script src="https://unpkg.com/ag-grid-enterprise@27.0.0/dist/ag-grid-enterprise.min.js"></script>
+    -->
+
+    <!-- For using jQuery's date picker -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css"/>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
 
     <link rel="icon" href="img/favicon.ico">
     <!-- <link rel="canonical" href="https://wastemattersscotland.org"> -->
@@ -50,6 +57,7 @@
 <body class="has-navbar-fixed-top">
 <noscript>You need to enable JavaScript to run this app.</noscript>
 <div id="app"></div>
+<script src="js/date-picker.js"></script>
 <script src="js/dcs-pasi-app.js"></script>
 <script>dcs.pasi.app.main.init();</script>
 </body>

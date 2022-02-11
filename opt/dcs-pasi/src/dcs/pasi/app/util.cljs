@@ -20,9 +20,9 @@
 
 (def vega-embed-opts
   ;; hide Vega's 3-dot menu
-  #_{:actions false}
+  {:actions false}
   ;; alternatively, to display Vega's 3-dot menu, uncomment...
-  {:actions          {:export   true
+  #_{:actions          {:export   true
                       :source   false
                       :compiled false
                       :editor   false}

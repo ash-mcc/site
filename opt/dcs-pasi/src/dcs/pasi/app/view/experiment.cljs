@@ -71,7 +71,10 @@
                               (map #(js/parseInt (subs % 4)))
                               sort 
                               last
-                              inc))}))
+                              inc))
+         :from (tf/unparse date-format (t/today))
+         :to (tf/unparse date-format (t/plus (t/today) (t/days 1)))
+         :itemCount 0}))
 
 (defn upsert [current-value-of-atom row-map]
   (conj (remove #(= (:id %) (:id row-map))
@@ -83,11 +86,26 @@
   (let [row-map   (js->clj (.-data e) :keywordize-keys true)
         old-value (.-oldValue e)
         new-value (.-newValue e)
-        col       (.-field (.-colDef e))]
-    ;; if all needed values are present then add it to the backing data 
-    (when (and (valid-date? (:to row-map)))
+        col       (.-field (.-colDef e))
+        row-map   (if (and (= col "category")
+                           (not= new-value old-value))
+                    (assoc row-map :subcategory nil))]
+     ;; if all needed values are present then add it to the backing data 
+    (when (and (valid-date? (:to row-map))
+               (valid-date? (:from row-map)))
       (swap! state/x-ds-cursor upsert row-map))
     ))
+
+(def category->subcategories
+  {"Furniture"      ["Chair, Kitchen, Dining or Wooden"
+                     "TEST VALUE vase"]
+   "Soft Furniture" ["Mattress, single"
+                     "TEST VALUE pillow"]})
+
+(defn subcategories [e]
+  (js/console.log e)
+  (let [row-map   (js->clj (.-data e) :keywordize-keys true)]
+    (clj->js {:values (get category->subcategories (:category row-map))})))
 
 
 (defn grid [ds]
@@ -109,10 +127,13 @@
                                :onCellValueChanged onCellValueChanged
                                :cellEditor         "agPopupSelectCellEditor" ;"agRichSelectCellEditor" but need enterprise edition 
                                :cellEditorPopup    true
-                               :cellEditorParams   {:values ["Furniture", "Soft Furniture"]}}
+                               :cellEditorParams   {:values (keys category->subcategories)}}
                               {:field              "subcategory"
                                :editable           editable
-                               :onCellValueChanged onCellValueChanged}
+                               :onCellValueChanged onCellValueChanged
+                               :cellEditor         "agPopupSelectCellEditor" ;"agRichSelectCellEditor" but need enterprise edition 
+                               :cellEditorPopup    true
+                               :cellEditorParams   subcategories}
                               {:field              "itemCount"
                                :type               "rightAligned"
                                :editable           true

@@ -9,7 +9,8 @@
                [dcs.pasi.app.util :as util]
                [dcs.pasi.app.state :as state]
                [dcs.pasi.model :as model]
-               [dcs.pasi.app.query :as query]))
+               [dcs.pasi.app.query :as query]
+               [dcs.pasi.app.mutation :as mutation]))
 
 
 (defn counts-per-month-spec
@@ -63,6 +64,19 @@
 (defn valid-date? [s]
   (tf/parse date-format s))
 
+(defn update-id 
+  [current-value-of-atom old-id new-id]
+  {:pre [(s/valid? seq? current-value-of-atom)]}
+  (let [coll (vec current-value-of-atom)]
+    (if-let [n (first (keep-indexed #(when (= (:id %2) old-id) %1) coll))]
+      (-> coll
+          (#(do (js/console.log "n:" n) %))
+          (#(do (js/console.log "nth" (str (get coll n))) %))
+          (assoc-in [n :id] new-id)
+          (assoc-in [n :status] "saved to server")
+          seq)
+      coll)))
+
 (defn add-new [current-value-of-atom _not-used]
   (conj current-value-of-atom
         {:id (str "new-" (->> current-value-of-atom
@@ -74,12 +88,16 @@
                               inc))
          :from (tf/unparse date-format (t/today))
          :to (tf/unparse date-format (t/plus (t/today) (t/days 1)))
-         :itemCount 0}))
+         :itemCount 0
+         :status "new - not saved to server"}))
 
 (defn upsert [current-value-of-atom row-map]
-  (conj (remove #(= (:id %) (:id row-map))
-                current-value-of-atom)
-        row-map))
+  {:pre [(s/valid? seq? current-value-of-atom)]}
+  (let [coll (vec current-value-of-atom)
+        n (first (keep-indexed #(when (= (:id %2) (:id row-map)) %1) coll))]
+      (-> coll
+          (assoc n row-map)
+          seq)))
 
 (defn onCellValueChanged [e]
   (js/console.log e)
@@ -98,7 +116,10 @@
         row-map   (if (and (= col "category")
                            (not= new-value old-value))
                     (assoc row-map :subcategory nil)
-                    row-map)]
+                    row-map)
+        row-map (if (contains? #{"loaded from server" "saved to server"} (:status row-map)) ;; TODO improve by comparing with what was fetched?
+                  (assoc row-map :status "changed - not saved to server")
+                  row-map)]
      ;; if all needed values are present then add it to the backing data 
      ;; ...actually no - suspend this validity check here - perhaps do it on upload
     (when true #_(and (valid-date? (:to row-map))
@@ -111,9 +132,10 @@
 
 (def category->subcategories
   {"Furniture"      ["Chair, Kitchen, Dining or Wooden"
-                     "TEST VALUE vase"]
+                     "Chest-of-Drawers, Tallboy"
+                     "Small Desk, Computer Table"]
    "Soft Furniture" ["Mattress, single"
-                     "TEST VALUE pillow"]})
+                     "Chaise Longue "]})
 
 (defn subcategories [e]
   (js/console.log e)
@@ -150,7 +172,8 @@
                               {:field              "itemCount"
                                :type               "rightAligned"
                                :editable           true
-                               :onCellValueChanged onCellValueChanged}]
+                               :onCellValueChanged onCellValueChanged}
+                              {:field              "status"}]
               :immutableData true
               :animateRows   true
               :rowData       ds
@@ -170,35 +193,6 @@
      [:> ag-grid/AgGridReact
       {:gridOptions spec}]]))
 
-
-(def mock-rows [
-                {:id          "pasi:ent/AceReusedFurniture/2016-12-01"
-                 :from        "2018-05-01"
-                 :to          "2016-12-01"
-                 :category    "Furniture"
-                 :subcategory "Chair, Kitchen, Dining or Wooden"
-                 :itemCount   43}
-                {:id          "pasi:ent/AceReusedFurniture/2017-09-01"
-                 :from        "2018-08-01"
-                 :to          "2019-09-01"
-                 :category    "Soft Furniture"
-                 :subcategory "Mattress, single"
-                 :itemCount   4}
-                {:id          "pasi:ent/AceReusedFurniture/2018-05-01"
-                 :from        "2017-04-01"
-                 :to          "2018-05-01"
-                 :category    "Soft Furniture"
-                 :subcategory "Mattress, single"
-                 :itemCount   28}
-                {:id          "pasi:ent/AceReusedFurniture/2019-11-01"
-                 :from        "2017-10-01"
-                 :to          "2019-11-01"
-                 :category    "Furniture"
-                 :subcategory "Chair, Kitchen, Dining or Wooden"
-                 :itemCount   41 }])
-
-(defn add-mock-row [coll]
-  (conj coll (get mock-rows (rand-int 4))))
 
 
 (defn load-from-server []
@@ -222,8 +216,13 @@
                                                           ;; assume a map with a single entry: get the value of that entry
                                                           vals
                                                           first
+                                                          ;; parse each possibly nested map to surface the wanted data in the top map
                                                           results-parser
-                                                          add-mock-row)]
+                                                          (->> 
+                                                           ;; add a status column
+                                                           (map #(assoc % :status "loaded from server"))
+                                                           (sort-by :to)
+                                                           reverse))]
                                              (reset! state/x-ds-cursor coll))))]
                   (query/http-call url graphql response-handler)))} 
    "Load from server"])
@@ -237,9 +236,38 @@
 (defn save-to-server []
   [:button.button
    {:on-click (fn [_e]
-                (let [url "http://localhost:2021/pasi/graphql"
-                      ]
-                  (js/console.log "TODO save-to-server")))}
+                (let [;;TODO flag up and don't server-to-server, any would-be duplicates
+                      changed-rows (remove #(contains? #{"loaded from server" "saved to server"} (:status %)) @state/x-ds-cursor)]
+                  (js/console.log (count changed-rows) "changed rows")
+                  (doseq [m changed-rows]
+                    (js/console.log "processing changed row" (str m))
+                  (let [url              "http://localhost:2021/pasi/graphql"
+                      graphql          (str "mutation {
+             upsertAceReusedFurniture(
+               category: \"" (:category m) "\",
+               subcategory: \"" (:subcategory m) "\",
+               from: \"" (:from m) "\",
+               to: \"" (:to m) "\",
+               itemCount: " (:itemCount m) "
+             ) { id }
+           }")
+                      response-handler (fn [response] 
+                                         (let [status (:status response)]
+                                           (when (not= 200 status)
+                                             (throw (ex-info (str "Error code: " status) {})))
+                                           (let [id (-> response
+                                                        :body
+                                                          ;; assume that it was an application/json response 
+                                                          ;; which will have prompted cljs-http to have 
+                                                          ;; converted the JSON data in the body, to Clojure data
+                                                        :data
+                                                        (#(do (js/console.log ":data" (str %)) %))
+                                                        ;; assume a map with a single entry: get the value of that entry
+                                                        vals
+first
+                                                        :id)]
+                                             (swap! state/x-ds-cursor update-id (:id m) id))))]
+                  (mutation/http-call url graphql response-handler)))))}
    "Save to server"])
 
 (defn root []

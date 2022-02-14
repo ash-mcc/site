@@ -79,7 +79,7 @@
                              ;[:span "Alloa Community Enterprises - Administrator"]
                                                         (rfe/href :dcs.pasi.app.router/ace-view nil {:participant :ace}))
                                       (navbar-clickable [:span.icon-text [:span.icon.has-text-warning-dark [:i.fas.fa-circle.is-warning-dark]] [:span "Anonymous public access"]]
-                             ;[:span "Anonymous public access"]
+                             ;[:span "Anonymous access"]
                                                         (rfe/href :dcs.pasi.app.router/anon-view nil {:participant :anon}))
                                       (navbar-clickable [:span.icon-text [:span.icon.has-text-danger [:i.fas.fa-circle]] [:span "Data Commons Scotland"]]
                              ;[:span "Data Commons Scotland - Administrator"]

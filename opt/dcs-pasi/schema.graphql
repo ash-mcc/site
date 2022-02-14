@@ -407,6 +407,8 @@ type Mutation {
       )
     abbr: String! @site(a: "pasi:pred/abbr")
     name: String! @site(a: "pasi:pred/name")
+    latitude: Float @site(a: "pasi:pred/latitude")
+    longitude: Float @site(a: "pasi:pred/longitude")
     qid: String @site(a: "pasi:pred/qid")
   ): DcsOrg @site(mutation: "update")
 
@@ -898,6 +900,10 @@ type DcsOrg {
   abbr: String! @site(a: "pasi:pred/abbr")
   "The name of the organisation"
   name: String! @site(a: "pasi:pred/name")
+  "Latitude of the action"
+  latitude: Float @site(a: "pasi:pred/latitude")
+  "Longitude of the action"
+  longitude: Float @site(a: "pasi:pred/longitude")
   "WikiData's Q Identifier for the organisation"
   qid: String! @site(a: "pasi:pred/qid")
 }

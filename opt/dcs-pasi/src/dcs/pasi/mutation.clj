@@ -198,11 +198,15 @@
              upsertDcsOrg(
                abbr: \"%s\",
                name: \"%s\",
+               latitude: \"%s\",
+               longitude: \"%s\",
                qid: \"%s\"
              ) { id }
            }"
           (:abbr m)
           (:name m)
+          (:latitude m)
+          (:longitude m)
           (:qid m)))
 
 (defn DcsProcess-upsert-fn [m]

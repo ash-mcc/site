@@ -233,11 +233,13 @@
                      id
                      abbr
                      name
+                     latitude
+                     longitude
                      qid
                    }
                  }"
                              :results-parser identity
-                             :field-order [:id :abbr :name :qid]}
+                             :field-order [:id :abbr :name :latitude :longitude :qid]}
    :dcsProcess              {:graphql "query {
                    dcsProcess {
                      id

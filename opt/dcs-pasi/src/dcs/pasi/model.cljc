@@ -1,4 +1,11 @@
-(ns dcs.pasi.model)
+(ns dcs.pasi.model
+  (:require #?(:clj 
+               [clojure.tools.logging :as log])))
+
+#?(:clj
+   (defn warn [s] (log/warn s))
+   :cljs
+   (defn warn [s] (js/console.log "WARNING:" s)))
 
 
 #?(:clj
@@ -271,6 +278,8 @@
                            }
                            enabler {
                              name
+                             latitude
+                             longitude
                            }
                          }
                        }
@@ -293,6 +302,8 @@
                            }
                            enabler {
                              name
+                             latitude
+                             longitude
                            }                        
                          }
                        }
@@ -315,6 +326,8 @@
                            }
                            enabler {
                              name
+                             latitude
+                             longitude
                            }                        
                          }
                        }
@@ -337,6 +350,8 @@
                            }
                            enabler {
                              name
+                             latitude
+                             longitude
                            }                        
                          }
                        }
@@ -350,40 +365,45 @@
                                                            (let [typename (:__typename m)]
                                                              (when (not (contains? #{"AceReusedFurniture" "StcmfRedistributedFood" "FrshrReusedMaterial" "StcilKerbsideRecycling"} typename))
                                                                (throw (ex-info (str "Unexpected typename: " typename) {})))
-                                                             (let [m2               (condp = typename
-                                                                                      "AceReusedFurniture" (assoc m
-                                                                                                                  :furnitureCategory (get-in m [:description :category])
-                                                                                                                  :furnitureSubcategory (get-in m [:description :subcategory])
-                                                                                                                  :furnitureItemKg (decimal (get-in m [:description :itemKg]))
-                                                                                                                  :furnitureItemCount (decimal (:itemCount m)))
-                                                                                      "StcmfRedistributedFood" (assoc m
-                                                                                                                      :foodDestination (get-in m [:destination :name]))
-                                                                                      "FrshrReusedMaterial" (assoc m
-                                                                                                                   :materialCategory (get-in m [:material :name]))
-                                                                                      "StcilKerbsideRecycling" (assoc m
-                                                                                                                      :binType (get-in m [:bin :name])))
-                                                                   m3               (assoc m2
-                                                                                           :batchKg (condp = typename
-                                                                                                      "AceReusedFurniture" (* (:furnitureItemKg m2)
-                                                                                                                              (:furnitureItemCount m2))
-                                                                                                      "StcmfRedistributedFood" (decimal (:batchKg m2))
-                                                                                                      "FrshrReusedMaterial" (decimal (:batchKg m2))
-                                                                                                      "StcilKerbsideRecycling" (* (decimal (:batchTonnes m2))
-                                                                                                                                  1000)))
-                                                                   refdata-mappings (condp = typename
-                                                                                      "AceReusedFurniture" (get-in m3 [:description :refDataConnectors])
-                                                                                      "StcmfRedistributedFood" (get-in m3 [:destination :refDataConnectors])
-                                                                                      "FrshrReusedMaterial" (get-in m3 [:material :refDataConnectors])
-                                                                                      "StcilKerbsideRecycling" (get-in m3 [:bin :refDataConnectors]))]
-                                                               (for [refdata-mapping refdata-mappings]
-                                                                 (let [m4 (assoc m3
-                                                                                 :enabler (get-in refdata-mapping [:enabler :name])
-                                                                                 :process (get-in refdata-mapping [:refProcess :name])
-                                                                                 :wasteStream (get-in refdata-mapping [:refMaterial :wasteStream])
-                                                                                 :batchKg (* (:batchKg m3)
-                                                                                             (decimal (:fraction refdata-mapping))))]
-                                                                   (assoc m4
-                                                                          :carbonSavingCo2eKg (* (:batchKg m4)
-                                                                                                 (decimal (get-in refdata-mapping [:refMaterial :carbonWeighting]))))))))))
+                                                             (try
+                                                               (let [m2               (condp = typename
+                                                                                        "AceReusedFurniture" (assoc m
+                                                                                                                    :furnitureCategory (get-in m [:description :category])
+                                                                                                                    :furnitureSubcategory (get-in m [:description :subcategory])
+                                                                                                                    :furnitureItemKg (decimal (get-in m [:description :itemKg]))
+                                                                                                                    :furnitureItemCount (decimal (:itemCount m)))
+                                                                                        "StcmfRedistributedFood" (assoc m
+                                                                                                                        :foodDestination (get-in m [:destination :name]))
+                                                                                        "FrshrReusedMaterial" (assoc m
+                                                                                                                     :materialCategory (get-in m [:material :name]))
+                                                                                        "StcilKerbsideRecycling" (assoc m
+                                                                                                                        :binType (get-in m [:bin :name])))
+                                                                     m3               (assoc m2
+                                                                                             :batchKg (condp = typename
+                                                                                                        "AceReusedFurniture" (* (:furnitureItemKg m2)
+                                                                                                                                (:furnitureItemCount m2))
+                                                                                                        "StcmfRedistributedFood" (decimal (:batchKg m2))
+                                                                                                        "FrshrReusedMaterial" (decimal (:batchKg m2))
+                                                                                                        "StcilKerbsideRecycling" (* (decimal (:batchTonnes m2))
+                                                                                                                                    1000)))
+                                                                     refdata-mappings (condp = typename
+                                                                                        "AceReusedFurniture" (get-in m3 [:description :refDataConnectors])
+                                                                                        "StcmfRedistributedFood" (get-in m3 [:destination :refDataConnectors])
+                                                                                        "FrshrReusedMaterial" (get-in m3 [:material :refDataConnectors])
+                                                                                        "StcilKerbsideRecycling" (get-in m3 [:bin :refDataConnectors]))]
+                                                                 (for [refdata-mapping refdata-mappings]
+                                                                   (let [m4 (assoc m3
+                                                                                   :enabler (get-in refdata-mapping [:enabler :name])
+                                                                                   :latitude (get-in refdata-mapping [:enabler :latitude])
+                                                                                   :longitude (get-in refdata-mapping [:enabler :longitude])
+                                                                                   :process (get-in refdata-mapping [:refProcess :name])
+                                                                                   :wasteStream (get-in refdata-mapping [:refMaterial :wasteStream])
+                                                                                   :batchKg (* (:batchKg m3)
+                                                                                               (decimal (:fraction refdata-mapping))))]
+                                                                     (assoc m4
+                                                                            :carbonSavingCo2eKg (* (:batchKg m4)
+                                                                                                   (decimal (get-in refdata-mapping [:refMaterial :carbonWeighting])))))))
+                                                               (catch #?(:clj Exception :cljs js/Error) e 
+                                                                 (warn (str "Problem: " e ". Data: " m)))))))
                                                     flatten))
-                             :field-order    [:from :to :enabler :process :wasteStream :batchKg :carbonSavingCo2eKg :furnitureCategory :furnitureSubcategory :foodDestination :materialCategory :binType :route]}})
+                             :field-order    [:from :to :enabler :process :wasteStream :batchKg :carbonSavingCo2eKg :latitude :longitude :furnitureCategory :furnitureSubcategory :foodDestination :materialCategory :binType :route]}})

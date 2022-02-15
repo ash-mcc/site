@@ -100,3 +100,7 @@
   {:extra-paths ["prod"]
    ;; nREPL can be useful debugging prod
    :extra-deps {nrepl/nrepl {:mvn/version "0.9.0-beta4"}}}}}
+
+
+
+ ;:exec-fn     nextjournal.clerk/build-static-app!

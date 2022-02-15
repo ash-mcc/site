@@ -84,8 +84,12 @@
 ;;
 ;; 
 
-
-(start)
+;; Alternatively, start via...
+;;
+;;  $ cd site
+;;  $ bin/site-server
+;;
+(start)  
 
 ; (update-site-graphql) for use with Alex's alx/insite-console branch
 
@@ -104,18 +108,23 @@
 
 ;; ----------------- authz specific -----------------
 
-; Define an access-all-areas access rule
-(def access-all-areas
-  {:xt/id "http://localhost:2021/access-rule"
-   ::site/description "A rule allowing access everything"
-   ::site/type "Rule"
-   ::pass/target []
-   ::pass/effect ::pass/allow})
+; Define and transact access-all-areas access rules
+(doseq [id ["http://localhost:2021/access-rule"
+            "http://localhost:2031/access-rule"
+            "http://192.168.1.106:2021/access-rule"
+            "http://192.168.1.106:2031/access-rule"]]
+  (let [access-all-areas
+        {:xt/id            id
+         ::site/description "A rule allowing access everything"
+         ::site/type        "Rule"
+         ::pass/target      []
+         ::pass/effect      ::pass/allow}]
 
-; Transact the access-all-areas access rule
-(xt/submit-tx
- (xt-node)
- [[::xt/put access-all-areas]])
+    ;; Transact the access-all-areas access rule
+    (xt/submit-tx
+     (xt-node)
+     [[::xt/put access-all-areas]])))
+
 
 ;; Remove the access-all-areas access rule
 #_(xt/submit-tx

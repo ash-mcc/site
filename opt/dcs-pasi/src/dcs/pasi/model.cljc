@@ -15,7 +15,7 @@
 
 
 (def queries
-  {:zwsCarbonMetric         {:graphql "query {
+  {:zwsCarbonMetric         {:graphql        "query {
                   zwsCarbonMetric {
                     id
                     wasteStream
@@ -23,8 +23,8 @@
                   }
                 }"
                              :results-parser identity
-                             :field-order [:id :wasteStream :carbonWeighting]}
-   :aceFurnitureDescription {:graphql "query {
+                             :field-order    [:id :wasteStream :carbonWeighting]}
+   :aceFurnitureDescription {:graphql        "query {
                    aceFurnitureDescription {
                      id
                      category
@@ -33,8 +33,8 @@
                    }
                  }"
                              :results-parser identity
-                             :field-order [:id :category :subcategory :itemKg]}
-   :aceReusedFurniture      {:graphql       "query {
+                             :field-order    [:id :category :subcategory :itemKg]}
+   :aceReusedFurniture      {:graphql        "query {
                    aceReusedFurniture {
                      id
                      from
@@ -47,28 +47,28 @@
                    }
                  }"
                              :results-parser (fn [coll]
-                                              (map #(assoc %
-                                                           :category (get-in % [:description :category])
-                                                           :subcategory (get-in % [:description :subcategory]))
-                                                   coll))
-                             :field-order [:id :from :to :category :subcategory :itemCount]}
-   :stcmfSource             {:graphql "query {
+                                               (map #(assoc %
+                                                            :category (get-in % [:description :category])
+                                                            :subcategory (get-in % [:description :subcategory]))
+                                                    coll))
+                             :field-order    [:id :from :to :category :subcategory :itemCount]}
+   :stcmfSource             {:graphql        "query {
                    stcmfSource {
                      id
                      name
                    }
                  }"
                              :results-parser identity
-                             :field-order [:id :name]}
-   :stcmfDestination        {:graphql "query {
+                             :field-order    [:id :name]}
+   :stcmfDestination        {:graphql        "query {
                    stcmfDestination {
                      id
                      name
                    }
                  }"
                              :results-parser identity
-                             :field-order [:id :name]}
-   :stcmfIncomingFood       {:graphql "query {
+                             :field-order    [:id :name]}
+   :stcmfIncomingFood       {:graphql        "query {
                    stcmfIncomingFood {
                      id
                      from
@@ -80,11 +80,11 @@
                    }
                  }"
                              :results-parser (fn [coll]
-                                              (map #(assoc %
-                                                           :source (get-in % [:source :name]))
-                                                   coll))
-                             :field-order [:id :from :to :source :batchKg]}
-   :stcmfRedistributedFood  {:graphql "query {
+                                               (map #(assoc %
+                                                            :source (get-in % [:source :name]))
+                                                    coll))
+                             :field-order    [:id :from :to :source :batchKg]}
+   :stcmfRedistributedFood  {:graphql        "query {
                    stcmfRedistributedFood {
                      id
                      from
@@ -96,19 +96,19 @@
                    }
                  }"
                              :results-parser (fn [coll]
-                                              (map #(assoc %
-                                                           :destination (get-in % [:destination :name]))
-                                                   coll))
-                             :field-order [:id :from :to :destination :batchKg]}
-   :frshrMaterialCategory   {:graphql "query {
+                                               (map #(assoc %
+                                                            :destination (get-in % [:destination :name]))
+                                                    coll))
+                             :field-order    [:id :from :to :destination :batchKg]}
+   :frshrMaterialCategory   {:graphql        "query {
                    frshrMaterialCategory {
                      id
                      name
                    }
                  }"
                              :results-parser identity
-                             :field-order [:id :name]}
-   :frshrReusedMaterial     {:graphql "query {
+                             :field-order    [:id :name]}
+   :frshrReusedMaterial     {:graphql        "query {
                    frshrReusedMaterial {
                      id
                      from
@@ -120,19 +120,19 @@
                    }
                  }"
                              :results-parser (fn [coll]
-                                              (map #(assoc %
-                                                           :material (get-in % [:material :name]))
-                                                   coll))
-                             :field-order [:id :from :to :material :batchKg]}
-   :stcilBin   {:graphql "query {
+                                               (map #(assoc %
+                                                            :material (get-in % [:material :name]))
+                                                    coll))
+                             :field-order    [:id :from :to :material :batchKg]}
+   :stcilBin                {:graphql        "query {
                    stcilBin {
                      id
                      name
                    }
                  }"
                              :results-parser identity
-                             :field-order [:id :name]}
-   :stcilKerbsideRecycling     {:graphql "query {
+                             :field-order    [:id :name]}
+   :stcilKerbsideRecycling  {:graphql        "query {
                    stcilKerbsideRecycling {
                      id
                      from
@@ -148,8 +148,8 @@
                                                (map #(assoc %
                                                             :bin (get-in % [:bin :name]))
                                                     coll))
-                             :field-order [:id :from :to :bin :route :batchTonnes]}
-   :dcsAceToRefData         {:graphql "query {
+                             :field-order    [:id :from :to :bin :route :batchTonnes]}
+   :dcsAceToRefData         {:graphql        "query {
                    dcsAceToRefData {
                      id
                      description {
@@ -163,13 +163,13 @@
                    }
                  }"
                              :results-parser (fn [coll]
-                                              (map #(assoc %
-                                                           :category (get-in % [:description :category])
-                                                           :subcategory (get-in % [:description :subcategory])
-                                                           :wasteStream (get-in % [:refMaterial :wasteStream]))
-                                                   coll))
-                             :field-order [:id :category :subcategory :wasteStream :fraction]}
-   :dcsStcmfToRefData       {:graphql       "query {
+                                               (map #(assoc %
+                                                            :category (get-in % [:description :category])
+                                                            :subcategory (get-in % [:description :subcategory])
+                                                            :wasteStream (get-in % [:refMaterial :wasteStream]))
+                                                    coll))
+                             :field-order    [:id :category :subcategory :wasteStream :fraction]}
+   :dcsStcmfToRefData       {:graphql        "query {
                    dcsStcmfToRefData {
                      id
                      destination {
@@ -185,13 +185,13 @@
                    }
                  }"
                              :results-parser (fn [coll]
-                                              (map #(assoc %                       
-                                                           :destination (get-in % [:destination :name])        
-                                                           :refProcess (get-in % [:refProcess :name])         
-                                                           :wasteStream (get-in % [:refMaterial :wasteStream]))
-                                                   coll))
-                             :field-order [:id :destination :refProcess :wasteStream :fraction]}
-   :dcsFrshrToRefData       {:graphql "query {
+                                               (map #(assoc %                       
+                                                            :destination (get-in % [:destination :name])        
+                                                            :refProcess (get-in % [:refProcess :name])         
+                                                            :wasteStream (get-in % [:refMaterial :wasteStream]))
+                                                    coll))
+                             :field-order    [:id :destination :refProcess :wasteStream :fraction]}
+   :dcsFrshrToRefData       {:graphql        "query {
                    dcsFrshrToRefData {
                      id
                      material {
@@ -207,13 +207,13 @@
                    }
                  }"
                              :results-parser (fn [coll]
-                                              (map #(assoc %
-                                                           :material (get-in % [:material :name])
-                                                           :refProcess (get-in % [:refProcess :name])
-                                                           :wasteStream (get-in % [:refMaterial :wasteStream]))
-                                                   coll))
-                             :field-order [:id :material :refProcess :wasteStream :fraction]}
-   :dcsStcilToRefData       {:graphql "query {
+                                               (map #(assoc %
+                                                            :material (get-in % [:material :name])
+                                                            :refProcess (get-in % [:refProcess :name])
+                                                            :wasteStream (get-in % [:refMaterial :wasteStream]))
+                                                    coll))
+                             :field-order    [:id :material :refProcess :wasteStream :fraction]}
+   :dcsStcilToRefData       {:graphql        "query {
                    dcsStcilToRefData {
                      id
                      bin {
@@ -234,8 +234,8 @@
                                                             :refProcess (get-in % [:refProcess :name])
                                                             :wasteStream (get-in % [:refMaterial :wasteStream]))
                                                     coll))
-                             :field-order [:id :bin :refProcess :wasteStream :fraction]}
-   :dcsOrg                  {:graphql "query {
+                             :field-order    [:id :bin :refProcess :wasteStream :fraction]}
+   :dcsOrg                  {:graphql        "query {
                    dcsOrg {
                      id
                      abbr
@@ -246,15 +246,15 @@
                    }
                  }"
                              :results-parser identity
-                             :field-order [:id :abbr :name :latitude :longitude :qid]}
-   :dcsProcess              {:graphql "query {
+                             :field-order    [:id :abbr :name :latitude :longitude :qid]}
+   :dcsProcess              {:graphql        "query {
                    dcsProcess {
                      id
                      name
                    }
                  }"
                              :results-parser identity
-                             :field-order [:id :name]}
+                             :field-order    [:id :name]}
    :dcsWasteReduction       {:graphql        "query {
                    dcsWasteReduction {
                      __typename

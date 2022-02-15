@@ -5,7 +5,8 @@
             [spec-tools.data-spec :as ds]
             [dcs.pasi.app.state :as state]
             [dcs.pasi.app.view.ace :as ace-view]
-            [dcs.pasi.app.view.anon :as anon-view]
+            [dcs.pasi.app.view.unidentified :as unidentified-view]
+            [dcs.pasi.app.view.identified-mop :as identified-mop-view]
             [dcs.pasi.app.view.dcs :as dcs-view]
             [dcs.pasi.app.view.frshr :as frshr-view]
             [dcs.pasi.app.view.stcmf :as stcmf-view]
@@ -19,9 +20,12 @@
    ["/ace"
     {:name ::ace-view
      :view ace-view/root}]
-   ["/anon"
-    {:name ::anon-view
-     :view anon-view/root}]
+   ["/unidentified"
+    {:name ::unidentified-view
+     :view unidentified-view/root}]
+   ["/identified-mop"
+    {:name ::identified-mop-view
+     :view identified-mop-view/root}]
    ["/dcs"
     {:name ::dcs-view
      :view dcs-view/root}]

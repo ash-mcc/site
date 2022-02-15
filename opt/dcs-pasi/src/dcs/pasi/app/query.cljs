@@ -11,7 +11,8 @@
   (async/go 
     (let [response (async/<! (http/post 
                               url 
-                              {:with-credentials? false
+                              {:debug true
+                               :with-credentials? false
                                :headers           {"Content-type" "application/json"}
                                :json-params       {:query     graphql
                                                    :variables nil}}))]

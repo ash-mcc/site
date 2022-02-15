@@ -79,7 +79,7 @@
    :dcsWasteReduction       "Calculated instances of waste reduction"})
 
 
-(def url "http://localhost:2021/pasi/graphql")
+(def url (str "http://" js/window.location.hostname ":2021/pasi/graphql"))
 
 
 (defn get-rows [params]

@@ -6,8 +6,8 @@
  :juxt.pass.alpha/classification "PUBLIC"
 
  :juxt.site.alpha/access-control-allow-origins
- {#regex "http://localhost:\\p{Digit}+"
-  {:juxt.site.alpha/access-control-allow-methods #{:option :post}
+ {#regex "http://((localhost)|(192.168.1.106)):\\p{Digit}+"
+  {:juxt.site.alpha/access-control-allow-methods #{:get :head :post :put :options}
    :juxt.site.alpha/access-control-allow-headers #{"authorization" "content-type"}
    :juxt.site.alpha/access-control-allow-credentials true}}
 

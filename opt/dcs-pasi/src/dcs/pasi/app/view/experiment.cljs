@@ -198,7 +198,7 @@
 (defn load-from-server []
   [:button.button 
    {:on-click (fn [_e]
-                (let [url "http://localhost:2021/pasi/graphql"
+                (let [url (str "http://" js/window.location.hostname ":2021/pasi/graphql")
                       model (:aceReusedFurniture model/queries)
                       graphql (:graphql model)
                       results-parser    (:results-parser model)

@@ -1,4 +1,4 @@
-(ns dcs.pasi.app.view.anon
+(ns dcs.pasi.app.view.unidentified
   (:require [reagent.core :as r]
             [dcs.pasi.app.util :as util]
             [dcs.pasi.app.state :as state]
@@ -22,8 +22,8 @@
                  :alt "Anonymous image"}]]]
         [:div.column
          [:div.content
-          [:h1.title.is-5 "Anonymous access"]
-          [:h2.subtitle.is-6.has-text-white "A mock-up of a webapp which an anonymous user might use to access PASI"]]]]]]]]
+          [:h1.title.is-5 "Unidentified access"]
+          [:h2.subtitle.is-6.has-text-white "A mock-up of a webapp which an unidentified user might use to access PASI"]]]]]]]]
 
    [:div.container.is-fullhd.mt-2.mb-6
     [datagrid/root @state/participant-cursor 500]]

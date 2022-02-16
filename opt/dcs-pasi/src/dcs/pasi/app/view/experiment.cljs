@@ -286,7 +286,7 @@ first
    [:div.container.is-fullhd
     [:div.columns
      [:div.column.is-4
-      (let [raw @state/x-ds-cursor
+      (let [raw    @state/x-ds-cursor
             counts raw]
         [oz/vega-lite (counts-per-month-spec counts) util/vega-embed-opts])]
      [:div.column.is-4

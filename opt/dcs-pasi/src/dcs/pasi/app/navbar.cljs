@@ -78,9 +78,9 @@
            (navbar-clickable [:span.icon-text [:span.icon.has-text-info [:i.fas.fa-circle]] [:span "Alloa Community Enterprises"]]
                              ;[:span "Alloa Community Enterprises - Administrator"]
                              (rfe/href :dcs.pasi.app.router/ace-view nil {:participant :ace}))
-           (navbar-clickable [:span.icon-text [:span.icon.has-text-warning-dark [:i.fas.fa-circle]] [:span "Unidentified access"]]
-                             ;[:span "Unidentified access"]
-                             (rfe/href :dcs.pasi.app.router/unidentified-view nil {:participant :unidentified}))
+           (navbar-clickable [:span.icon-text [:span.icon.has-text-warning-dark [:i.fas.fa-circle]] [:span "Public access (unauthenticated)"]]
+                             ;[:span "Public access (unauthenticated)"]
+                             (rfe/href :dcs.pasi.app.router/unauthenticated-view nil {:participant :unauthenticated}))
            (navbar-clickable [:span.icon-text [:span.icon.has-text-success [:i.fas.fa-circle]] [:span "Identified member of the public"]]
                              ;[:span "Identified member of the public access"]
                              (rfe/href :dcs.pasi.app.router/identified-mop-view nil {:participant :identified-mop}))

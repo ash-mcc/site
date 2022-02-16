@@ -18,7 +18,8 @@
                                             :stcmf :stcmfRedistributedFood
                                             :zws   :zwsCarbonMetric}
                        
-                       :x-ds               nil}))
+                       :x-ds               nil
+                       :unauthn             {:wr-ds nil}}))
 
 (defonce route-match-cursor (r/cursor root [:route-match]))
 (defonce participant-cursor (r/cursor root [:participant]))
@@ -39,6 +40,7 @@
 (def zws-type-kw-cursor (r/cursor root [:type-kw :zws]))
 
 (def x-ds-cursor (r/cursor root [:x-ds]))
+(def unauthn-wr-ds-cursor (r/cursor root [:unauthn :wr-ds]))
 
 
 ;; -----------------

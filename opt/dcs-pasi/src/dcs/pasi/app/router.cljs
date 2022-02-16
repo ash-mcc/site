@@ -5,7 +5,7 @@
             [spec-tools.data-spec :as ds]
             [dcs.pasi.app.state :as state]
             [dcs.pasi.app.view.ace :as ace-view]
-            [dcs.pasi.app.view.unidentified :as unidentified-view]
+            [dcs.pasi.app.view.unauthenticated.main :as unauthenticated-view]
             [dcs.pasi.app.view.identified-mop :as identified-mop-view]
             [dcs.pasi.app.view.dcs :as dcs-view]
             [dcs.pasi.app.view.frshr :as frshr-view]
@@ -20,9 +20,9 @@
    ["/ace"
     {:name ::ace-view
      :view ace-view/root}]
-   ["/unidentified"
-    {:name ::unidentified-view
-     :view unidentified-view/root}]
+   ["/unauthenticated"
+    {:name ::unauthenticated-view
+     :view unauthenticated-view/root}]
    ["/identified-mop"
     {:name ::identified-mop-view
      :view identified-mop-view/root}]

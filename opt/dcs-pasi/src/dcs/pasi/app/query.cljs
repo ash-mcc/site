@@ -61,10 +61,11 @@
                                               (when (contains? editable-fields %) {:editable true})
                                               ;; hack in some maxWidth settings
                                               (when (contains? #{:from :to :process :refProcess :batchKg :itemCount :itemKg :fraction :abbr :qid :source} %) {:maxWidth 100})
-                                              (when (contains? #{:category :furnitureCategory :materialCategory :carbonWeighting :route} %) {:maxWidth 130})
+                                              (when (contains? #{:category :furnitureCategory :materialCategory :carbonWeighting} %) {:maxWidth 130})
                                               (when (contains? #{:carbonSavingCo2eKg} %) {:maxWidth 160})
                                               (when (contains? #{:fraction :batchKg :batchTonnes :carbonSavingCo2eKg :carbonWeighting :itemCount} %) {:type "rightAligned"})
-                                              (when (contains? #{:fraction :batchKg :batchTonnes :carbonSavingCo2eKg :carbonWeighting} %) {:valueFormatter (fn [^js params] (let [v (.-value params)] (if (number? v) (.toFixed v 2) v)))}))))
+                                              (when (contains? #{:fraction :batchKg :batchTonnes :carbonSavingCo2eKg :carbonWeighting} %) {:valueFormatter (fn [^js params] (let [v (.-value params)] (if (number? v) (.toFixed v 2) v)))})
+                                              (when (contains? #{:enabler} %) {:sortable true}))))
           response-handler' (partial response-handler results-parser params)]
       (.setColumnDefs grid-api-component (clj->js col-defs)) ;; hack to set the columnDefs to 'match' the expected data
       (http-call url graphql response-handler'))))

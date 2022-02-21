@@ -140,7 +140,6 @@
                      bin {
                        name
                      }
-                     route
                      batchTonnes
                    }
                  }"
@@ -148,7 +147,7 @@
                                                (map #(assoc %
                                                             :bin (get-in % [:bin :name]))
                                                     coll))
-                             :field-order    [:id :from :to :bin :route :batchTonnes]}
+                             :field-order    [:id :from :to :bin :batchTonnes]}
    :dcsAceToRefData         {:graphql        "query {
                    dcsAceToRefData {
                      id
@@ -355,7 +354,6 @@
                            }                        
                          }
                        }
-                       route
                      }
                    }  
                  }"
@@ -406,4 +404,4 @@
                                                                (catch #?(:clj Exception :cljs js/Error) e 
                                                                  (warn (str "Problem: " e ". Data: " m)))))))
                                                     flatten))
-                             :field-order    [:from :to :enabler :process :wasteStream :batchKg :carbonSavingCo2eKg :latitude :longitude :furnitureCategory :furnitureSubcategory :foodDestination :materialCategory :binType :route]}})
+                             :field-order    [:from :to :enabler :process :wasteStream :batchKg :carbonSavingCo2eKg :latitude :longitude :furnitureCategory :furnitureSubcategory :foodDestination :materialCategory :binType]}})

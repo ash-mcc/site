@@ -38,8 +38,8 @@
            }"
           (:category m)
           (:subcategory m)
-          (:startTime m)
-          (:endTime m)
+          (:from m)
+          (:to m)
           (:itemCount m)))
 
 (defn StcmfSource-upsert-fn [m]
@@ -67,8 +67,8 @@
                batchKg: %s
              ) { id }
            }"
-          (:startTime m)
-          (:endTime m)
+          (:from m)
+          (:to m)
           (:source m)
           (:batchKg m)))
 
@@ -81,8 +81,8 @@
                batchKg: %s
              ) { id }
            }"
-          (:startTime m)
-          (:endTime m)
+          (:from m)
+          (:to m)
           (:destination m)
           (:batchKg m)))
 
@@ -122,14 +122,12 @@
                from: \"%s\",
                to: \"%s\",
                bin: \"%s\",
-               route: \"%s\",
                batchTonnes: %s
              ) { id }
            }"
-          (:startTime m)
-          (:endTime m)
+          (:from m)
+          (:to m)
           (:bin m)
-          (:route m)
           (:batchTonnes m)))
 
 (defn DcsAceToRefData-upsert-fn [m]

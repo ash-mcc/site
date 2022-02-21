@@ -185,7 +185,7 @@ type Mutation {
         a: "xt/id"
         gen: {
           type: TEMPLATE 
-          template: "pasi:ent/StcilKerbsideRecycling/{{from}}/{{to}}/{{bin}}/{{route}}"
+          template: "pasi:ent/StcilKerbsideRecycling/{{from}}/{{to}}/{{bin}}"
         }
       )
       from: Date! @site(a: "pasi:pred/from")
@@ -199,7 +199,6 @@ type Mutation {
             template: "pasi:ent/StcilBin/{{bin}}"
           }
         )
-      route: String! @site(a: "pasi:pred/route")
       batchTonnes: Float! @site(a: "pasi:pred/batchTonnes")
   ): StcilKerbsideRecycling @site(mutation: "update")
 
@@ -702,9 +701,6 @@ type StcilKerbsideRecycling {
                    [object {keyword: "pasi:pred/bin"} e]]
          }
     )
-
-  "The collection route"
-  route: String! @site(a: "pasi:pred/route")
     
   "The weight in tonnes of this batch of reused material"
   batchTonnes: Float! @site(a: "pasi:pred/batchTonnes")

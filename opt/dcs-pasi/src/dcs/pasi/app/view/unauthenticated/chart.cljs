@@ -36,7 +36,7 @@
                                              ;:tickBand "extent"
                                              }
                                      :timeUnit "yearquarter"
-                                     :scale {:domain ["2016-01-01T00:00:00" {:expr "now()"}]}}
+                                     :scale {:domain ["2013-01-01T00:00:00" {:expr "now()"}]}}
                            :y       {:title "Carbon savings (CO2e tonnes)"
                                      :field "carbonSavingCo2eTonnes"
                                      :type  "quantitative"

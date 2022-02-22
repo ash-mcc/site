@@ -1,11 +1,11 @@
 (ns dcs.pasi.app.view.unauthenticated.chart
   (:require [cljs.spec.alpha :as s]
-[clojure.string :as str]
+            [clojure.string :as str]
             [reagent.core :as r]
-             [oz.core :as oz]
+            [oz.core :as oz]
             [dcs.pasi.app.util :as util]
             [dcs.pasi.app.state :as state]
-            [dcs.pasi.app.view.datagrid :as datagrid]))
+            [dcs.pasi.app.view.unauthenticated.tmp :as tmp]))
 
 (def chart-template
   {:schema    "https://vega.github.io/schema/vega/v5.json"
@@ -60,6 +60,13 @@
    :config    {:axisX {:grid false}}})
 
 
-(defn root []
-  (let [chart-spec (assoc-in chart-template [:data :values] @state/unauthn-wr-ds-cursor)]
+(defn ele [wr-ds selected-years selected-orgs]
+  (let [chart-spec (assoc-in chart-template [:data :values] (tmp/filter-ds wr-ds selected-orgs))]
     [oz/vega-lite chart-spec util/vega-embed-opts]))
+
+
+(defn root []
+  [ele
+   @state/unauthn-wr-ds-cursor
+   @state/unauthn-selected-years-cursor
+   @state/unauthn-selected-orgs-cursor])

@@ -37,7 +37,12 @@
                   (query/http-call url graphql response-handler)))
 
 
-
+(defn filter-ds 
+  [wr-ds selected-orgs]
+  {:pre [(s/valid? seq? wr-ds)
+         (s/valid? set? selected-orgs)]}
+  (->> wr-ds
+       (filter #(contains? selected-orgs (:enabler %)))))
 
 
 

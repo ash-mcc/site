@@ -21,7 +21,8 @@
                        :x-ds               nil
                        :unauthn             {:wr-ds nil
                                              :selected {:years #{}
-                                                        :orgs #{}}
+                                                        :orgs #{}
+                                                        :streams #{}}
                                              :grid-api nil}}))
 
 (defonce route-match-cursor (r/cursor root [:route-match]))
@@ -47,6 +48,7 @@
 (def unauthn-wr-ds-cursor (r/cursor root [:unauthn :wr-ds]))
 (def unauthn-selected-years-cursor (r/cursor root [:unauthn :selected :years]))
 (def unauthn-selected-orgs-cursor (r/cursor root [:unauthn :selected :orgs]))
+(def unauthn-selected-streams-cursor (r/cursor root [:unauthn :selected :streams]))
 (def unauthn-grid-api-cursor (r/cursor root [:unauthn :grid-api]))
 
 

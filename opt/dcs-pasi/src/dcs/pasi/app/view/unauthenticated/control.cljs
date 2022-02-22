@@ -27,7 +27,7 @@
    [:span.control-label label]]])
 
 
-(defn ele [wr-ds selected-years selected-orgs]
+(defn ele [wr-ds selected-years selected-orgs selected-streams]
   (let [years (->> wr-ds
                    (map :from) 
                    (map #(subs % 0 4))
@@ -36,6 +36,10 @@
                    sort)
         organisations (->> wr-ds
                            (map :enabler) 
+                           distinct 
+                           sort)
+        waste-streams (->> wr-ds
+                           (map :wasteStream) 
                            distinct 
                            sort)] 
     
@@ -52,6 +56,11 @@
        [:h3.subtitle "Organisations"]
        (doall (map #(checkbox state/unauthn-selected-orgs-cursor % (str %)) organisations))]]
      
+     [:div.column.is-4
+      [:div.container
+       [:h3.subtitle "Waste streams"]
+       (doall (map #(checkbox state/unauthn-selected-streams-cursor % (str %)) waste-streams))]]
+     
      ]))
 
 
@@ -59,4 +68,5 @@
   [ele
    @state/unauthn-wr-ds-cursor
    @state/unauthn-selected-years-cursor
-   @state/unauthn-selected-orgs-cursor])
+   @state/unauthn-selected-orgs-cursor
+   @state/unauthn-selected-streams-cursor])

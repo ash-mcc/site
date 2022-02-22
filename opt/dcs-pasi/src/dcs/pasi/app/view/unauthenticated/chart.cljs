@@ -61,8 +61,8 @@
    :config    {:axisX {:grid false}}})
 
 
-(defn ele [wr-ds selected-years selected-orgs]
-  (let [chart-spec (assoc-in chart-template [:data :values] (tmp/filter-ds wr-ds selected-years selected-orgs))]
+(defn ele [wr-ds selected-years selected-orgs selected-streams]
+  (let [chart-spec (assoc-in chart-template [:data :values] (tmp/filter-ds wr-ds selected-years selected-orgs selected-streams))]
     [oz/vega-lite chart-spec util/vega-embed-opts]))
 
 
@@ -70,4 +70,5 @@
   [ele
    @state/unauthn-wr-ds-cursor
    @state/unauthn-selected-years-cursor
-   @state/unauthn-selected-orgs-cursor])
+   @state/unauthn-selected-orgs-cursor
+   @state/unauthn-selected-streams-cursor])

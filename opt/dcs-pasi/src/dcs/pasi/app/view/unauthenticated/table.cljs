@@ -52,13 +52,14 @@
       {:gridOptions spec}]]))
 
 
-(defn ele [wr-ds selected-years selected-orgs]
+(defn ele [wr-ds selected-years selected-orgs selected-streams]
   [:div {:style {:height 500}}
-   [grid (tmp/filter-ds wr-ds selected-years selected-orgs)]])
+   [grid (tmp/filter-ds wr-ds selected-years selected-orgs selected-streams)]])
 
 
 (defn root []
   [ele
    @state/unauthn-wr-ds-cursor
    @state/unauthn-selected-years-cursor
-   @state/unauthn-selected-orgs-cursor])
+   @state/unauthn-selected-orgs-cursor
+   @state/unauthn-selected-streams-cursor])

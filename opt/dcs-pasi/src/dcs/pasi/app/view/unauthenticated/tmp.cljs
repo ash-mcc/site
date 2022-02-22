@@ -43,13 +43,10 @@
   {:pre [#_(s/valid? set? selected-years)
          (s/valid? set? selected-orgs)]}
   (->> wr-ds
-       #_(filter #(seq (set/intersection selected-years 
-                                       (let [from ^String (:from %)
-                                             from (subs from 0 4)
-                                             to   (when (not (str/starts-with? % "01-01-"))
-                                                    (let [to ^String (:to %)
-                                                          to (subs to 0 4)]
-                                                      to))]
+       (filter #(seq (set/intersection selected-years 
+                                       (let [from (-> % :from (subs 0 4) js/parseInt)
+                                             to   (when (not (str/starts-with? (:to %) "01-01-"))
+                                                    (-> % :to (subs 0 4) js/parseInt))]
                                          #{from to}))))
        (filter #(contains? selected-orgs (:enabler %)))))
 

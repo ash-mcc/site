@@ -43,7 +43,7 @@
      [:div.hero-body
       (control/root)]]]
    
-   [:section.hero.is-full-height.is-white
+   [:section.hero.is-small.has-background-info-light
     [:div.container.is-fullhd
      [:div.hero-body
       (map/root)]]]

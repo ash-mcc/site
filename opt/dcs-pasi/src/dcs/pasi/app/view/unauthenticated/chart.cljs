@@ -42,10 +42,11 @@
                                      :type  "quantitative"
                           
                                      }
-                           :color   {:field "wasteStream" 
+                           :color   {:title "Waste stream"
+                                     :field "wasteStream" 
                                      :type "nominal" 
                                      :scale {:scheme "tableau20"} 
-                                     :legend nil #_{:orient "bottom" :columns 3}}
+                                     :legend {:columns 2}}
                            :tooltip [{:title  "Year quarter"
                                       :field  "quarter"
                                       :type   "temporal"
@@ -61,7 +62,7 @@
 
 
 (defn ele [wr-ds selected-years selected-orgs]
-  (let [chart-spec (assoc-in chart-template [:data :values] (tmp/filter-ds wr-ds selected-orgs))]
+  (let [chart-spec (assoc-in chart-template [:data :values] (tmp/filter-ds wr-ds selected-years selected-orgs))]
     [oz/vega-lite chart-spec util/vega-embed-opts]))
 
 

@@ -54,7 +54,7 @@
 
 (defn ele [wr-ds selected-years selected-orgs]
   [:div {:style {:height 500}}
-   [grid (tmp/filter-ds wr-ds selected-orgs)]])
+   [grid (tmp/filter-ds wr-ds selected-years selected-orgs)]])
 
 
 (defn root []

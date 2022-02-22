@@ -1,5 +1,6 @@
 (ns dcs.pasi.app.view.unauthenticated.tmp
   (:require    [cljs.spec.alpha :as s]
+               [clojure.set :as set]
                [clojure.string :as str]
                [dcs.pasi.app.state :as state]
                [dcs.pasi.model :as model]
@@ -38,10 +39,18 @@
 
 
 (defn filter-ds 
-  [wr-ds selected-orgs]
-  {:pre [(s/valid? seq? wr-ds)
+  [wr-ds selected-years selected-orgs]
+  {:pre [#_(s/valid? set? selected-years)
          (s/valid? set? selected-orgs)]}
   (->> wr-ds
+       #_(filter #(seq (set/intersection selected-years 
+                                       (let [from ^String (:from %)
+                                             from (subs from 0 4)
+                                             to   (when (not (str/starts-with? % "01-01-"))
+                                                    (let [to ^String (:to %)
+                                                          to (subs to 0 4)]
+                                                      to))]
+                                         #{from to}))))
        (filter #(contains? selected-orgs (:enabler %)))))
 
 

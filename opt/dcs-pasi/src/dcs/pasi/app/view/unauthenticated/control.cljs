@@ -61,6 +61,22 @@
        [:h3.subtitle "Waste streams"]
        (doall (map #(checkbox state/unauthn-selected-streams-cursor % (str %)) waste-streams))]]
      
+     [:div.column.is-4
+      [:div.container
+       [:h3.subtitle "TODO controls"]
+       [:div.content 
+        [:ul 
+         [:li "bar vs line charts"]
+         [:li "in terms of tonnes vs cars vs airplanes"]
+         [:li "use parent->child grid rows for drill-in"]
+         [:li "date range slider"]
+         [:li "controls for 'process' and other dims"]
+         [:li "controls for forcus: waste streams vs orgs"]
+         [:li "use the same colour swatch throughout"]
+         [:li "download current selection as CSV"]
+         [:li "generate SPARQL query for current selection"]
+         [:li "handle comments (comments attach to?)"]
+         [:li "handle 'presets' (in comments?)"]]]]]
      ]))
 
 

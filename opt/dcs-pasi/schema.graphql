@@ -185,11 +185,13 @@ type Mutation {
         a: "xt/id"
         gen: {
           type: TEMPLATE 
-          template: "pasi:ent/StcilKerbsideRecycling/{{from}}/{{to}}/{{bin}}"
+          template: "pasi:ent/StcilKerbsideRecycling/{{from}}/{{to}}/{{hhMm}}/{{route}}/{{bin}}"
         }
       )
       from: Date! @site(a: "pasi:pred/from")
       to: Date! @site(a: "pasi:pred/to")
+      hhMm: String!
+      route: String!
       bin: String!
       binRef: ID 
         @site(
@@ -692,6 +694,12 @@ type StcilKerbsideRecycling {
 
   "The end of the period, exclusive"
   to: Date! @site(a: "pasi:pred/to")
+
+  "The time within the day"
+  hhMm: String! @site(a: "pasi:pred/hhMm")
+
+  "The collection route"
+  route: String! @site(a: "pasi:pred/route")
 
   "The bin type"
   bin: StcilBin

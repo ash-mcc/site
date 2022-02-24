@@ -121,12 +121,16 @@
              upsertStcilKerbsideRecycling(
                from: \"%s\",
                to: \"%s\",
+               hhMm: \"%s\",  
+               route: \"%s\",
                bin: \"%s\",
                batchTonnes: %s
              ) { id }
            }"
           (:from m)
           (:to m)
+          (:hhMm m)
+          (:route m)
           (:bin m)
           (:batchTonnes m)))
 

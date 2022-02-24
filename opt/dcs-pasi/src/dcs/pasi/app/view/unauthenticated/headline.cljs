@@ -1,44 +1,42 @@
 (ns dcs.pasi.app.view.unauthenticated.headline
   (:require [cljs.pprint :as pp]
-            [dcs.pasi.app.state :as state]))
+            [dcs.pasi.app.state :as state]
+            [dcs.pasi.app.view.unauthenticated.tmp :as tmp]))
 
 (defn int-comma [n] 
   (pp/cl-format nil "~:d" n))
 
-(defn root []
-  (let [observations  (->> @state/unauthn-wr-ds-cursor 
+(defn ele [wr-ds selected-years selected-orgs selected-streams]
+  (let [ds (tmp/filter-ds wr-ds selected-years selected-orgs selected-streams)
+        observations  (->> ds
                            count
                            int-comma)
-        years         (let [years (->> @state/unauthn-wr-ds-cursor 
-                                       (map :from) 
-                                       (map #(subs % 0 4))
-                                       (map int)
-                                       distinct)]
-                        (str (apply min years) "-" (apply max years)))
-        co2e          (->> @state/unauthn-wr-ds-cursor 
-                           (map #(if (contains? % :batchKg)
-                                   (/ (:batchKg %) 1000)
-                                   (:batchTonnes %))) 
+        years         (->> ds
+                           (map :from) 
+                           (map #(subs % 0 4))
+                           distinct
+                           count)
+        co2eT         (->> ds
+                           (map :carbonSavingCo2eKg) 
                            (apply +)
+                           (#(/ % 1000))
                            int
                            int-comma)
-        cars          (->> @state/unauthn-wr-ds-cursor 
-                           (map #(if (contains? % :batchKg)
-                                   (/ (:batchKg %) 1000)
-                                   (:batchTonnes %))) 
+        cars          (->> ds
+                           (map :carbonSavingCo2eKg)
                            (apply +)
+                           (#(/ % 1000))
                            (#(/ % 4.1))
                            int
                            int-comma)
-        flights          (->> @state/unauthn-wr-ds-cursor 
-                           (map #(if (contains? % :batchKg)
-                                   (:batchKg %)
-                                   (* (:batchTonnes %) 1000))) 
-                           (apply +)
-                           (#(/ % 202.5))
-                           int
-                           int-comma)
-        organisations (->> @state/unauthn-wr-ds-cursor 
+        flights          (->> ds 
+                              (map :carbonSavingCo2eKg)
+                              (apply +)
+                              (#(/ % 1000))
+                              (#(/ % 0.2025))
+                              int
+                              int-comma)
+        organisations (->> ds
                            (map :enabler) 
                            distinct 
                            count
@@ -48,7 +46,7 @@
      [:div.level-item.has-text-centered
       [:div
        [:p.heading  [:span "♻️ Carbon savings" [:br] "(CO" [:sub "2"] "e tonnes)"]]
-       [:p.title co2e]]]
+       [:p.title co2eT]]]
      [:div.level-item.has-text-centered
       [:div
        [:p.heading [:span "✈️ Equivalent flights" [:br] "(Glasgow -> Berlin)"]]
@@ -59,7 +57,7 @@
        [:p.title observations]]]
      [:div.level-item.has-text-centered
       [:div
-       [:p.heading "📅 Years"]
+       [:p.heading "📅 Years covered"]
        [:p.title years]]]
      [:div.level-item.has-text-centered
       [:div
@@ -69,3 +67,11 @@
       [:div
        [:p.heading "📝 Comments"]
        [:p.title comments]]]]))
+
+
+(defn root []
+  [ele
+   @state/unauthn-wr-ds-cursor
+   @state/unauthn-selected-years-cursor
+   @state/unauthn-selected-orgs-cursor
+   @state/unauthn-selected-streams-cursor])

@@ -45,7 +45,7 @@
     
     [:div.columns 
      
-     [:div.column.is-2
+     [:div.column.is-1
       [:div.container
        [:h3.subtitle "Years"]
        (doall (map #(checkbox state/unauthn-selected-years-cursor % (str %)) years))

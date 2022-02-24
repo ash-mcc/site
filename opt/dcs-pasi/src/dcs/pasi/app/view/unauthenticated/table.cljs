@@ -29,7 +29,7 @@
                                             ;(when (contains? #{:carbonSavingCo2eKg} %) {:maxWidth 160})
                                             (when (contains? #{:fraction :batchKg :batchTonnes :carbonSavingCo2eKg :carbonWeighting :itemCount} %) {:type "rightAligned"})
                                             (when (contains? #{:fraction :batchKg :batchTonnes :carbonSavingCo2eKg :carbonWeighting} %) {:valueFormatter (fn [^js params] (let [v (.-value params)] (if (number? v) (.toFixed v 2) v)))})
-                                            (when (contains? #{:to :enabler} %) {:sortable true})))
+                                            (when (contains? #{:to :enabler :batchKg :carbonSavingCo2eKg} %) {:sortable true})))
                                vec)    
               :immutableData true
               :animateRows   true

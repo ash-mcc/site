@@ -32,16 +32,16 @@
          [:div.content
           [:h1.title.is-5 "Public access (unauthenticated)"]
           [:h2.subtitle.is-6.has-text-white "A mock-up of a webapp which an unauthenticated member of the public might use to access PASI"]]]]]]]]
-
-   [:section.hero.is-small.is-primary
-    [:div
-     [:div.hero-body
-      (headline/root)]]]
    
    [:section.hero.is-small.is-white
     [:div
      [:div.hero-body
       (control/root)]]]
+   
+   [:section.hero.is-small.is-primary
+       [:div
+        [:div.hero-body
+         (headline/root)]]]
    
    [:section.hero.is-small.has-background-info-light
     [:div.container.is-fullhd

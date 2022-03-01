@@ -26,8 +26,17 @@
    [:span.check.is-info]
    [:span.control-label label]]])
 
+(defn radio [backing-atom value label]
+  [:div {:key value}
+   [:label.b-checkbox.checkbox.is-small
+    [:input {:type      "checkbox"
+             :on-change #(reset! backing-atom value)
+             :checked   (= @backing-atom value)}]
+    [:span.check.is-info]
+    [:span.control-label label]]])
 
-(defn ele [wr-ds selected-years selected-orgs selected-streams]
+
+(defn ele [wr-ds selected-years selected-orgs selected-streams selected-groupby selected-charttype]
   (let [years (->> wr-ds
                    (map :from) 
                    (map #(subs % 0 4))
@@ -47,19 +56,29 @@
      
      [:div.column.is-1
       [:div.container
-       [:h3.subtitle "Years"]
+       [:h3.subtitle.mb-1 "Years"]
        (doall (map #(checkbox state/unauthn-selected-years-cursor % (str %)) years))
        ]]
      
      [:div.column.is-2
       [:div.container
-       [:h3.subtitle "Organisations"]
+       [:h3.subtitle.mb-1 "Organisations"]
        (doall (map #(checkbox state/unauthn-selected-orgs-cursor % (str %)) organisations))]]
      
-     [:div.column.is-4
+     [:div.column.is-3
       [:div.container
-       [:h3.subtitle "Waste streams"]
+       [:h3.subtitle.mb-1 "Waste streams"]
        (doall (map #(checkbox state/unauthn-selected-streams-cursor % (str %)) waste-streams))]]
+     
+     [:div.column.is-2
+      [:div.container
+       [:h3.subtitle.mb-1 "Group by"]
+       (radio state/unauthn-selected-groupby-cursor "Waste stream" "Waste stream")
+       (radio state/unauthn-selected-groupby-cursor "Organisation" "Organisation")
+       [:br]
+       [:h3.subtitle.mb-1 "Chart type"]
+       (radio state/unauthn-selected-charttype-cursor "Bar chart" "Bar chart")
+       (radio state/unauthn-selected-charttype-cursor "Line chart" "Line chart")]]
      
      [:div.column.is-4
       [:div.container
@@ -85,4 +104,6 @@
    @state/unauthn-wr-ds-cursor
    @state/unauthn-selected-years-cursor
    @state/unauthn-selected-orgs-cursor
-   @state/unauthn-selected-streams-cursor])
+   @state/unauthn-selected-streams-cursor
+   @state/unauthn-selected-groupby-cursor
+   @state/unauthn-selected-charttype-cursor])

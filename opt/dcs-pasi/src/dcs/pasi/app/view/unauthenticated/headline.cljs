@@ -57,7 +57,7 @@
        [:p.title observations]]]
      [:div.level-item.has-text-centered
       [:div
-       [:p.heading "📅 Years covered"]
+       [:p.heading "📅 Period covered"]
        [:p.title years]]]
      [:div.level-item.has-text-centered
       [:div

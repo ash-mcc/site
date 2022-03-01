@@ -22,7 +22,9 @@
                        :unauthn             {:wr-ds nil
                                              :selected {:years #{}
                                                         :orgs #{}
-                                                        :streams #{}}
+                                                        :streams #{}
+                                                        :groupby "Waste stream"
+                                                        :charttype "Bar chart"}
                                              :grid-api nil}}))
 
 (defonce route-match-cursor (r/cursor root [:route-match]))
@@ -49,6 +51,8 @@
 (def unauthn-selected-years-cursor (r/cursor root [:unauthn :selected :years]))
 (def unauthn-selected-orgs-cursor (r/cursor root [:unauthn :selected :orgs]))
 (def unauthn-selected-streams-cursor (r/cursor root [:unauthn :selected :streams]))
+(def unauthn-selected-groupby-cursor (r/cursor root [:unauthn :selected :groupby]))
+(def unauthn-selected-charttype-cursor (r/cursor root [:unauthn :selected :charttype]))
 (def unauthn-grid-api-cursor (r/cursor root [:unauthn :grid-api]))
 
 

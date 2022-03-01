@@ -85,12 +85,10 @@
        [:h3.subtitle "TODO controls"]
        [:div.content 
         [:ul 
-         [:li "bar vs line charts"]
          [:li "in terms of tonnes vs cars vs airplanes"]
          [:li "use parent->child grid rows for drill-in"]
          [:li "date range slider"]
          [:li "controls for 'process' and other dims"]
-         [:li "controls for forcus: waste streams vs orgs"]
          [:li "use the same colour swatch throughout"]
          [:li "download current selection as CSV"]
          [:li "generate SPARQL query for current selection"]

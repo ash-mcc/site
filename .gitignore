@@ -9,3 +9,5 @@ opt/graphiql/target
 /import
 *.dylib
 .clj-kondo
+opt/dcs-pasi/public/js/cljs-runtime
+opt/dcs-pasi/public/js/dcs-pasi-app.js

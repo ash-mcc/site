@@ -43,7 +43,7 @@
         [:div.hero-body
          (headline/root)]]]
    
-   [:section.hero.is-small.has-background-info-light
+   [:section.hero
     [:div.container.is-fullhd
      [:div.hero-body
       (map/root)]]]

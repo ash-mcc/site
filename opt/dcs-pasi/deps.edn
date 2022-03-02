@@ -14,6 +14,8 @@
 
          com.andrewmcveigh/cljs-time {:mvn/version "0.5.2"}
 
+         testdouble/clojurescript.csv {:mvn/version "0.5.1"}
+
          ;; Alex's data table
          ;armincerf/reagent-datatable {:git/url "https://github.com/armincerf/reagent-datatable"
          ;                             :sha     "d78fd710d82dbc0af319001fbc21254d69986ad5"}

@@ -53,4 +53,138 @@
        (filter #(contains? selected-streams (:wasteStream %)))))
 
 
+(def wasteStreams ;; TODO remove this hardcoding
+  ["Textiles"
+   "Textiles and Footwear"
+   "Aluminium cans and foil"
+   "Footwear"
+   "Mixed Cans"
+   "Scrap Metal"
+   "Steel Cans"
+   "PET (including forming)"
+   "WEEE - Small"
+   "WEEE - Mixed"
+   "WEEE - Large"
+   "PS (including forming)"
+   "Wood"
+   "Average Plastics"
+   "Average plastic rigid (including bottles)"
+   "HDPE (including forming)"
+   "LDPE and LLDPE (including forming)"
+   "Average plastic film (including bags)"
+   "PP (including forming)"
+   "PVC (including forming)"
+   "Board"
+   "Mixed paper and board"
+   "Paper"
+   "Books"
+   "Mineral Oil"
+   "WEEE - Fridges and Freezers"
+   "Food and Drink Waste (wet AD)"
+   "Food and Drink Waste (Composting)"
+   "Batteries (Post Consumer Non Automotive)"
+   "Glass (colour separated)"
+   "Mixed Food and Garden Waste (dry AD)"
+   "Garden Waste (dry AD)"
+   "Mixed Food and Garden Waste (Composting)"
+   "Garden Waste Composting"
+   "Glass (mixed colours)"
+   "Plasterboard"
+   "Aggregates (Rubble)"])
+
+(def geojson-template {:type       "FeatureCollection"
+                       :features   []
+                       :properties {:fields      {"n" {:name "Site name"}
+                                                  "r" {:name "Region"}
+                                                  "p" {:name "Permit"}
+                                                  "s" {:name "Status"}
+                                                  "a" {:name "Activities"}
+                                                  "k" {:name "Accepts"}
+                                                  "t" {:lookup (apply array-map
+                                                                      (interleave (map #(str "m" %) (range))
+                                                                                  wasteStreams))
+                                                       :name   "Materials"}
+                                                  "z" {:name "Total incoming tonnes"}}
+                                    :attribution "SEPA",
+                                    :description "Waste site locations and the quantities of incoming materials (2019)"}})
+
+;; Example of a ds (containing 1 record) that has been restructed ready to be turned into a geojson oriented Feature record 
+#_({:enabler                            "The Fair Share"
+  :latitude                           "56.146389"
+  :longitude                          "-3.919833"
+  :per-wasteStream-carbonSavingCo2eKg {"m34" 2868.330419999999
+                                       "m25" 0
+                                       "m8"  18442.849840000003
+                                       "m11" 0
+                                       "m27" 0
+                                       "m20" 0
+                                       "m3"  0
+                                       "m7"  0
+                                       "m12" 4137.0327
+                                       "m4"  943.6153999999997
+                                       "m13" 9685.26552
+                                       "m15" 7935.50175
+                                       "m17" 443.4934500000001
+                                       "m33" 0
+                                       "m0"  0
+                                       "m28" 384.8385
+                                       "m9"  0
+                                       "m26" 16967.29245
+                                       "m36" 117.01556999999998
+                                       "m29" 0
+                                       "m16" 0
+                                       "m19" 0
+                                       "m10" 4465.179
+                                       "m32" 0
+                                       "m23" 31551.068070000005
+                                       "m30" 0
+                                       "m2"  193311.91663000002
+                                       "m35" 0
+                                       "m6"  0
+                                       "m24" 0
+                                       "m1"  1586281.4197999998
+                                       "m18" 0
+                                       "m14" 0
+                                       "m21" 3930.29872
+                                       "m31" 0
+                                       "m5"  20312.238950000003
+                                       "m22" 0}
+  :total-carbonSavingCo2eKg           1901777.35677})
+
+(defn ->geojson-as-a-clj-structure [ds]
+  (js/console.log (str "->geojson-as-a-clj-structure encoding " (count ds) " rows"))
+  (let [ds (->> ds
+                (group-by :enabler)
+                (map (fn [[enabler coll]] {:enabler                            enabler
+                                           :latitude                           (-> coll first :latitude)
+                                           :longitude                          (-> coll first :longitude)
+                                           :per-wasteStream-carbonSavingCo2eKg (->> wasteStreams
+                                                                                    (keep-indexed
+                                                                                     (fn [idx wasteStream] (let [v (->> coll
+                                                                                                                        (filter #(= wasteStream (:wasteStream %)))
+                                                                                                                        (map :carbonSavingCo2eKg)
+                                                                                                                        (apply +))]
+                                                                                                             [(str "m" idx) v])))
+                                                                                    (into {}))
+                                           :total-carbonSavingCo2eKg           (->> coll
+                                                                                    (map :carbonSavingCo2eKg)
+                                                                                    (apply +))})))
+        ; _ (js/console.log (str ds))
+        
+        ;; Encode as GeoJSON oriented feature records
+        features (map #(hash-map :geometry {:type        "Point"
+                                            :coordinates [(:longitude %) (:latitude %)]}
+                                 :type "Feature"
+                                 :properties {"n" (:enabler %)
+                                              "r" "region"
+                                              "p" "permit"
+                                              "s" "status"
+                                              "a" "activities"
+                                              "k" "accepts"
+                                              "t" (:per-wasteStream-carbonSavingCo2eKg %) ;tonnes-incoming 
+                                              "z" (:total-carbonSavingCo2eKg %) ;tonnes-incoming-total
+                                              })
+                      ds)]
+    (assoc geojson-template :features features)))
+
 

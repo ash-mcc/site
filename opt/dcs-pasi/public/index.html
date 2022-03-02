@@ -52,14 +52,28 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
 
+    <!-- For the cluster map  TODO: move these from the js dir-->
+    <link rel="stylesheet" href="js/leaflet.css">
+    <link rel="stylesheet" href="js/MarkerCluster.css">
+    <link rel="stylesheet" href="js/ui-style.css">
+
     <link rel="icon" href="img/favicon.ico">
     <!-- <link rel="canonical" href="https://wastemattersscotland.org"> -->
 </head>
 <body class="has-navbar-fixed-top">
 <noscript>You need to enable JavaScript to run this app.</noscript>
 <div id="app"></div>
+
 <script src="js/date-picker.js"></script>
+
+<!-- For the cluster map -->
+<script src="js/leaflet.js" charset="utf-8"></script>
+<script src="js/leaflet.markercluster.js"></script>
+<script src="js/d3.v3.min.js" charset="utf-8"></script>
+<script src="js/ui-main.js"></script>
+
 <script src="js/dcs-pasi-app.js"></script>
 <script>dcs.pasi.app.main.init();</script>
+
 </body>
 </html>

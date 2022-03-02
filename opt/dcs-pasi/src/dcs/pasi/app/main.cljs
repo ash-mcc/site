@@ -3,7 +3,8 @@
             [dcs.pasi.app.watch] 
             [dcs.pasi.app.state :as state]
             [dcs.pasi.app.router :as router]
-            [dcs.pasi.app.navbar :as navbar]))
+            [dcs.pasi.app.navbar :as navbar]
+            [dcs.pasi.app.loader :as loader]))
 
 (defn page
   []
@@ -30,7 +31,7 @@
       ;; init is called ONCE when the page loads
       ;; this is called in the index.html and must be exported
       ;; so it is available even in :advanced release builds
-      ;(loader/load-data)
+  (loader/load-data)
   (start))
 
 ;; this is called before any code is reloaded

@@ -37,16 +37,17 @@ function initMap() {
     return [map, markerclusters];
 }
 
-function initMarkers(map, markerclusters, geojson) {
-    console.log('addMarkers()');
+function initMarkers(map, markerclusters, geojson, fitBounds) {
+    console.log('initMarkers()');
 
     metadata = geojson.properties;
     var markers = L.geoJson(geojson, {
 	    pointToLayer: defineFeature,
 		onEachFeature: defineFeaturePopup
     });
+    markerclusters.eachLayer(layer => markerclusters.removeLayer(layer)); // remove any previous
     markerclusters.addLayer(markers);
-    map.fitBounds(markers.getBounds());
+    if (fitBounds) map.fitBounds(markers.getBounds());
     //createUiLegend().addTo(map);
     //renderLegend();
 }

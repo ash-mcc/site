@@ -11,3 +11,11 @@ opt/graphiql/target
 .clj-kondo
 opt/dcs-pasi/public/js/cljs-runtime
 opt/dcs-pasi/public/js/dcs-pasi-app.js
+opt/dcs-pasi/data
+opt/dcs-pasi/node_modules
+.calva/
+opt/dcs-pasi/.calva
+opt/dcs-pasi/.shadow-cljs
+opt/dcs-pasi/package-lock.json
+opt/dcs-pasi/package.json
+

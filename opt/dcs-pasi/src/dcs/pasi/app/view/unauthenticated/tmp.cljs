@@ -169,7 +169,7 @@
                                            :total-carbonSavingCo2eKg           (->> coll
                                                                                     (map :carbonSavingCo2eKg)
                                                                                     (apply +))})))
-        ; _ (js/console.log (str ds))
+        _ (js/console.log (str ds))
         
         ;; Encode as GeoJSON oriented feature records
         features (map #(hash-map :geometry {:type        "Point"

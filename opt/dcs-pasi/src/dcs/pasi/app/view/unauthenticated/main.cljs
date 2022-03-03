@@ -35,9 +35,8 @@
    
    [:<>
     [:section.hero.is-small.is-white
-     [:div
-      [:div.hero-body
-       (control/root)]]]
+     [:div.hero-body
+       (control/root)]]
     [:section.is-full-height.hero.is-small.is-primary
      [:div.hero-body
       (headline/root)]]

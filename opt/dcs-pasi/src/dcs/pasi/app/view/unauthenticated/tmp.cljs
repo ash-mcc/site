@@ -61,7 +61,7 @@
    "#BCBD22"
    "#17BECF"
    ;; repeat
-   "#1F77B4"
+   "#D7B5A6" ;; customised
    "#FF7F0E"
    "#2CA02C"
    "#D62728"
@@ -70,7 +70,7 @@
    "#CFECF9"
    "#7F7F7F"
    "#BCBD22"
-   "#17BECF"
+   "#F1CE63" ;; customised
    ;; repeat
    "#1F77B4"
    "#FF7F0E"
@@ -78,7 +78,7 @@
    "#D62728"
    "#9467BD"
    "#8C564B"
-   "#CFECF9"
+   "#FF9D9A" ;; customised
    "#7F7F7F"
    "#BCBD22"
    "#17BECF"

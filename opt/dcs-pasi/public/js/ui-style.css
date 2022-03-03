@@ -37,7 +37,7 @@ html, body {
 /* Previously, for the standalone version, I was (below) using:   height: 90%   */
 #map-container {
     position: relative;
-    height: 110%;
+    height: 100%;
     width: 95vw;
     padding: 5px;
 }
@@ -137,146 +137,174 @@ html, body {
 
 /*marker categories*/
 .category-m0{
-  fill: #E78144;
-  background: #E78144;
+  fill: #1F77B4;
+  background: #1F77B4;
 }
 .category-m1{
-  fill: #8BA6A9;
-  background: #8BA6A9;
+  fill: #FF7F0E;
+  background: #FF7F0E;
 }
 .category-m2{
-  fill: #9A816D;
-                 background: #9A816D;
+  fill: #2CA02C;
+                 background: #2CA02C;
                }
 .category-m3{
-  fill: #F64B54;
-                 background: #F64B54;
+  fill: #D62728;
+                 background: #D62728;
                }
 
 .category-m4{
-  fill: #F4EBBE;
-                 background: #F4EBBE;
+  fill: #9467BD;
+                 background: #9467BD;
                }
 .category-m5{
-  fill: #F7EBEC;
-                 background: #F7EBEC;
+  fill: #8C564B;
+                 background: #8C564B;
                }
 .category-m6{
-  fill: #DDBDD5;
-                 background: #DDBDD5;
+  fill: #CFECF9;
+                 background: #CFECF9;
                }
 .category-m7{
-  fill: #AC9FBB;
-                 background: #AC9FBB;
+  fill: #7F7F7F;
+                 background: #7F7F7F;
                }
 .category-m8{
-  fill: #59656F;
-                 background: #59656F;
+  fill: #BCBD22;
+                 background: #BCBD22;
                }
 .category-m9{
-  fill: #878472;
-                 background: #878472;
+  fill: #17BECF;
+                 background: #17BECF;
                }
-.category-m10{
-  fill: #89ACAB;
-                 background: #89ACAB;
-               }
-.category-m11{
-  fill: #70E4EF;
-                 background: #DE541E;
-               }
-.category-m12{ /*Household*/
-  fill: #8B6E87;
-                 background: #8B6E87;
-               }
-.category-m13{
-  fill: #8D6346;
-                 background: #8D6346;
-               }
-.category-m14{
-  fill: #DDF45B;
-                 background: #DDF45B;
-               }
-.category-m15{
-  fill: #667761;
-                 background: #667761;
-               }
-.category-m16{
-  fill: #9E9A91;
-                 background: #9E9A91;
-               }
-.category-m17{
-  fill: #917C78;
-                 background: #917C78;
-               }
-.category-m18{
-  fill: #B79492;
-                 background: #B79492;
-               }
-.category-m19{
-  fill: #EAE1DF;
-                 background: #EAE1DF;
-               }
-.category-m20{
-  fill: #7C9EB2;
-                 background: #7C9EB2;
-               }
-.category-m21{ /*Paper and cardboard*/
-  fill: #E6D4A4;
-                 background: #E6D4A4;
-               }
-.category-m22{
-  fill: #B965C8;
-                 background: #B965C8;
-               }
-.category-m23{
-  fill: #2460AC;
-                 background: #2460AC;
-               }
-.category-m24{
-  fill: #DB2B39;
-                 background: #DB2B39;
-               }
-.category-m25{
-  fill: #AB906E;
-                 background: #AB906E;
-               }
-.category-m26{ /* Sorting residues*/
-  fill: #C8665A;
-                 background: #C8665A;
-               }
-.category-m27{
-  fill: #971B66;
-                 background: #971B66;
-               }
-.category-m28{
-  fill: #F0CEA0;
-                 background: #F0CEA0;
-               }
-.category-m29{
-  fill: #CACC90;
-                 background: #CACC90;
-               }
-.category-m30{
-  fill: #297373;
-                 background: #297373;
-               }
-.category-m31{
-  fill: #FF8552;
-                 background: #FF8552;
-               }
-.category-m32{
-  fill: #839E5B;
-                 background: #839E5B;
-               }
- .category-m33{
-                 fill: #B7AEB3;
-                                background: #B7AEB3;
-                              }
-.category-m34{
-                                fill: #808178;
-                                               background: #808178;
-                                             }
+
+
+               .category-m10{
+                fill: #1F77B4;
+                background: #1F77B4;
+              }
+              .category-m11{
+                fill: #FF7F0E;
+                background: #FF7F0E;
+              }
+              .category-m12{
+                fill: #2CA02C;
+                               background: #2CA02C;
+                             }
+              .category-m13{
+                fill: #D62728;
+                               background: #D62728;
+                             }
+              
+              .category-m14{
+                fill: #9467BD;
+                               background: #9467BD;
+                             }
+              .category-m15{
+                fill: #8C564B;
+                               background: #8C564B;
+                             }
+              .category-m16{
+                fill: #CFECF9;
+                               background: #CFECF9;
+                             }
+              .category-m17{
+                fill: #7F7F7F;
+                               background: #7F7F7F;
+                             }
+              .category-m18{
+                fill: #BCBD22;
+                               background: #BCBD22;
+                             }
+              .category-m19{
+                fill: #17BECF;
+                               background: #17BECF;
+                             }
+
+                             .category-m20{
+                              fill: #1F77B4;
+                              background: #1F77B4;
+                            }
+                            .category-m21{
+                              fill: #FF7F0E;
+                              background: #FF7F0E;
+                            }
+                            .category-m22{
+                              fill: #2CA02C;
+                                             background: #2CA02C;
+                                           }
+                            .category-m23{
+                              fill: #D62728;
+                                             background: #D62728;
+                                           }
+                            
+                            .category-m24{
+                              fill: #9467BD;
+                                             background: #9467BD;
+                                           }
+                            .category-m25{
+                              fill: #8C564B;
+                                             background: #8C564B;
+                                           }
+                            .category-m26{
+                              fill: #CFECF9;
+                                             background: #CFECF9;
+                                           }
+                            .category-m27{
+                              fill: #7F7F7F;
+                                             background: #7F7F7F;
+                                           }
+                            .category-m28{
+                              fill: #BCBD22;
+                                             background: #BCBD22;
+                                           }
+                            .category-m29{
+                              fill: #17BECF;
+                                             background: #17BECF;
+                                           }
+
+                                           .category-m30{
+                                            fill: #1F77B4;
+                                            background: #1F77B4;
+                                          }
+                                          .category-m31{
+                                            fill: #FF7F0E;
+                                            background: #FF7F0E;
+                                          }
+                                          .category-m32{
+                                            fill: #2CA02C;
+                                                           background: #2CA02C;
+                                                         }
+                                          .category-m33{
+                                            fill: #D62728;
+                                                           background: #D62728;
+                                                         }
+                                          
+                                          .category-m34{
+                                            fill: #9467BD;
+                                                           background: #9467BD;
+                                                         }
+                                          .category-m35{
+                                            fill: #8C564B;
+                                                           background: #8C564B;
+                                                         }
+                                          .category-m36{
+                                            fill: #CFECF9;
+                                                           background: #CFECF9;
+                                                         }
+                                          .category-m37{
+                                            fill: #7F7F7F;
+                                                           background: #7F7F7F;
+                                                         }
+                                          .category-m38{
+                                            fill: #BCBD22;
+                                                           background: #BCBD22;
+                                                         }
+                                          .category-m39{
+                                            fill: #17BECF;
+                                                           background: #17BECF;
+                                                         }
+
 /* E6D4A4 */
 
 /*marker icons*/

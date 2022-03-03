@@ -8,6 +8,115 @@
 
 
 
+
+(def wasteStreams ;; ordered by CO2e, the most first
+  ;; manually hacked ui-style.css to align with this
+  ["Textiles"
+   "Textiles and Footwear"
+   "Aluminium cans and foil"
+   "Footwear"
+   "Mixed Cans"
+   "Scrap Metal"
+   "Steel Cans"
+   "PET (including forming)"
+   "WEEE - Small"
+   "WEEE - Mixed"
+   "WEEE - Large"
+   "PS (including forming)"
+   "Wood"
+   "Average Plastics"
+   "Average plastic rigid (including bottles)"
+   "HDPE (including forming)"
+   "LDPE and LLDPE (including forming)"
+   "Average plastic film (including bags)"
+   "PP (including forming)"
+   "PVC (including forming)"
+   "Board"
+   "Mixed paper and board"
+   "Paper"
+   "Books"
+   "Mineral Oil"
+   "WEEE - Fridges and Freezers"
+   "Food and Drink Waste (wet AD)"
+   "Food and Drink Waste (Composting)"
+   "Batteries (Post Consumer Non Automotive)"
+   "Glass (colour separated)"
+   "Mixed Food and Garden Waste (dry AD)"
+   "Garden Waste (dry AD)"
+   "Mixed Food and Garden Waste (Composting)"
+   "Garden Waste Composting"
+   "Glass (mixed colours)"
+   "Plasterboard"
+   "Aggregates (Rubble)"])
+
+(def wasteStream-colours 
+  ["#1F77B4"
+   "#FF7F0E"
+   "#2CA02C"
+   "#D62728"
+   "#9467BD"
+   "#8C564B"
+   "#CFECF9"
+   "#7F7F7F"
+   "#BCBD22"
+   "#17BECF"
+   ;; repeat
+   "#1F77B4"
+   "#FF7F0E"
+   "#2CA02C"
+   "#D62728"
+   "#9467BD"
+   "#8C564B"
+   "#CFECF9"
+   "#7F7F7F"
+   "#BCBD22"
+   "#17BECF"
+   ;; repeat
+   "#1F77B4"
+   "#FF7F0E"
+   "#2CA02C"
+   "#D62728"
+   "#9467BD"
+   "#8C564B"
+   "#CFECF9"
+   "#7F7F7F"
+   "#BCBD22"
+   "#17BECF"
+   ;; repeat
+   "#1F77B4"
+   "#FF7F0E"
+   "#2CA02C"
+   "#D62728"
+   "#9467BD"
+   "#8C564B"
+   "#CFECF9"
+   "#7F7F7F"
+   "#BCBD22"
+   "#17BECF"])
+
+(def orgs
+  ["Alloa Community Enterprises"
+   "The Fair Share"
+   "Stirling council"
+   "Stirling Community Food"])
+
+(def org-colours
+  ["#aeebf9"
+   "#f2e1ab"
+   "#ff9c00"
+   "#94cc7a"])
+
+(defn colour [v]
+  (let [idx (.indexOf wasteStreams v)]
+    (if (>= idx 0) 
+      (get wasteStream-colours idx)
+      (let [idx (.indexOf orgs v)]
+        (if (>= idx 0)
+          (get org-colours idx)
+          "#3e8ed0")))))
+
+  
+
 (defn load-from-server []
   (let [url (str "http://" js/window.location.hostname ":2021/pasi/graphql")
                       model (:dcsWasteReduction model/queries)
@@ -53,44 +162,7 @@
        (filter #(contains? selected-streams (:wasteStream %)))))
 
 
-(def wasteStreams ;; TODO remove this hardcoding
-  ["Textiles"
-   "Textiles and Footwear"
-   "Aluminium cans and foil"
-   "Footwear"
-   "Mixed Cans"
-   "Scrap Metal"
-   "Steel Cans"
-   "PET (including forming)"
-   "WEEE - Small"
-   "WEEE - Mixed"
-   "WEEE - Large"
-   "PS (including forming)"
-   "Wood"
-   "Average Plastics"
-   "Average plastic rigid (including bottles)"
-   "HDPE (including forming)"
-   "LDPE and LLDPE (including forming)"
-   "Average plastic film (including bags)"
-   "PP (including forming)"
-   "PVC (including forming)"
-   "Board"
-   "Mixed paper and board"
-   "Paper"
-   "Books"
-   "Mineral Oil"
-   "WEEE - Fridges and Freezers"
-   "Food and Drink Waste (wet AD)"
-   "Food and Drink Waste (Composting)"
-   "Batteries (Post Consumer Non Automotive)"
-   "Glass (colour separated)"
-   "Mixed Food and Garden Waste (dry AD)"
-   "Garden Waste (dry AD)"
-   "Mixed Food and Garden Waste (Composting)"
-   "Garden Waste Composting"
-   "Glass (mixed colours)"
-   "Plasterboard"
-   "Aggregates (Rubble)"])
+
 
 (def geojson-template {:type       "FeatureCollection"
                        :features   []
@@ -164,6 +236,7 @@
                                                                                                                         (filter #(= wasteStream (:wasteStream %)))
                                                                                                                         (map :carbonSavingCo2eKg)
                                                                                                                         (apply +))]
+                                                                                                             (when (= "Wood" wasteStream) (js/console.log (str "wasteStream " idx " " wasteStream)))
                                                                                                              [(str "m" idx) v])))
                                                                                     (into {}))
                                            :total-carbonSavingCo2eKg           (->> coll

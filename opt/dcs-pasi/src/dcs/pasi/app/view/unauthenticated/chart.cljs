@@ -7,9 +7,11 @@
             [dcs.pasi.app.state :as state]
             [dcs.pasi.app.view.unauthenticated.tmp :as tmp]))
 
-(def chart-template-wasteStream-bar
+
+
+(def chart-template-wasteStream-bar-oriented
   {:schema    "https://vega.github.io/schema/vega/v5.json"
-   :width      700 ;"container"
+   :width      900 ;"container"
    ;:height     500
    ;:background "#f2dfce"
    :title     "Carbon savings per quarter"
@@ -43,8 +45,8 @@
                            :color   {:title "Waste stream"
                                      :field "wasteStream" 
                                      :type "nominal" 
-                                     :scale {:scheme "tableau20"} 
-                                     :legend {:columns 2}}
+                                     :scale :PLACEHOLDER 
+                                     :legend nil #_{:columns 2}}
                            :tooltip [{:title  "Year quarter"
                                       :field  "quarter"
                                       :type   "temporal"
@@ -58,6 +60,9 @@
                                       :type "nominal"}]}}]
    :config    {:axisX {:grid false}}})
 
+(def chart-template-wasteStream-bar
+  (-> chart-template-wasteStream-bar-oriented
+      (assoc-in [:layer 0 :encoding :color :scale] {:domain tmp/wasteStreams :range tmp/wasteStream-colours})))
 
 (def chart-template-wasteStream-line
   (-> chart-template-wasteStream-bar
@@ -65,6 +70,7 @@
 
 (def chart-template-organisation-bar 
   (-> chart-template-wasteStream-bar
+      (assoc-in [:layer 0 :encoding :color :scale] {:domain tmp/orgs :range tmp/org-colours})
       (assoc-in [:transform 1 :groupby 1] "enabler")
       (assoc-in [:layer 0 :encoding :color :title] "Organisation")
       (assoc-in [:layer 0 :encoding :color :field] "enabler")

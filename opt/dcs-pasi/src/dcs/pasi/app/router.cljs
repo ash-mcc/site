@@ -16,7 +16,7 @@
 (def routes
   [["/"
     {:name ::home-view
-     :view dcs-view/root}]
+     :view unauthenticated-view/root}]
    ["/ace"
     {:name ::ace-view
      :view ace-view/root}]
@@ -43,7 +43,7 @@
      :view experiment-view/root}]
    ["*path"
     {:name ::catch-all
-     :view dcs-view/root}]])
+     :view unauthenticated-view/root}]])
 
 (defn init
       []

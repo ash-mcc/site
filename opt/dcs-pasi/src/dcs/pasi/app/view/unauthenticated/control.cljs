@@ -1,7 +1,8 @@
 (ns dcs.pasi.app.view.unauthenticated.control
   (:require [cljs.spec.alpha :as s]
             [reagent.core :as r]
-            [dcs.pasi.app.state :as state]))
+            [dcs.pasi.app.state :as state]
+            [dcs.pasi.app.view.unauthenticated.tmp :as tmp]))
 
 ;; Bulma/CSS add-ons:
 ;;   https://justboil.github.io/bulma-checkbox/
@@ -18,13 +19,19 @@
 
 
 (defn checkbox [backing-atom value label]
- [:div {:key value}
+ (let [assoc-colour (tmp/colour value)
+       style {:border-color assoc-colour}
+       checked? (contains? @backing-atom value)
+       style (if checked?
+              (assoc style :background-color assoc-colour)
+               style)]
+   [:div {:key value}
   [:label.b-checkbox.checkbox.is-small
    [:input {:type      "checkbox"
             :on-change #(swap! backing-atom toggle value)
-            :checked   (contains? @backing-atom value)}]
-   [:span.check.is-info]
-   [:span.control-label label]]])
+            :checked   checked?}]
+   [:span.check {:style style}]
+   [:span.control-label label]]]))
 
 (defn radio [backing-atom value label]
   [:div {:key value}
@@ -85,7 +92,8 @@
        [:br]
        [:h3.subtitle.mb-1 "Chart type"]
        (radio state/unauthn-selected-charttype-cursor "Bar chart" "Bar chart")
-       (radio state/unauthn-selected-charttype-cursor "Line chart" "Line chart")]]
+       (radio state/unauthn-selected-charttype-cursor "Line chart" "Line chart")
+       ]]
      
      
      ]))

@@ -34,22 +34,22 @@
           [:h2.subtitle.is-6.has-text-white "A mock-up of a webapp which an unauthenticated member of the public might use to access PASI"]]]]]]]]
    
    [:<>
-     [:section.hero.is-small.is-white
-                 [:div
-                  [:div.hero-body
-                   (control/root)]]]
-    [:section.hero.is-small.is-primary
-                       [:div.hero-body
-                         (headline/root)]]
-    [:section.hero
-                 [:div.container.is-fullhd
-                  [:div.hero-body
-                   (map/root)]]]
-    [:section.hero.is-full-height.is-link
-                 [:div.hero-body
-                  [:div.container.is-fullhd
-                   (chart/root)]]]
-    [:section.hero.is-full-height.is-info
-                 [:div.hero-body
-                  [:div.container.is-fullhd.mt-2.mb-6
-                   [table/root]]]]]])
+    [:section.hero.is-small.is-white
+     [:div
+      [:div.hero-body
+       (control/root)]]]
+    [:section.is-full-height.hero.is-small.is-primary
+     [:div.hero-body
+      (headline/root)]]
+    [:section.hero.is-full-height
+     [:div.hero-body.pt-1.pb-4
+      [:div.container.is-fullhd
+       (map/root)]]]
+    [:section.hero {:style {:background-color "#aeebf9"}}
+     [:div.hero-body.pt-1.pb-1.has-text-centered
+      [:div.container.is-fullhd
+       (chart/root)]]]
+    [:section.hero.is-full-height
+     [:div.hero-body.pt-1.pb-1
+      [:div.container.is-fullhd
+       [table/root]]]]]])

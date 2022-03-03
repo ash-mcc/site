@@ -35,7 +35,7 @@
                     false))) ;; TODO figure out when to fitBounds and when noit to
 
 (defn render []
-  [:div#map-container {:style {:height 350}}
+  [:div#map-container {:style {:height 320}}
    [:div#map]])
 
 (defn component [wr-ds selected-years selected-orgs selected-streams]

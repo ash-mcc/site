@@ -32,7 +32,11 @@
                         (tmp/filter-ds @state/unauthn-selected-years-cursor @state/unauthn-selected-orgs-cursor @state/unauthn-selected-streams-cursor)
                         tmp/->geojson-as-a-clj-structure
                         clj->js)
-                    false))) ;; TODO figure out when to fitBounds and when noit to
+                    (let [markerclusters ^js @markerclusters-holder
+                          layers (.getLayers markerclusters)
+                          ;; when zero layers then call fitBounds (zoom to) after adding the new layers/markers 
+                          fit-bounds? (= 0 (count layers))]
+                      fit-bounds?))))
 
 (defn render []
   [:div#map-container {:style {:height 320}}

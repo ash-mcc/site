@@ -43,6 +43,8 @@
                    :component-did-mount  did-mount
                    :component-did-update did-update}))
 
+;; TODO make popups etc. work
+;;   maybe see https://github.com/rururu/rete4flights for inspiration of how to do it with Reagent
 (defn root []
   [component 
    @state/unauthn-wr-ds-cursor

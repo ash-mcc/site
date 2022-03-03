@@ -37,20 +37,22 @@
 
 
 (defn ele [wr-ds selected-years selected-orgs selected-streams selected-groupby selected-charttype]
-  (let [years (->> wr-ds
-                   (map :from) 
-                   (map #(subs % 0 4))
-                   (map int)
-                   distinct
-                   sort)
-        organisations (->> wr-ds
-                           (map :enabler) 
-                           distinct 
-                           sort)
-        waste-streams (->> wr-ds
-                           (map :wasteStream) 
-                           distinct 
-                           sort)] 
+  (let [years                                 (->> wr-ds
+                                                   (map :from) 
+                                                   (map #(subs % 0 4))
+                                                   (map int)
+                                                   distinct
+                                                   sort)
+        organisations                         (->> wr-ds
+                                                   (map :enabler) 
+                                                   distinct 
+                                                   sort)
+        waste-streams                         (->> wr-ds
+                                                   (map :wasteStream) 
+                                                   distinct 
+                                                   sort)
+        n                                     (quot (count waste-streams) 2)
+        [waste-streams-pt1 waste-streams-pt2] (split-at n waste-streams)] 
     
     [:div.columns 
      
@@ -65,10 +67,15 @@
        [:h3.subtitle.mb-1 "Organisations"]
        (doall (map #(checkbox state/unauthn-selected-orgs-cursor % (str %)) organisations))]]
      
+
      [:div.column.is-3
       [:div.container
        [:h3.subtitle.mb-1 "Waste streams"]
-       (doall (map #(checkbox state/unauthn-selected-streams-cursor % (str %)) waste-streams))]]
+       (doall (map #(checkbox state/unauthn-selected-streams-cursor % (str %)) waste-streams-pt1))]]
+     
+     [:div.column.is-3
+      [:div.container
+       (doall (map #(checkbox state/unauthn-selected-streams-cursor % (str %)) waste-streams-pt2))]]
      
      [:div.column.is-2
       [:div.container
@@ -80,20 +87,7 @@
        (radio state/unauthn-selected-charttype-cursor "Bar chart" "Bar chart")
        (radio state/unauthn-selected-charttype-cursor "Line chart" "Line chart")]]
      
-     [:div.column.is-4
-      [:div.container
-       [:h3.subtitle "TODO controls"]
-       [:div.content 
-        [:ul 
-         [:li "in terms of tonnes vs cars vs airplanes"]
-         [:li "use parent->child grid rows for drill-in"]
-         [:li "date range slider"]
-         [:li "controls for 'process' and other dims"]
-         [:li "use the same colour swatch throughout"]
-         [:li "download current selection as CSV"]
-         [:li "generate SPARQL query for current selection"]
-         [:li "handle comments (comments attach to?)"]
-         [:li "handle 'presets' (in comments?)"]]]]]
+     
      ]))
 
 

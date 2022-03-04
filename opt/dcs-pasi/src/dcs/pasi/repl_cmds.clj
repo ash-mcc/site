@@ -161,6 +161,14 @@
 
 (-> (xt-node)
     xt/db
+    (xt/q `{:find  [?e ?route]
+            :where [[?e :pasi:pred/type "StcilKerbsideRecycling"]
+                    [?e :pasi:pred/route ?route]]
+            :limit 10})
+    pp/pprint)
+
+(-> (xt-node)
+    xt/db
     (xt/q `{:find  [e]
             :where [[e ~(keyword "pasi:pred/type") "AceFurnitureDescription"]]})
     pp/pprint)

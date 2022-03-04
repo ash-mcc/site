@@ -1,0 +1,161 @@
+route,latitude,longitude,comment
+602 Route 2A (NEW),,,
+601 Route 1A (NEW),,,
+604 Route 4A (NEW),,,
+603 Route 3A (NEW),,,
+189 Missed Bins,,,
+605 Route 5A (NEW),,,
+191 Rt 2,,,
+606 Route 6A  (NEW),,,
+607 Route 7A (NEW),,,
+631 Route 31A (NEW),,,
+608 Route 8A (NEW),,,
+636 Bring sites ,,,
+610 Route 10A (NEW),,,
+609 Route 9A (NEW),,,
+201 Commercial,,,
+505 Route 5 (NEW),,,
+Balfron ,56.0699601,-4.3408356,
+Drymen ,56.0661743,-4.4564235,
+Fintry ,56.0560444,-4.229194,
+Strathblane ,55.9804156,-4.3140577,
+Killearn ,56.0399143,-4.3832445,
+"Aberfoyle, Drymen, Balmaha, Croftamie, Balfron & Fintry narrow access areas  ",56.0798692,-4.5093052,
+"Thornhill, Callander, Aberfoyle, Kinlochard & Loch Katrine narrow access areas ",56.1929172,-4.5005601,
+City Centre recycling  bring sites & Rural glass bring sites ,56.1127364,-3.9346271,
+Bridge of Allan,56.1563863,-3.9601072,
+Dunblane East ,56.1926793,-4.0037551,
+Dunblane West ,56.1926793,-3.9950004,
+Dunblane North ,56.1926793,-4.0037551,
+Doune & Deanston ,56.1887921,-4.0628412,
+"Blairlogie, Fallin, Bannockburn & Town centre narrow access areas",56.1207531,-3.9471199,
+Causewayhead & Cambuskenneth ,56.1242457,-3.9210488,
+Raploch ,56.1311882,-3.9578219,
+Cornton & Bridge of Allan East ,56.1348466,-3.9448227,
+"Blairdrummond, Doune, Dunblane North narrow access areas ",56.1653729,-4.049343,
+St Ninians & Cultenhove ,56.1000358,-3.9485348,
+Cambusbarron ,56.1088783,-3.975689,
+Riverside ,56.1252726,-3.9345645,
+Torbrex ,56.1051923,-3.9513647,
+Braehead ,56.0969598,-3.9317605,
+"Cowie, Bannockburn, Carronbridge & Fintry narrow access areas ",56.0270772,-4.0328072,
+Hillpark & Whins of Milton ,56.090171,-3.938687,
+Broomridge & Wallace Park ,56.0900371,-3.9481238,
+St Ninians & Whins of Milton ,56.1014631,-3.943169,
+Plean ,56.0645404,-3.879077,
+Fallin ,56.1046294,-3.8796953,
+Bannockburn ,56.0880607,3.9295339,
+Cowie ,56.0810543,-3.8737331,
+"Kippen, Fintry, Killearn, Blanefield & Strathblane narrow access areas ",56.0598542,-4.3590822,
+Kippen ,56.1262816,4.1779841,
+"Balquhidder, Callander & Strathyre narrow access areas ",56.2119242,-4.2360418,
+Buchlyvie & Gartmore ,56.1150388,-4.3012505,
+Aberfoyle ,56.1797959,-4.3969539,
+Callander ,56.2416624,-4.2274811,
+Tyndrum ,56.4360692,-4.7205381,
+"Balquhidder, Killin & Lochearnhead narrow access areas ",56.2119242,-4.2360418,
+Lochearnhead & Strathyre ,56.3242273,-4.3333474,
+"Kinbuck, Ashfield, Dunblane and Bridge of Allan narrow access areas ",56.2119242,-3.9646452,
+Cornton,56.1369992,-3.9520988,
+Not applicable,,,
+All routes ,56.113345,-3.936807,
+"Gargunnock, Kippen, Arnprior & Port of Mentieth narrow access areas",56.1864262,-4.2896451,
+"Balqhidder, Strathyre, Kilmahog and Brig O'Turk",56.3598962,-4.3825992,
+"Callander, Blairhoyle, Thornhill and Deanston",56.3242273,-4.6091215,
+"St Ninians: Blue & Green bins. 
+St Ninians and Torbex: Glass boxes.",56.1014631,-3.943169,
+"Thornhill, Kippen, Arnprior, Buchlyvie and Port of Menteith",56.1270262,-4.2413992,
+"Dunblane, Sherrifmuir and Bridge of Allan",56.1874348,-3.9038406,
+"Callander and Thornhill: Blue bins. 
+Arnprior, Buchlyvie and Gartmore: Glass boxes. 
+Thornhill, Kippen and Gargunnock: Green bins.",56.1819052,-4.2301302,
+"Killin, Lochearnhead, Strathyre and Kilmahog: Blue bins. 
+Callander and Thornhill: Glass boxes. 
+Lochearnhead, Strathyre, Kilmahog and Callander: Green bins.",56.2630689,-4.2894657,
+"Dunblane, Ashfield and Kinbuck",56.2148112,-3.9508732,
+"St Ninians, Chartershall, Carron Valley and Plean",56.0862056,-3.952504,
+"Drymen, Croftamie and Stockiemuir: Blue bins. 
+Drymen, Croftamie, Stockiemuir and Blanefield: Glass boxes. & Green bins.",56.0084755,-4.3670752,
+"Throsk, Cowie and Plean",56.0645404,-3.8790772,
+"Strathblane and Blanefield: Blue & Green bins. 
+Not applicable: Glass boxes.",56.1014631,-3.943169,
+Dunblane,56.1014631,-3.943169,
+"Bridge of Allan: Blue bins. 
+Bridge of Allan and Dumblane: Glass boxes & Green bins.",56.1014631,-3.943169,
+"Causewayhead, City Centre and Raploch: Blue bins. 
+Not applicable: Glass boxes. 
+Callander: Green bins.",56.1014631,-3.943169,
+"Blairlogie, Fallin and Springkerse",56.1014631,-3.943169,
+Causewayhead and Cambuskenneth,56.1014631,-3.943169,
+Callander,56.1014631,-3.943169,
+"Ruskie, Blairhoyle, Port of Menteith and Aberfolye",56.1014631,-3.943169,
+"Riverside and Kings Park: Blue & Green bins. 
+Port of Menteith, Aberfoyle and Riverside: Glass boxes.",56.1014631,-3.943169,
+"City Centre, Blairdrummond, Deanston and Doune",56.1014631,-3.943169,
+City Centre,56.1014631,-3.943169,
+"Cambusbarron, Torbrex and St Ninians: Blue bins. 
+Not applicable: Glass boxes. 
+Ruskie, Blairhoyle, Port of Menteith and Aberfolye: Green bins.",56.1014631,-3.943169,
+"Broomridge: Blue bins. 
+Balmaha, Drymen and St Ninians: Glass boxes. 
+Broomridge and St Ninians: Green bins.",,,
+"Aberfoyle, Milton of Buchanan and Balmaha",,,
+"Aberfoyle, Milton, Kinlochard, Inversnaid and Loch Katrine",,,
+"Kinlochard, Aberfoyle, Gartmore, Dalmary, Balfron and Balfron Station",,,
+"St Ninians and Hillpark: Blue bins. 
+Not applicable: Glass boxes. 
+Aberfoyle, Milton of Buchanan and Balmaha: Green bins.",,,
+Kippen and Fintry,,,
+"Plean and Bannockburn: Blue bins. 
+Not applicable: Glass boxes. 
+Plean and Gargunnock: Green bins.",,,
+"Gargunnock and Kippen: Blue bins. 
+Fintry, Kippen and Gargunnock: Glass boxes. 
+Kippen and Fintry: Green bins.",,,
+Bannockburn,,,
+"Balfron Station, Dumgoyne and Blanefield",,,
+"Killearn: Blue bins. 
+Strathblane and Blanefield: Glasss boxes. 
+Killearn and Dumgoyne: Green bins.",,,
+"Blairdrummond, Deanston and Doune",,,
+Killin and Lochearnhead,,,
+"Bridge of Allan: Blue & Green bins. 
+Bridge of Allan and Cornton: Glass boxes.",,,
+"Bridge of Allan, Cambuskenneth, Riverside, Raploch, City Centre, Torbrex and Braehead",,,
+"Cornton: Blue bins. 
+Raploch, City Centre and Cornton: Glass boxes. 
+Cornton and City Centre: Green bins.",,,
+"Raploch: Blue & Green bins. 
+Callander and Raploch: Glass boxes.",,,
+"Cambusbarron: Blue & Green bins. 
+Cambusbarron and Kings Park: Glass boxes.",,,
+"Torbrex, St Ninians: Blue bins. 
+Torbrex, St Nininas and Riverside: Glass Boxes 
+Torbrex and St Ninians: Green bins.",,,
+"Croftamie, Gartness, Drymen, Balamaha and Rowardennan",,,
+"St Ninians and Blue bins. 
+Hillpark, St Ninians and Broombridge: Glass boxes. 
+Hillpark and Whins of Milton: Green bins.",,,
+St Ninians and Whins of Milton,,,
+"Braehead and Springkerse: Blue bins. 
+Braehead and Broomridge: Glass boxes. 
+Braehead, Springkerse and St Ninians: Green bins.",,,
+"Blairdrummond, Gargunnock, Kippen, Fintry and Cambusbarron",,,
+"Cowie: Blue bins. 
+Cowie and Plean: Glass boxes. 
+Cowie and Bannockburn: Green bins.",,,
+"Fallin: Blue bins. 
+Falllin and Cowie: Glass boxes. 
+Fallin and Gargunnock: Green bins.",,,
+"Buchlyvie, Strathblane, Mugdock, Dumgoyne, Killearn and Boquhan ",,,
+"Callander: Blue & Green bins. 
+Lochearnhead, Strathyre, Kilmahog and Callander: Glass boxes.",,,
+"Kilmahog, Strathyre, Lochearnhead, Crainlarich, Inverarnan and Tyndrum: Blue bins. 
+Killin, Crianlarich and Tyndrum: Glass boxes. 
+Tyndrum, Inverarnan, Crianlarich and Killin: Green bins.",,,
+Balfron,56.1014631,-3.943169,
+"Killearn and Balfron: Blue & Green bins. 
+Killearn: Glass boxes.",56.1014631,-3.943169,
+"Arnprior, Buchlyvie, Gartmore, Kippen: Blue bins. 
+Not applicable: Glass boxes. 
+Arnprior, Buchlyvie and Gartmore: Green bins.",,,

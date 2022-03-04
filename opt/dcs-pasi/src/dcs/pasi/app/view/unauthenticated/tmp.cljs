@@ -115,6 +115,28 @@
           (get org-colours idx)
           "#3e8ed0")))))
 
+
+
+(defn apply-stcil-route-latlngs-to-ds [ds]
+  (js/console.log "apply-stcil-route-latlngs-to-ds")
+  (if-let [stcil-routes @state/stcil-routes-cursor]
+    (do
+      (js/console.log "stcil-routes available")
+      (js/console.log "sample Cornton: " (str (stcil-routes "Cornton")))
+      (->> ds
+           ;(filter (fn [m] (str/starts-with? (or (:route m) "") "D")))
+           ;(#(do (js/console.log (str "sample: " (first %))) %))
+           (map (fn [m] (let [{:keys [latitude longitude]} (stcil-routes (:route m))]
+                          ;; Use the STCIL route latlng (if it exists) instead of the STCIL org latlng
+                          (if (and (some? latitude) (some? longitude))
+                            (assoc m
+                                   :latitude latitude
+                                   :longitude longitude)
+                            m))))))
+    (do
+      (js/console.log "stcil-routes not available")
+      ds)))
+
   
 
 (defn load-from-server []
@@ -142,7 +164,9 @@
                                                            ;; add a status column
                                                            (map #(assoc % :status "loaded from server"))
                                                            (sort-by :to)
-                                                           reverse))]
+                                                           reverse))
+                                                 coll (apply-stcil-route-latlngs-to-ds coll) ;; super hacky - substitute-in the STCIL route latlngs
+                                                 ]
                                              (reset! state/unauthn-wr-ds-cursor coll))))]
                   (query/http-call url graphql response-handler)))
 
@@ -226,7 +250,7 @@
 (defn ->geojson-as-a-clj-structure [ds]
   (js/console.log (str "->geojson-as-a-clj-structure encoding " (count ds) " rows"))
   (let [ds (->> ds
-                (group-by :enabler)
+                (group-by #(str (:enabler %) (when (some? (:route %)) ": ") (:route %)))
                 (map (fn [[enabler coll]] {:enabler                            enabler
                                            :latitude                           (-> coll first :latitude)
                                            :longitude                          (-> coll first :longitude)

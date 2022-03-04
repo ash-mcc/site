@@ -13,7 +13,7 @@
   {:schema    "https://vega.github.io/schema/vega/v5.json"
    :width      900 ;"container"
    ;:height     500
-   ;:background "#f2dfce"
+   :background "#E8F8F5"
    :title     "Carbon savings per quarter"
    :data      {:values :PLACEHOLDER}
    :transform [{:timeUnit "yearquarter"
@@ -74,7 +74,7 @@
       (assoc-in [:transform 1 :groupby 1] "enabler")
       (assoc-in [:layer 0 :encoding :color :title] "Organisation")
       (assoc-in [:layer 0 :encoding :color :field] "enabler")
-      (assoc-in [:layer 0 :encoding :color :legend :columns] 1)
+      ;(assoc-in [:layer 0 :encoding :color :legend :columns] 1)
       (assoc-in [:layer 0 :encoding :tooltip 2 :title] "Organisation")
       (assoc-in [:layer 0 :encoding :tooltip 2 :field] "enabler")))
 

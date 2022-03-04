@@ -33,9 +33,9 @@
                         tmp/->geojson-as-a-clj-structure
                         clj->js)
                     (let [markerclusters ^js @markerclusters-holder
-                          layers (.getLayers markerclusters)
+                          layers         (.getLayers markerclusters)
                           ;; when zero layers then call fitBounds (zoom to) after adding the new layers/markers 
-                          fit-bounds? (= 0 (count layers))]
+                          fit-bounds?    (= 0 (count layers))]
                       fit-bounds?))))
 
 (defn render []

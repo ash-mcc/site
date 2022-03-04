@@ -24,6 +24,12 @@
   []
   (js/console.log "Loading data files")
   
-  #_(fetch "js/waste-sites.geojson"
-         (fn [geojson] (->> geojson
-                            (reset! state/geojson-cursor)))))
+  (fetch "StcilRoutes.csv"
+         (fn [stcil-routes] (->> stcil-routes
+                                 (drop 1)
+                                 (remove #(some str/blank? (take 3 %)))
+                                 (map #(vector (first %) 
+                                               {:latitude (js/parseFloat (second %))
+                                                :longitude (js/parseFloat (nth % 2))}))
+                                 (into {})
+                                 (reset! state/stcil-routes-cursor)))))

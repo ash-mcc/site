@@ -96,13 +96,13 @@ function calcN(children){ //X this was:   children.length, ...i.e. simply the nu
 }
 
 function bin(zz){
-    if      (zz <      100) return 12;
-    else if (zz <     1000) return 10;
-    else if (zz <    10000) return  8;
-    else if (zz <   100000) return  6;
-    else if (zz <  1000000) return  4;
-    else if (zz < 10000000) return  2;
-    else                    return  0;
+    if      (zz <      1) return 12; 
+    else if (zz <     10) return 10; 
+    else if (zz <    100) return  8; 
+    else if (zz <   1000) return  6; 
+    else if (zz <  10000) return  4; 
+    else if (zz < 100000) return  2; 
+    else                  return  0; 
 }
 
 function defineClusterIcon(cluster) {

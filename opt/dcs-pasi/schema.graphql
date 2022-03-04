@@ -190,8 +190,8 @@ type Mutation {
       )
       from: Date! @site(a: "pasi:pred/from")
       to: Date! @site(a: "pasi:pred/to")
-      hhMm: String!
-      route: String!
+      hhMm: String! @site(a: "pasi:pred/hhMm")
+      route: String! @site(a: "pasi:pred/route")
       bin: String!
       binRef: ID 
         @site(

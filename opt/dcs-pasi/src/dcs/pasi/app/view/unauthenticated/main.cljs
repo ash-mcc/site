@@ -44,7 +44,7 @@
      [:div.hero-body.pt-1.pb-4
       [:div.container.is-fullhd
        (map/root)]]]
-    [:section.hero {:style {:background-color "#aeebf9"}}
+    [:section.hero {:style {:background-color "#E8F8F5"}}
      [:div.hero-body.pt-1.pb-1.has-text-centered
       [:div.container.is-fullhd
        (chart/root)]]]

@@ -43,3 +43,15 @@
 (apply pp/print-table (report/query :dcsProcess url))
 (apply pp/print-table (report/query :dcsWasteReduction url))
 ;;(apply pp/print-table (report/query :dcsWasteReduction-stcmfOnly url))
+
+(let [[header-row rows] (report/query :stcilKerbsideRecycling url)
+      rows              (take 5 rows)]
+  (pp/print-table header-row rows))
+
+
+
+
+
+
+
+

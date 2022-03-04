@@ -96,6 +96,7 @@ function calcN(children){ //X this was:   children.length, ...i.e. simply the nu
 }
 
 function bin(zz){
+    console.log("zz = " + zz);
     if      (zz <      1) return 12; 
     else if (zz <     10) return 10; 
     else if (zz <    100) return  8; 
@@ -111,12 +112,12 @@ function defineClusterIcon(cluster) {
         n = children.length, // the number of markers in cluster
         zz = calcN(children), // total tonnes in the cluster
         strokeWidth = 1, //Set clusterpie stroke width
-        //X Radius value will be 1 of 4 discrete values
-        r = rmax-2*strokeWidth-bin(zz), //Calculate clusterpie radius...
+        //X Radius value will be 1 of 10-ish discrete values
+        r = rmax - 2 * strokeWidth - bin(zz), //Calculate clusterpie radius...
         iconDim = (r+strokeWidth)*2, //...and divIcon dimensions (leaflet really want to know the size)
         //X My version of grouping the data...
         //X
-        data = Array.from(Array(34).keys()).map(x => String("m" + x)) // manufacture the keys
+        data = Array.from(Array(36).keys()).map(x => String("m" + x)) // manufacture the keys
                 // return an array of...
                 .map(key => {
                         // ...object where each object has a 'key' and a 'values' property:

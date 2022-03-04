@@ -19,14 +19,15 @@
                                             :zws   :zwsCarbonMetric}
                        
                        :x-ds               nil
-                       :unauthn            {:wr-ds    nil
-                                            :selected {:years     #{}
-                                                       :orgs      #{}
-                                                       :streams   #{}
-                                                       :groupby   "Waste stream"
-                                                       :charttype "Bar chart"}
-                                            :grid-api nil
-                                            :geojson  nil}}))
+                       :unauthn            {:wr-ds        nil
+                                            :selected     {:years     #{}
+                                                           :orgs      #{}
+                                                           :streams   #{}
+                                                           :groupby   "Waste stream"
+                                                           :charttype "Bar chart"}
+                                            :grid-api     nil
+                                            :geojson      nil
+                                            :stcil-routes nil}}))
 
 (defonce route-match-cursor (r/cursor root [:route-match]))
 (defonce participant-cursor (r/cursor root [:participant]))
@@ -56,6 +57,7 @@
 (def unauthn-selected-charttype-cursor (r/cursor root [:unauthn :selected :charttype]))
 (def unauthn-grid-api-cursor (r/cursor root [:unauthn :grid-api]))
 (def geojson-cursor (r/cursor root [:unauthn :geojson]))
+(def stcil-routes-cursor (r/cursor root [:unauthn :stcil-routes]))
 
 
 ;; -----------------

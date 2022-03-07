@@ -152,7 +152,7 @@
 #_(-> (xt-node)
       xt/db
       (xt/q `{:find  [e]
-              :where [[e :pasi:pred/type "StcilKerbsideRecycling"]]})
+              :where [[e :pasi:pred/type "StcilKerbsideRecycling"]]}) 
       (->>
        (map #(xt/submit-tx (xt-node) [[::xt/delete (first %)]]))))
 

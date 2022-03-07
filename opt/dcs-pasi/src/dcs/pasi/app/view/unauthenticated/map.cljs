@@ -21,14 +21,14 @@
                             clj->js)
                         (let [markerclusters ^js @markerclusters-holder
                               layers         (.getLayers markerclusters)
-                                 ;; when zero layers then call fitBounds (zoom to) after adding the new layers/markers 
+                              ;; when zero layers then call fitBounds (zoom to) after adding the new layers/markers 
                               fit-bounds?    (= 0 (count layers))]
                           fit-bounds?))]
     (reset! map-holder map-component)
     (reset! markerclusters-holder markerclusters-component)
     (reset! markers-holder markers-component)))
 
-(defn did-mount []
+(defn did-mount [] 
   (let [[map-component markerclusters-component] (js/initMap)]
     (reset! map-holder map-component)
     (reset! markerclusters-holder markerclusters-component)

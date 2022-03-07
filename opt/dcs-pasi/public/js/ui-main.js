@@ -69,6 +69,29 @@ function defineFeaturePopup(feature, layer) {
                     + '<span class="label">' + props['n'] + '</span> '
                     + props['z'].toLocaleString('en-GB', {maximumFractionDigits: 0}) + ' CO2e tonnes saved'
                     + '</span>';
+  
+  
+  let s1 = props['n'];
+  let s2 = props['z'].toLocaleString('en-GB', {maximumFractionDigits: 0}) + ' CO2e tonnes saved';
+  var s3;
+  if (s1.startsWith('Alloa')) { s3 = "img/ace-furniture.png"; }
+  else if (s1.startsWith('Stirling Community')) { s3 = "img/stirling-community-food.png"; }
+  else if (s1.startsWith('The Fair')) { s3 = "img/fairshare.png"; }
+  else if (s1.startsWith('Stirling council')) { s3 = "img/looking-at-bin-collections.jpeg"; }
+  popupContent =
+`<div class="card-container">
+  <div class="float-layout">
+    <div class="card-image">
+      <img src=${s3} width="48px" height="24px">
+      <div class="card">
+        <div class="card-title">${s1}</div>
+        <div class="card-desc">${s2}</div>
+      </div>
+    </div>
+  </div>
+</div>`;
+
+
   popupContent = '<div class="mymap-popup">' + popupContent + '</div>';
 
   layer.bindPopup(popupContent, {offset: L.point(1,-2)}); 

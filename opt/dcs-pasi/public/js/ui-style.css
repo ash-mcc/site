@@ -255,3 +255,60 @@
 }
 
 
+
+/*
+ * For the 'cards' which pop-up on the map -------------------------
+ */
+
+.float-layout {
+  padding: 2px 2px;
+  float: left;
+  width: 100%;
+  height: auto;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.card-container {
+  overflow: hidden;
+  width: 220px;
+  height: 80px;
+}
+
+.card {
+  /*background-color: dodgerblue;
+  color: black;*/
+  max-height: 100%;
+  width: 100%;
+  float: right;
+}
+
+.card-title {
+  font-size: 12px;
+  text-align: center;
+  font-weight: bold;
+  padding-top: 6px;
+}
+
+.card-desc {
+  padding: 4px;
+  text-align: center;
+  font-size: 11px;
+}
+
+/*add this it*/
+.card-image {
+  display: flex;
+}
+/*-------------*/
+
+div.card-image img {
+  width: 50%;
+  height: auto;
+}
+
+
+
+
+
+

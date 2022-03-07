@@ -1,49 +1,12 @@
-/*
-body {
-    padding: 0;
-    margin: 0;
-    color: #fff;
-    background-color: floralwhite;
-}
-html, body {
-    height: 100%;
-    width: 100vw;
-}
-.title {
-    display: flex;
-    align-items: center;
-    margin: 3px;
-}
-.title h2 {
-    text-align: center;
-    align-items: center;
-}
-.title h1 {
-    font-size: 26px;
-    font-family: 'Alegreya';
-}
-.title img {
-    max-height: 64px;
-    width: auto;
-    padding: 3px;
-    display: inline;
-    vertical-align: middle;
-    margin-right: 5px;
-}
-.title a {
-    color: #fff !important;
-    font-size: 26px;
-    text-decoration: none;
-}
-*/
+
 /* Previously, for the standalone version, I was (below) using:   height: 90%   */
-#map-container {
+#mymap-container {
     position: relative;
     height: 100%;
     width: 95vw;
     padding: 5px;
 }
-#map {
+#mymap {
     position: relative;
     height: inherit;
     width: inherit;
@@ -52,59 +15,7 @@ html, body {
 }
 
 
-.leaflet-center {
-    left: 50%;
-    transform: translate(-50%, 0%);
-}
 
-.leaflet-middle {
-    top: 50%;
-    position: absolute;
-    z-index: 1000;
-    pointer-events: none;
-  transform: translate(0%, -50%);
-
-}
-
-.leaflet-center.leaflet-middle {
-  transform: translate(-50%, -50%);
-}
-
-.leaflet-bottom.leaflet-right {
-  transform: translate(0%, -10%); /* to keep it clear of the attributions location */
-}
-
-
-
-
-#legend {
-  position: relative;
-  top: 3px;
-  margin: 10px;
-  padding: 5px;
-  border-radius: 5px;
-  z-index: 100;
-  font-size: 1em;
-  font-family: sans-serif;
-  min-width: 100px;
-  max-width: 150px;
-  background: rgba(255,255,255,0.6);
-  opacity: 0.5;
-}
-.legendheading {
-  position: relative;
-  height: 25px;
-  padding: 5px 2px 0px 2px;
-  font-size: larger;
-  font-weight: bold;
-  text-align: center;
-}
-.legenditem {
-  padding: 2px;
-  margin-bottom: 1px;
-  font-size: 7pt;
-  font-weight: bold;
-}
 
 /*Marker clusters*/
 .marker-cluster-pie g.arc{
@@ -307,7 +218,6 @@ html, body {
                                                            background: #17BECF;
                                                          }
 
-/* E6D4A4 */
 
 /*marker icons*/
 .icon-1{
@@ -332,26 +242,16 @@ html, body {
 }
 
 /*Popup*/
-.map-popup span.heading {
+.mymap-popup span.heading {
   display: block;
   font-size: 1.2em;
   font-weight: bold;
 }
-.map-popup span.attribute {
+.mymap-popup span.attribute {
   display: block;
 }
-.map-popup span.label {
+.mymap-popup span.label {
   font-weight: bold;
 }
 
 
-.attributions {
-    width: 90%;
-    padding: 5px;
-    margin: 5px;
-    font: 14px/16px Arial, Helvetica, sans-serif;
-    color: black;
-    background-color: floralwhite;
-    box-shadow: 0 0 15px floralwhite;
-    border-radius: 5px;
-}

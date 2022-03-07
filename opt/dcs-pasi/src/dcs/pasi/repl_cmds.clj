@@ -148,6 +148,14 @@
       (->>
        (map #(xt/submit-tx (xt-node) [[::xt/delete (first %)]]))))
 
+;; Remove a specific type of ent (I'm sure that there's a better way of coding this)
+#_(-> (xt-node)
+      xt/db
+      (xt/q `{:find  [e]
+              :where [[e :pasi:pred/type "StcilKerbsideRecycling"]]})
+      (->>
+       (map #(xt/submit-tx (xt-node) [[::xt/delete (first %)]]))))
+
 ;; Remove a specific ent (I'm sure that there's a better way of coding this)
 #_(-> (xt-node)
       xt/db

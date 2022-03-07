@@ -9,38 +9,39 @@
 
 (def map-holder (r/atom nil))
 (def markerclusters-holder (r/atom nil))
+(def markers-holder (r/atom nil))
 
+(defn init-markers [ds]
+  (let [[map-component markerclusters-component markers-component]
+        (js/initMarkers @map-holder
+                        @markerclusters-holder
+                        (-> ds
+                            (tmp/filter-ds @state/unauthn-selected-years-cursor @state/unauthn-selected-orgs-cursor @state/unauthn-selected-streams-cursor)
+                            tmp/->geojson-as-a-clj-structure
+                            clj->js)
+                        (let [markerclusters ^js @markerclusters-holder
+                              layers         (.getLayers markerclusters)
+                                 ;; when zero layers then call fitBounds (zoom to) after adding the new layers/markers 
+                              fit-bounds?    (= 0 (count layers))]
+                          fit-bounds?))]
+    (reset! map-holder map-component)
+    (reset! markerclusters-holder markerclusters-component)
+    (reset! markers-holder markers-component)))
 
 (defn did-mount []
   (let [[map-component markerclusters-component] (js/initMap)]
     (reset! map-holder map-component)
     (reset! markerclusters-holder markerclusters-component)
     (when-let [ds @state/unauthn-wr-ds-cursor]
-      (js/initMarkers map-component 
-                      markerclusters-component 
-                      (-> ds
-                          (tmp/filter-ds @state/unauthn-selected-years-cursor @state/unauthn-selected-orgs-cursor @state/unauthn-selected-streams-cursor)
-                          tmp/->geojson-as-a-clj-structure
-                          clj->js)
-                      true))))
+      (init-markers ds))))
 
 (defn did-update [_this _prev-props]
   (when-let [ds @state/unauthn-wr-ds-cursor]
-    (js/initMarkers @map-holder 
-                    @markerclusters-holder 
-                    (-> ds
-                        (tmp/filter-ds @state/unauthn-selected-years-cursor @state/unauthn-selected-orgs-cursor @state/unauthn-selected-streams-cursor)
-                        tmp/->geojson-as-a-clj-structure
-                        clj->js)
-                    (let [markerclusters ^js @markerclusters-holder
-                          layers         (.getLayers markerclusters)
-                          ;; when zero layers then call fitBounds (zoom to) after adding the new layers/markers 
-                          fit-bounds?    (= 0 (count layers))]
-                      fit-bounds?))))
+    (init-markers ds)))
 
 (defn render []
-  [:div#map-container {:style {:height 320}}
-   [:div#map]])
+  [:div#mymap-container {:style {:height 320}}
+   [:div#mymap]])
 
 (defn component [wr-ds selected-years selected-orgs selected-streams]
   (r/create-class {:reagent-render       render

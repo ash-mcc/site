@@ -166,6 +166,9 @@
                                                            (sort-by :to)
                                                            reverse))
                                                  coll (apply-stcil-route-latlngs-to-ds coll) ;; super hacky - substitute-in the STCIL route latlngs
+                                                 #_coll #_(filter (fn [m] (and (= "The Fair Share" (:enabler m))
+                                                                           (= "2021-07-01" (:from m))
+                                                                           (= "Food and Drink Waste (wet AD)" (:wasteStream m)))) coll)
                                                  ]
                                              (reset! state/unauthn-wr-ds-cursor coll))))]
                   (query/http-call url graphql response-handler)))
@@ -260,13 +263,13 @@
                                                                                                                         (filter #(= wasteStream (:wasteStream %)))
                                                                                                                         (map :carbonSavingCo2eKg)
                                                                                                                         (apply +))]
-                                                                                                             (when (= "Wood" wasteStream) (js/console.log (str "wasteStream " idx " " wasteStream)))
+                                                                                                             ;;(when (= "Wood" wasteStream) (js/console.log (str "wasteStream " idx " " wasteStream)))
                                                                                                              [(str "m" idx) v])))
                                                                                     (into {}))
                                            :total-carbonSavingCo2eKg           (->> coll
                                                                                     (map :carbonSavingCo2eKg)
                                                                                     (apply +))})))
-        _ (js/console.log (str ds))
+        ;;_ (js/console.log (str "ds: " ds))
         
         ;; Encode as GeoJSON oriented feature records
         features (map #(hash-map :geometry {:type        "Point"
@@ -281,7 +284,9 @@
                                               "t" (:per-wasteStream-carbonSavingCo2eKg %) ;tonnes-incoming 
                                               "z" (:total-carbonSavingCo2eKg %) ;tonnes-incoming-total
                                               })
-                      ds)]
-    (assoc geojson-template :features features)))
+                      ds)
+        geojson (assoc geojson-template :features features)]
+    ;;(js/console.log (str "geojson: " geojson))
+    geojson))
 
 

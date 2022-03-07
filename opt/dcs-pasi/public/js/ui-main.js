@@ -10,10 +10,9 @@ const rmax = 41, // Max radius for cluster pies
 
 var metadata;
 
+
 function initMap() {
     console.log('initMap()');
-
-    var geojson;
 
     var markerclusters = L.markerClusterGroup({
         singleMarkerMode: true,
@@ -21,23 +20,18 @@ function initMap() {
         iconCreateFunction: defineClusterIcon // Where the magic happens
       });
 
-    var map = L.map('map').setView([56.12, -3.87], 7); // Centre on Polmaise!
-
-    //addControlPositionings(map);
-    //createUiTitle().addTo(map);
-
-    //map.attributionControl.setPrefix(false);
-    //map.attributionControl.addAttribution('<a href="attributions.html">Attributions</a>');
+    var mymap = L.map('mymap').setView([56.12, -3.87], 7); // Centre on Polmaise!
 
     // Add basemap
-    L.tileLayer(tileServer, {maxZoom: 18}).addTo(map);
+    L.tileLayer(tileServer, {maxZoom: 18}).addTo(mymap);
+    
     // And the empty markercluster layer
-    map.addLayer(markerclusters);
+    mymap.addLayer(markerclusters);
 
-    return [map, markerclusters];
+    return [mymap, markerclusters];
 }
 
-function initMarkers(map, markerclusters, geojson, fitBounds) {
+function initMarkers(mymap, markerclusters, geojson, fitBounds) {
     console.log('initMarkers()');
 
     metadata = geojson.properties;
@@ -45,11 +39,11 @@ function initMarkers(map, markerclusters, geojson, fitBounds) {
 	    pointToLayer: defineFeature,
 		onEachFeature: defineFeaturePopup
     });
-    markerclusters.eachLayer(layer => markerclusters.removeLayer(layer)); // remove any previous
+    markerclusters.clearLayers(); // remove any previous, I was using:  markerclusters.eachLayer(layer => markerclusters.removeLayer(layer));
     markerclusters.addLayer(markers);
-    if (fitBounds) map.fitBounds(markers.getBounds());
-    //createUiLegend().addTo(map);
-    //renderLegend();
+    if (fitBounds) mymap.fitBounds(markers.getBounds());
+
+    return [mymap, markerclusters, markers];
 }
 
 
@@ -85,8 +79,10 @@ function defineFeaturePopup(feature, layer) {
     }
   });
 
-  popupContent = '<div class="map-popup">'+popupContent+'</div>';
-  layer.bindPopup(popupContent, {offset: L.point(1,-2)});
+  popupContent = '<div class="mymap-popup">'+popupContent+'</div>';
+  //console.log("popupContext =" + popupContent);
+
+  layer.bindPopup(popupContent, {offset: L.point(1,-2)}); 
 }
 
 function calcN(children){ //X this was:   children.length, ...i.e. simply the number of markers in cluster
@@ -242,7 +238,6 @@ function bakeThePie(options) {
     return serializeXmlNode(svg);
 }
 
-
 function serializeXmlNode(xmlNode) {
     if (typeof window.XMLSerializer != "undefined") {
         return (new window.XMLSerializer()).serializeToString(xmlNode);
@@ -252,76 +247,8 @@ function serializeXmlNode(xmlNode) {
     return "";
 }
 
-function createUiTitle(){
-    var uiTitle = L.control({position: 'topcenter'});
 
-    uiTitle.onAdd = function(uiMap){
-        this._div = L.DomUtil.create('div', 'title');
-        this.update();
-        return this._div;
-    };
 
-    uiTitle.update = function(){
-        this._div.innerHTML = "<h2>The quantities of materials<br/>that came into waste sites in 2019</h2>";
-    };
 
-    return uiTitle;
-}
 
-// Generate a legend with the same categories as in the clusterPie
-function renderLegend() {
-    var data = d3.entries(metadata.fields[categoryField].lookup),
-      legenddiv = d3.select('#legend-container').append('div')
-        .attr('id','legend');
 
-    var heading = legenddiv.append('div')
-        .classed('legendheading', true)
-        .text(metadata.fields[categoryField].name);
-
-    var legenditems = legenddiv.selectAll('.legenditem')
-        .data(data);
-
-    legenditems
-        .enter()
-        .append('div')
-        .attr('class',function(d){return 'category-'+d.key;})
-        .classed({'legenditem': true})
-        .text(function(d){return d.value;});
-}
-
-// Generate a legend with the same categories as in the clusterPie.
-function createUiLegend(){
-    var uiLegend = L.control({position: 'middleright'});
-
-    uiLegend.onAdd = function(uiMap){
-        this._div = L.DomUtil.create('div', 'info legend');
-        this._div.id = 'legend-container';
-        return this._div;
-    };
-
-    return uiLegend;
-}
-
-// Create additional control positionings
-function addControlPositionings(uiMap) {
-    var corners = uiMap._controlCorners = {},
-        l = 'leaflet-',
-        container = uiMap._controlContainer = L.DomUtil.create('div', l + 'control-container', uiMap._container);
-
-    function createCorner(vSide, hSide) {
-        var className = l + vSide + ' ' + l + hSide;
-
-        corners[vSide + hSide] = L.DomUtil.create('div', className, container);
-    }
-
-    createCorner('top', 'left');
-        createCorner('top', 'right');
-        createCorner('bottom', 'left');
-        createCorner('bottom', 'right');
-
-        createCorner('top', 'center');
-        createCorner('middle', 'center');
-        createCorner('middle', 'left');
-        createCorner('middle', 'right');
-        createCorner('bottom', 'center');
-}

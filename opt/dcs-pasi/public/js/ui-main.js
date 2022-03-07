@@ -6,7 +6,7 @@ const rmax = 41, // Max radius for cluster pies
       tileServer = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       categoryField = 't', // This is the fieldname for marker category (used in the pie and legend)
       iconField = 'not-in-use', // This is the fieldname for marker icon
-      popupFields = ['n','r','p','s','a','k','z']; // Pop-up will display these fields
+      popupFields = ['n', 'z']; // Pop-up will display these fields
 
 var metadata;
 
@@ -65,22 +65,11 @@ function defineFeaturePopup(feature, layer) {
       fields = metadata.fields,
       popupContent = '';
 
-  popupFields.map( function(key) {
-    if (props[key]) {
-      var val = props[key],
-          label = fields[key].name;
-      if (fields[key].lookup) {
-          val = fields[key].lookup[val];
-      }
-      if (key == 'z') { 
-          val = val.toFixed(); 
-      }
-      popupContent += '<span class="attribute"><span class="label">'+label+':</span> '+val+'</span>';
-    }
-  });
-
-  popupContent = '<div class="mymap-popup">'+popupContent+'</div>';
-  //console.log("popupContext =" + popupContent);
+ popupContent += '<span> ' 
+                    + '<span class="label">' + props['n'] + '</span> '
+                    + props['z'].toLocaleString('en-GB', {maximumFractionDigits: 0}) + ' CO2e tonnes saved'
+                    + '</span>';
+  popupContent = '<div class="mymap-popup">' + popupContent + '</div>';
 
   layer.bindPopup(popupContent, {offset: L.point(1,-2)}); 
 }
@@ -165,7 +154,7 @@ function defineClusterIcon(cluster) {
                             pieLabelClass: 'marker-cluster-pie-label',
                             //X Fns used to label/colour the segments (?)
                             pathClassFunc: function(d){return "category-"+d.data.key;},
-                            pathTitleFunc: function(d){return metadata.fields[categoryField].lookup[d.data.key]+' ('+myValueFuncForPathStarFuncs(d).toFixed()+' tonnes)';}
+                            pathTitleFunc: function(d){return metadata.fields[categoryField].lookup[d.data.key]+': '+myValueFuncForPathStarFuncs(d).toLocaleString('en-GB', {maximumFractionDigits: 0})+' CO2e tonnes saved)';}
                           }),
         // Create a new divIcon and assign the svg markup to the html property
         myIcon = new L.DivIcon({

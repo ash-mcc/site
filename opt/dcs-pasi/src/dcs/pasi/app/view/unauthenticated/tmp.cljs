@@ -193,7 +193,7 @@
 
 (def geojson-template {:type       "FeatureCollection"
                        :features   []
-                       :properties {:fields      {"n" {:name "Site name"}
+                       :properties {:fields      {"n" {:name "Organisation"}
                                                   "r" {:name "Region"}
                                                   "p" {:name "Permit"}
                                                   "s" {:name "Status"}
@@ -203,7 +203,7 @@
                                                                       (interleave (map #(str "m" %) (range))
                                                                                   wasteStreams))
                                                        :name   "Materials"}
-                                                  "z" {:name "Total incoming tonnes"}}
+                                                  "z" {:name "Carbon savings (CO2e tonnes)"}}
                                     :attribution "SEPA",
                                     :description "Waste site locations and the quantities of incoming materials (2019)"}})
 

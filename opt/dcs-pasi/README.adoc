@@ -74,7 +74,10 @@ shadow-cljs watch app
 # Connect to REPL for the build (available while watch is running)
 shadow-cljs cljs-repl app
 
-# Running a release build optimized for production use
+# Build a release-build that is optimized for production use
 shadow-cljs release app
+
+# Then run it
+python3 -m http.server 3000 --directory public
 ----
 

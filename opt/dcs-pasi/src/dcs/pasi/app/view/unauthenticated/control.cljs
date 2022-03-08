@@ -2,7 +2,8 @@
   (:require [cljs.spec.alpha :as s]
             [reagent.core :as r]
             [dcs.pasi.app.state :as state]
-            [dcs.pasi.app.view.unauthenticated.tmp :as tmp]))
+            [dcs.pasi.app.view.unauthenticated.tmp :as tmp]
+            [dcs.pasi.app.view.unauthenticated.slider :as slider]))
 
 ;; Bulma/CSS add-ons:
 ;;   https://justboil.github.io/bulma-checkbox/
@@ -93,6 +94,8 @@
        [:h3.subtitle.mb-1 "Chart type"]
        (radio state/unauthn-selected-charttype-cursor "Bar chart" "Bar chart")
        (radio state/unauthn-selected-charttype-cursor "Line chart" "Line chart")
+       ;;[:br]
+       ;;[slider/date-slider-range-comp]
        ]]
      
      

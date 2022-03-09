@@ -1,19 +1,19 @@
 (ns dcs.pasi.app.view.unauthenticated.table
-  (:require    [cljs.spec.alpha :as s]
-               [clojure.string :as str]
-               [reagent.core :as r]
-               ["ag-grid-react" :as ag-grid]
-               [oz.core :as oz]
-               [cljs-time.core :as t]
-               [cljs-time.format :as tf]
-               [dcs.pasi.app.util :as util]
-               [dcs.pasi.app.state :as state]
-               [dcs.pasi.model :as model]
-               [dcs.pasi.app.query :as query]
-               [dcs.pasi.app.mutation :as mutation]
-               [dcs.pasi.app.view.unauthenticated.tmp :as tmp]))
-
-
+  (:require [cljs.spec.alpha :as s]
+            [clojure.string :as str]
+            [reagent.core :as r]
+            ["ag-grid-react" :as ag-grid]
+            [oz.core :as oz]
+            [cljs-time.core :as t]
+            [cljs-time.format :as tf]
+            [testdouble.cljs.csv :as csv]
+            [dcs.pasi.app.util :as util]
+            [dcs.pasi.app.state :as state]
+            [dcs.pasi.model :as model]
+            [dcs.pasi.app.query :as query]
+            [dcs.pasi.app.mutation :as mutation]
+            [dcs.pasi.app.view.unauthenticated.tmp :as tmp]
+            [dcs.pasi.app.download-from-spa :as download]))
 
 
 
@@ -53,8 +53,19 @@
 
 
 (defn ele [wr-ds selected-years selected-orgs selected-streams]
-  [:div {:style {:height 500}}
-   [grid (tmp/filter-ds wr-ds selected-years selected-orgs selected-streams)]])
+  [:<>
+   [:div {:style {:height 500}}
+    [grid (tmp/filter-ds wr-ds selected-years selected-orgs selected-streams)]]
+   [:div.mt-2.has-text-centered
+    [:button.button
+     {:on-click (fn [_e] (let [clj-data   (tmp/filter-ds wr-ds selected-years selected-orgs selected-streams)
+                               header-row (-> clj-data first keys)
+                               data-rows  (->> clj-data (map (fn [m] (map m header-row))))
+                               rows       (cons header-row data-rows)
+                               csv-data   (csv/write-csv rows)]
+                           (download/download-data csv-data "pasi.csv" "text/csv")))}
+     [:span.icon [:i.fas.fa-download]]
+     [:span "Download"]]]])
 
 
 (defn root []

@@ -77,7 +77,7 @@ function defineFeaturePopup(feature, layer) {
   if (s1.startsWith('Alloa')) { s3 = "img/ace-furniture.png"; }
   else if (s1.startsWith('Stirling Community')) { s3 = "img/stirling-community-food.png"; }
   else if (s1.startsWith('The Fair')) { s3 = "img/fairshare.png"; }
-  else if (s1.startsWith('Stirling council')) { s3 = "img/looking-at-bin-collections.jpeg"; }
+  else if (s1.startsWith('Stirling council')) { s3 = "img/Stirling-council-logo.png"; }
   popupContent =
 `<div class="card-container">
   <div class="float-layout">

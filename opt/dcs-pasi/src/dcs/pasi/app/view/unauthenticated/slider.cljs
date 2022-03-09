@@ -4,7 +4,7 @@
 
 ;; see  https://codepen.io/muralidharmoka/pen/ZvQqGq
 
-(defn- create-slider! [total-quarters-shown node f]
+(defn- create-slider! [total-quarters-shown ^js node f]
   (js/noUiSlider.create
    node
    (js-obj

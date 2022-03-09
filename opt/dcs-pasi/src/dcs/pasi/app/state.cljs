@@ -23,6 +23,7 @@
                                             :selected     {:years     #{}
                                                            :orgs      #{}
                                                            :streams   #{}
+                                                           :focuson   "Carbon savings"
                                                            :groupby   "Waste stream"
                                                            :charttype "Bar chart"}
                                             :grid-api     nil
@@ -53,6 +54,7 @@
 (def unauthn-selected-years-cursor (r/cursor root [:unauthn :selected :years]))
 (def unauthn-selected-orgs-cursor (r/cursor root [:unauthn :selected :orgs]))
 (def unauthn-selected-streams-cursor (r/cursor root [:unauthn :selected :streams]))
+(def unauthn-selected-focuson-cursor (r/cursor root [:unauthn :selected :focuson]))
 (def unauthn-selected-groupby-cursor (r/cursor root [:unauthn :selected :groupby]))
 (def unauthn-selected-charttype-cursor (r/cursor root [:unauthn :selected :charttype]))
 (def unauthn-grid-api-cursor (r/cursor root [:unauthn :grid-api]))

@@ -46,7 +46,7 @@
     [:span.control-label label]]])
 
 
-(defn ele [wr-ds selected-years selected-orgs selected-streams selected-groupby selected-charttype]
+(defn ele [wr-ds selected-years selected-orgs selected-streams selected-focuson selected-groupby selected-charttype]
   (let [years                                 (->> wr-ds
                                                    (map :from) 
                                                    (map #(subs % 0 4))
@@ -89,13 +89,17 @@
      
      [:div.column.is-2
       [:div.container
+       [:h3.subtitle.mb-1 "Chart type"]
+       (radio state/unauthn-selected-charttype-cursor "Bar chart" "Bar chart")
+       (radio state/unauthn-selected-charttype-cursor "Line chart" "Line chart")
+       [:br]
        [:h3.subtitle.mb-1 "Group by"]
        (radio state/unauthn-selected-groupby-cursor "Waste stream" "Waste stream")
        (radio state/unauthn-selected-groupby-cursor "Organisation" "Organisation")
        [:br]
-       [:h3.subtitle.mb-1 "Chart type"]
-       (radio state/unauthn-selected-charttype-cursor "Bar chart" "Bar chart")
-       (radio state/unauthn-selected-charttype-cursor "Line chart" "Line chart")
+       [:h3.subtitle.mb-1 "Focus on"]
+       (radio state/unauthn-selected-focuson-cursor "Carbon savings" "Carbon savings")
+       (radio state/unauthn-selected-focuson-cursor "Weights" "Weights")
        ;[:br]
        ;(slider/date-slider-range-comp)
        ]]]))
@@ -107,5 +111,6 @@
    @state/unauthn-selected-years-cursor
    @state/unauthn-selected-orgs-cursor
    @state/unauthn-selected-streams-cursor
+   @state/unauthn-selected-focuson-cursor
    @state/unauthn-selected-groupby-cursor
    @state/unauthn-selected-charttype-cursor])

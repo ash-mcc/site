@@ -2,7 +2,7 @@
 
 // Thanks to Bård Romstad for the outline of this.
 
-const rmax = 41, // Max radius for cluster pies 
+const rmax = 53, // Max radius for cluster pies 
       tileServer = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       categoryField = 't', // This is the fieldname for marker category (used in the pie and legend)
       iconField = 'not-in-use', // This is the fieldname for marker icon
@@ -104,11 +104,15 @@ function calcN(children){ //X this was:   children.length, ...i.e. simply the nu
 }
 
 function bin(zz){
-    if      (zz <       10000) return 18; 
-    else if (zz <      100000) return 15; 
-    else if (zz <     1000000) return 12; 
-    else if (zz <    10000000) return  9; 
-    else if (zz <   100000000) return  6; 
+    if      (zz <       10000) return 30; 
+    else if (zz <      500000) return 27;
+    else if (zz <      100000) return 24; 
+    else if (zz <     1000000) return 21; 
+    else if (zz <     5000000) return 18; 
+    else if (zz <    10000000) return 15; 
+    else if (zz <    50000000) return 12; 
+    else if (zz <   100000000) return  9; 
+    else if (zz <   500000000) return  6; 
     else if (zz <  1000000000) return  3; 
     else                       return  0; 
 }

@@ -131,11 +131,13 @@
     ))
 
 (def category->subcategories
-  {"Furniture"      ["Chair, Kitchen, Dining or Wooden"
+  {"Furniture "      ["Chair, Kitchen, Dining or Wooden"
                      "Chest-of-Drawers, Tallboy"
                      "Small Desk, Computer Table"]
-   "Soft Furniture" ["Mattress, single"
-                     "Chaise Longue "]})
+   "Soft Furniture " ["Mattress, single"
+                     "Chaise Longue "]
+   "Bathroom Items " ["Bath (metal) "
+                      "Shower equipment/tray "]})
 
 (defn subcategories [e]
   (js/console.log e)

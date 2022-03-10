@@ -193,6 +193,17 @@
                     [d ~(keyword "pasi:pred/subcategory") subcategory]]})
     pp/pprint)
 
+
+(-> (xt-node)
+    xt/db
+    (xt/q `{:find  [?e ?category ?subcategory ?itemCount]
+            :where [[?e :pasi:pred/type "AceReusedFurniture"]
+                    [?e :pasi:pred/from "2020-12-01"]
+                    [?e :pasi:pred/category ?category]
+                    [?e :pasi:pred/subcategory ?subcategory]
+                    [?e :pasi:pred/itemCount ?itemCount]]
+            :limit 10}))
+
 (-> (xt-node)
     xt/db
     (xt/q `{:find  [e]
@@ -427,5 +438,7 @@
 
 
 ;; ----------------- New stuff... -----------------
+
+
 
 

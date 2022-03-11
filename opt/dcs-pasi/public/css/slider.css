@@ -1,0 +1,37 @@
+
+
+
+.noUi-vertical {
+	width: 8px;
+}
+
+.noUi-vertical .noUi-handle {
+	width: 18px;
+	height: 4px;
+	background-color: green; /* rgb(62, 142, 208); */
+	border: 0;
+	box-shadow: none;
+	cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.noUi-handle:before, .noUi-handle:after {
+  display: none;
+}
+
+.noUi-connect {
+  background-color: rgb(62, 142, 208);
+}
+
+.noUi-tooltip {
+  font-size: small;
+}
+
+.noUi-marker {
+	display: none;
+}
+
+.noUi-value {
+	padding-left: 0;
+  font-size: small;
+}

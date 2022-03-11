@@ -4,7 +4,7 @@
             [reagent.dom :as rd]
             [dcs.pasi.app.state :as state]
             [dcs.pasi.app.view.unauthenticated.tmp :as tmp]
-            ;[dcs.pasi.app.view.unauthenticated.slider :as slider]
+            [dcs.pasi.app.view.unauthenticated.slider :as slider]
             ))
 
 ;; Bulma/CSS add-ons:
@@ -99,10 +99,10 @@
        [:br]
        [:h3.subtitle.mb-1 "Focus on"]
        (radio state/unauthn-selected-focuson-cursor "Carbon savings" "Carbon savings")
-       (radio state/unauthn-selected-focuson-cursor "Weights" "Weights")
-       ;[:br]
-       ;(slider/date-slider-range-comp)
-       ]]]))
+       (radio state/unauthn-selected-focuson-cursor "Weights" "Weights")]]
+     
+     [:div.column.is-1
+      [slider/date-slider-range-comp]]]))
 
 
 (defn root []

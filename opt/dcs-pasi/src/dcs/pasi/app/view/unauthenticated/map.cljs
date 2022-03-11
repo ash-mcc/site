@@ -16,7 +16,7 @@
         (js/initMarkers @map-holder
                         @markerclusters-holder
                         (-> ds
-                            (tmp/filter-ds @state/unauthn-selected-years-cursor @state/unauthn-selected-orgs-cursor @state/unauthn-selected-streams-cursor)
+                            (tmp/filter-ds @state/unauthn-selected-period-cursor @state/unauthn-selected-orgs-cursor @state/unauthn-selected-streams-cursor)
                             tmp/->geojson-as-a-clj-structure
                             clj->js)
                         (let [markerclusters ^js @markerclusters-holder
@@ -43,7 +43,7 @@
   [:div#mymap-container {:style {:height 320}}
    [:div#mymap]])
 
-(defn component [wr-ds selected-years selected-orgs selected-streams]
+(defn component [wr-ds selected-period selected-orgs selected-streams]
   (r/create-class {:reagent-render       render
                    :component-did-mount  did-mount
                    :component-did-update did-update}))
@@ -53,6 +53,6 @@
 (defn root []
   [component 
    @state/unauthn-wr-ds-cursor
-   @state/unauthn-selected-years-cursor
+   @state/unauthn-selected-period-cursor
    @state/unauthn-selected-orgs-cursor
    @state/unauthn-selected-streams-cursor])

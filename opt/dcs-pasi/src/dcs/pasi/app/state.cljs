@@ -20,7 +20,7 @@
                        
                        :x-ds               nil
                        :unauthn            {:wr-ds        nil
-                                            :selected     {:years     #{}
+                                            :selected     {:period    []
                                                            :orgs      #{}
                                                            :streams   #{}
                                                            :focuson   "Carbon savings"
@@ -51,7 +51,7 @@
 (def x-ds-cursor (r/cursor root [:x-ds]))
 
 (def unauthn-wr-ds-cursor (r/cursor root [:unauthn :wr-ds]))
-(def unauthn-selected-years-cursor (r/cursor root [:unauthn :selected :years]))
+(def unauthn-selected-period-cursor (r/cursor root [:unauthn :selected :period]))
 (def unauthn-selected-orgs-cursor (r/cursor root [:unauthn :selected :orgs]))
 (def unauthn-selected-streams-cursor (r/cursor root [:unauthn :selected :streams]))
 (def unauthn-selected-focuson-cursor (r/cursor root [:unauthn :selected :focuson]))

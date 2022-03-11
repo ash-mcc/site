@@ -1,6 +1,9 @@
 (ns dcs.pasi.app.view.unauthenticated.slider
   (:require [reagent.core :as r]
-            [reagent.dom :as rd]))
+            [reagent.dom :as rd]
+            [goog.functions :as gfuncs]
+            [goog.string :as gstring]
+            [dcs.pasi.app.state :as state]))
 
 ;; see 
 ;;   
@@ -46,10 +49,24 @@
   (doto (.-noUiSlider node)
     (.on "slide" f)))
 
-(defn home-render []
-  [:div#qy-slider.pasi-slider {:style {:height "200px"}}])
+(defn update-state [e]
+  (let [[from to] e
+        from (str (-> from (subs 3 7)) 
+                  "-" 
+                  (-> from (subs 1 2) js/parseInt dec (* 3) (+ 1) (->> (gstring/format "%02d")))
+                  "-01")
+        year-end? (-> to (subs 1 2) js/parseInt (= 4))
+        to (str (-> to (subs 3 7) js/parseInt (+ (if year-end? 1 0)))
+                  "-"
+                  (-> to (subs 1 2) js/parseInt (* 4) (#(if year-end? 1 %)) (->> (gstring/format "%02d")))
+                  "-01")]
+    ;(js/console.log (str from " -> " to))
+    (reset! state/unauthn-selected-period-cursor [from to])))
 
-(def year-labels [])
+(def debounced-update-state (gfuncs/debounce update-state 250))
+
+(defn home-render []
+  [:div#qy-slider.pasi-slider {:style {:height "200px" :margin-top "20px" :margin-left "54px"}}])
 
 (defn date-slider-range-comp
   []
@@ -58,6 +75,6 @@
                      :component-did-mount (fn [node]
                                             (create-slider!
                                              (rd/dom-node node)
-                                             (fn [e] (js/console.log e))))})))
+                                             debounced-update-state))})))
 
 

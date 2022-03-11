@@ -6,8 +6,8 @@
 (defn int-comma [n] 
   (pp/cl-format nil "~:d" n))
 
-(defn ele [wr-ds selected-years selected-orgs selected-streams]
-  (let [ds (tmp/filter-ds wr-ds selected-years selected-orgs selected-streams)
+(defn ele [wr-ds selected-period selected-orgs selected-streams]
+  (let [ds (tmp/filter-ds wr-ds selected-period selected-orgs selected-streams)
         observations  (->> ds
                            count
                            int-comma)
@@ -72,6 +72,6 @@
 (defn root []
   [ele
    @state/unauthn-wr-ds-cursor
-   @state/unauthn-selected-years-cursor
+   @state/unauthn-selected-period-cursor
    @state/unauthn-selected-orgs-cursor
    @state/unauthn-selected-streams-cursor])

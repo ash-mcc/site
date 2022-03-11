@@ -46,7 +46,7 @@
     [:span.control-label label]]])
 
 
-(defn ele [wr-ds selected-years selected-orgs selected-streams selected-focuson selected-groupby selected-charttype]
+(defn ele [wr-ds selected-period selected-orgs selected-streams selected-focuson selected-groupby selected-charttype]
   (let [years                                 (->> wr-ds
                                                    (map :from) 
                                                    (map #(subs % 0 4))
@@ -68,9 +68,8 @@
      
      [:div.column.is-1
       [:div.container
-       [:h3.subtitle.mb-1 "Years"]
-       (doall (map #(checkbox state/unauthn-selected-years-cursor % (str %)) years))
-       ]]
+       [:h3.subtitle.mb-1 "Period"]
+       [slider/date-slider-range-comp]]]
      
      [:div.column.is-2
       [:div.container
@@ -99,16 +98,13 @@
        [:br]
        [:h3.subtitle.mb-1 "Focus on"]
        (radio state/unauthn-selected-focuson-cursor "Carbon savings" "Carbon savings")
-       (radio state/unauthn-selected-focuson-cursor "Weights" "Weights")]]
-     
-     [:div.column.is-1
-      [slider/date-slider-range-comp]]]))
+       (radio state/unauthn-selected-focuson-cursor "Weights" "Weights")]]]))
 
 
 (defn root []
   [ele
    @state/unauthn-wr-ds-cursor
-   @state/unauthn-selected-years-cursor
+   @state/unauthn-selected-period-cursor
    @state/unauthn-selected-orgs-cursor
    @state/unauthn-selected-streams-cursor
    @state/unauthn-selected-focuson-cursor

@@ -22,11 +22,7 @@
                                                              (set new-state))]
                (when (or (seq only-in-a) 
                          (seq only-in-b))
-                 (reset! state/unauthn-selected-years-cursor (->> new-state
-                                                                  (map :from)
-                                                                  (map #(subs % 0 4))
-                                                                  (map int)
-                                                                  set))
+                 (reset! state/unauthn-selected-period-cursor [])
                  (reset! state/unauthn-selected-orgs-cursor (->> new-state
                                                                  (map :enabler)
                                                                  set))
@@ -52,9 +48,9 @@
                      ;; neither of the next 2 lines do what we want
                      ;(.refreshCells component (clj->js {:force? true}))
                      ;(.redrawRows component)
-                     (.setRowData grid-api (clj->js (tmp/filter-ds wr-ds @state/unauthn-selected-years-cursor new-state @state/unauthn-selected-streams-cursor)))))))))
+                     (.setRowData grid-api (clj->js (tmp/filter-ds wr-ds @state/unauthn-selected-period-cursor new-state @state/unauthn-selected-streams-cursor)))))))))
 
-(add-watch state/unauthn-selected-years-cursor :unauthn-selected-years
+(add-watch state/unauthn-selected-period-cursor :unauthn-selected-years
            (fn [_key _atom old-state new-state]
              (let [[only-in-a only-in-b _in-both] (data/diff (set old-state) 
                                                              (set new-state))]
@@ -82,4 +78,4 @@
                      ;; neither of the next 2 lines do what we want
                      ;(.refreshCells component (clj->js {:force? true}))
                      ;(.redrawRows component)
-                     (.setRowData grid-api (clj->js (tmp/filter-ds wr-ds @state/unauthn-selected-years-cursor @state/unauthn-selected-orgs-cursor new-state)))))))))
+                     (.setRowData grid-api (clj->js (tmp/filter-ds wr-ds @state/unauthn-selected-period-cursor @state/unauthn-selected-orgs-cursor new-state)))))))))

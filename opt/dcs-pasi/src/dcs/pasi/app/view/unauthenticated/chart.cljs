@@ -124,16 +124,16 @@
    ["Weights"        "Organisation" "Line chart"]        chart-template-weight-organisation-line})
   
 
-(defn ele [wr-ds selected-years selected-orgs selected-streams selected-focuson selected-groupby selected-charttype]
+(defn ele [wr-ds selected-period selected-orgs selected-streams selected-focuson selected-groupby selected-charttype]
   (let [chart-template (chart-templates [selected-focuson selected-groupby selected-charttype])
-        chart-spec (assoc-in chart-template [:data :values] (tmp/filter-ds wr-ds selected-years selected-orgs selected-streams))]
+        chart-spec (assoc-in chart-template [:data :values] (tmp/filter-ds wr-ds selected-period selected-orgs selected-streams))]
     [oz/vega-lite chart-spec util/vega-embed-opts]))
 
 
 (defn root []
   [ele
    @state/unauthn-wr-ds-cursor
-   @state/unauthn-selected-years-cursor
+   @state/unauthn-selected-period-cursor
    @state/unauthn-selected-orgs-cursor
    @state/unauthn-selected-streams-cursor
    @state/unauthn-selected-focuson-cursor

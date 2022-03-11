@@ -52,13 +52,13 @@
       {:gridOptions spec}]]))
 
 
-(defn ele [wr-ds selected-years selected-orgs selected-streams]
+(defn ele [wr-ds selected-period selected-orgs selected-streams]
   [:<>
    [:div {:style {:height 500}}
-    [grid (tmp/filter-ds wr-ds selected-years selected-orgs selected-streams)]]
+    [grid (tmp/filter-ds wr-ds selected-period selected-orgs selected-streams)]]
    [:div.mt-2.has-text-centered
     [:button.button
-     {:on-click (fn [_e] (let [clj-data   (tmp/filter-ds wr-ds selected-years selected-orgs selected-streams)
+     {:on-click (fn [_e] (let [clj-data   (tmp/filter-ds wr-ds selected-period selected-orgs selected-streams)
                                header-row (-> clj-data first keys)
                                data-rows  (->> clj-data (map (fn [m] (map m header-row))))
                                rows       (cons header-row data-rows)
@@ -71,6 +71,6 @@
 (defn root []
   [ele
    @state/unauthn-wr-ds-cursor
-   @state/unauthn-selected-years-cursor
+   @state/unauthn-selected-period-cursor
    @state/unauthn-selected-orgs-cursor
    @state/unauthn-selected-streams-cursor])

@@ -175,18 +175,23 @@
 
 
 (defn filter-ds 
-  [wr-ds selected-years selected-orgs selected-streams]
-  {:pre [(s/valid? set? selected-years)
+  [wr-ds selected-period selected-orgs selected-streams]
+  {:pre [(s/valid? sequential? selected-period)
          (s/valid? set? selected-orgs)
          (s/valid? set? selected-streams)]}
-  (->> wr-ds
-       (filter #(seq (set/intersection selected-years 
-                                       (let [from (-> % :from (subs 0 4) js/parseInt)
-                                             to   (when (not (str/starts-with? (:to %) "01-01-"))
-                                                    (-> % :to (subs 0 4) js/parseInt))]
-                                         #{from to}))))
+  (let [[selected-from selected-to] selected-period
+        period-filter (if (and (some? selected-from) (some? selected-to))
+                        (let [selected-from (js/Date.parse selected-from)
+                              selected-to (js/Date.parse selected-to)]
+                          (fn [m] (let [m-from (js/Date.parse (:from m))
+                                        m-to (js/Date.parse (:to m))]
+                                    (and (>= m-from selected-from)
+                                         (<= m-to selected-to)))))
+                        (constantly true))]
+    (->> wr-ds
+       (filter period-filter)
        (filter #(contains? selected-orgs (:enabler %)))
-       (filter #(contains? selected-streams (:wasteStream %)))))
+       (filter #(contains? selected-streams (:wasteStream %))))))
 
 
 

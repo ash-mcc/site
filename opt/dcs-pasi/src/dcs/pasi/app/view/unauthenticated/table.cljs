@@ -54,7 +54,7 @@
 
 (defn ele [wr-ds selected-period selected-orgs selected-streams]
   [:<>
-   [:div {:style {:height 500}}
+   [:div {:style {:height 350}}
     [grid (tmp/filter-ds wr-ds selected-period selected-orgs selected-streams)]]
    [:div.mt-2.has-text-centered
     [:button.button

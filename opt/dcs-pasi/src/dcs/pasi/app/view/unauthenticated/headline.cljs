@@ -11,11 +11,26 @@
         observations  (->> ds
                            count
                            int-comma)
-        years         (->> ds
-                           (map :from) 
-                           (map #(subs % 0 4))
-                           distinct
-                           count)
+        period         (if (empty? selected-period)
+                         "Q1 2013 - Q1 2022" ;; a hardwired nasty
+                         (let [from (first selected-period)
+                             from-month (-> from (subs 5 7) js/parseInt)
+                             from (str "Q" (-> from-month (quot 3) (+ 1)) 
+                                       " " 
+                                       (subs from 0 4))
+                             to (second selected-period)
+                             to-month (-> to (subs 5 7) js/parseInt)
+                             to-year (-> to (subs 0 4) js/parseInt)
+                             year-end? (-> to-month (= 1))
+                             to (str "Q" (if year-end?
+                                           4
+                                           (-> to-month (quot 3)))
+                                     " "
+                                     (if year-end?
+                                       (dec to-year)
+                                       to-year))
+                             _ (js/console.log "to: " to)]
+                         (str from " - " to)))
         co2eT         (->> ds
                            (map :carbonSavingCo2eKg) 
                            (apply +)
@@ -57,8 +72,8 @@
        [:p.title observations]]]
      [:div.level-item.has-text-centered
       [:div
-       [:p.heading "📅 Period covered"]
-       [:p.title years]]]
+       [:p.heading [:span "📅 Period covered" [:br] "(inclusive)"]]
+       [:p.subtitle.has-text-weight-bold period]]]
      [:div.level-item.has-text-centered
       [:div
        [:p.heading "🛠️ Organisations"]

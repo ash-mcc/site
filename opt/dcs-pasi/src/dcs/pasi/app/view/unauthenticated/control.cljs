@@ -66,7 +66,7 @@
     
     [:div.columns 
      
-     [:div.column.is-1
+     [:div.column.is-2
       [:div.container
        [:h3.subtitle.mb-1 "Period"]
        [slider/date-slider-range-comp]]]

@@ -8,7 +8,7 @@
 .noUi-vertical .noUi-handle {
 	width: 18px;
 	height: 4px;
-	background-color: green; /* rgb(62, 142, 208); */
+	background-color: rgb(62, 142, 208); 
 	border: 0;
 	box-shadow: none;
 	cursor: pointer;
@@ -34,4 +34,5 @@
 .noUi-value {
 	padding-left: 0;
   font-size: small;
+  color: black;
 }

@@ -113,8 +113,6 @@
                      id
                      from
                      to
-                     hhMm
-                     route
                      material {
                        name
                      }
@@ -125,7 +123,7 @@
                                                (map #(assoc %
                                                             :material (get-in % [:material :name]))
                                                     coll))
-                             :field-order    [:id :from :to :hhMm :route :material :batchKg]}
+                             :field-order    [:id :from :to :material :batchKg]}
    :stcilBin                {:graphql        "query {
                    stcilBin {
                      id

@@ -148,7 +148,7 @@
       (->>
        (map #(xt/submit-tx (xt-node) [[::xt/delete (first %)]]))))
 
-;; Remove a specific type of ent (I'm sure that there's a better way of coding this)
+;; Remove a specific _type_ of ent (I'm sure that there's a better way of coding this)
 #_(-> (xt-node)
       xt/db
       (xt/q `{:find  [e]
@@ -156,11 +156,20 @@
       (->>
        (map #(xt/submit-tx (xt-node) [[::xt/delete (first %)]]))))
 
-;; Remove a specific ent (I'm sure that there's a better way of coding this)
+;; Remove a specific ent _by id_ (I'm sure that there's a better way of coding this)
 #_(-> (xt-node)
       xt/db
       (xt/q `{:find  [e]
               :where [[e :xt/id "pasi:ent/DcsWasteReduction/pasi:ent/AceReusedFurniture/2018-03-01/2019-03-01/Furniture/Chair, Kitchen, Dining or Wooden"]]})
+      (->>
+       (map #(xt/submit-tx (xt-node) [[::xt/delete (first %)]]))))
+
+;; Remove a specific ent _by attributes_ (I'm sure that there's a better way of coding this)
+#_(-> (xt-node)
+      xt/db
+      (xt/q `{:find  [?e]
+              :where [[?e :pasi:pred/type "AceReusedFurniture"]
+                      [?e :pasi:pred/from "2022-03-10"]]})
       (->>
        (map #(xt/submit-tx (xt-node) [[::xt/delete (first %)]]))))
 
@@ -247,6 +256,7 @@
      (sparql/sparql->datalog
       "SELECT ?s WHERE { ?s <pasi:pred/type> \"ZwsCarbonMetric\" }")))
 
+
 ;; SPARQL query where:
 ;;   * the predicate is of the form <schema>:<path> 
 ;;   * the predicate isn't declared in a prefix
@@ -257,7 +267,7 @@
 
 
 ;; SPARQL query where:
-;;   * the predicate is of the form <schema>:<path> 
+;;   * the predicate is of the form <schema>:<path>
 ;;   * the predicate isn't declared in a prefix
 ;; When called over-HTTP as a federated SPARQL query (from my Blazegraph app) it:
 ;;   * FAILS  (...I suspect that this is an error in Blazegraph)
@@ -272,7 +282,7 @@
 ;; SPARQL query where:
 ;;   * the predicate is of the form <schema>:<path> 
 ;;   * the predicate is declared in a prefix
-;; When called over-HTTP as a federated SPARQL query ()from my Blazegraph app) it:
+;; When called over-HTTP as a federated SPARQL query (from my Blazegraph app) it:
 ;;   * SUCCEEDS
 ;;
 ;; PREFIX dummy: <dummy:blah/>
@@ -437,8 +447,91 @@
 ;; But I can't get a UNION of the two queries above (when their ?value names have been sync'd), to work  :-(
 
 
+;; ----------------- Monkey-patch XTDB to workaround it not correctly differentiating between an IRI and a value -----------------
+
+;; For background see the Github issue: 
+;;    SPARQL-over-http should be able to return string values
+;;    https://github.com/xtdb/xtdb/issues/1686
+
+;; The bad decision point is at:
+;;    https://github.com/xtdb/xtdb/blame/e2f51ed99fc2716faa8ad254c0b18166c937b134/labs/rdf/src/xtdb/rdf.clj#L237
+
+;; The following monkey-patch assumes that all IRIs will start with the string   pasi:
+;;    Of course, that doesn't generally hold but it does hold for most of our PASI examples. 
+
+;; Run this to have the REPL enter the namespace
+(ns xtdb.rdf)
+
+;; Now copy the below defn into the REPL and <enter>
+;; to monkey-patch the function
+(defn ^org.eclipse.rdf4j.model.Value clj->rdf [x]
+  (let [s "\n\n*** clj->rdf ***\n"
+        s (str s "x = " x "\n")
+        s (str s "(c/valid-id? x) = " (c/valid-id? x) "\n")
+        s (str s "\n\n")]
+    (log/info s))
+  (let [factory (SimpleValueFactory/getInstance)]
+    (if (and (c/valid-id? x) 
+             (str/starts-with? x "pasi:")) ;; monkey-patched !
+      (if (and (keyword? x) (= "_" (namespace x)))
+        (.createBNode factory (name x))
+        (.createIRI factory (if (and (keyword? x) (namespace x))
+                              (subs (str x) 1)
+                              (str x))))
+      (Literals/createLiteral factory x))))
+
+;; After applying the above monkey-patch, I used successfully ran the 
+;; following federated SPARQL queries (from my Blazegraph app)
+
+
+;;;; For Alloa Community Enterprises (a nil category/subcategory is causing a failure so ignoring category/subcategory for now)
+;;
+;; PREFIX dummy: <dummy:blah/>
+;; SELECT ?iri ?from ?to ?itemKg ?itemCount
+;; WHERE {
+;; 	SERVICE <http://localhost:2021/sparql> {
+;; 		?iri <pasi:pred/type> "AceReusedFurniture";
+;;             <pasi:pred/from> ?from;
+;;              <pasi:pred/to> ?to;
+;;              <pasi:pred/description>/<pasi:pred/itemKg> ?itemKg;
+;;              <pasi:pred/itemCount> ?itemCount
+;; 	}
+;; }
+
+
+;;;; For Stirling Community Food
+;;
+;; PREFIX dummy: <dummy:blah/>
+;; SELECT ?iri ?from ?to ?destination ?batchKg
+;; WHERE {
+;; 	SERVICE <http://localhost:2021/sparql> {
+;; 		?iri <pasi:pred/type> "StcmfRedistributedFood";
+;;              <pasi:pred/from> ?from;
+;;              <pasi:pred/to> ?to;
+;;              <pasi:pred/destination>/<pasi:pred/name> ?destination;
+;;              <pasi:pred/batchKg> ?batchKg
+;;	}
+;; }
+
+
+;;;; For The Fair Share (a nil material name is causing a failure so just return the material IRI for now)
+;;
+;; PREFIX dummy: <dummy:blah/>
+;; SELECT ?iri ?from ?to ?materialIri ?batchKg
+;; WHERE {
+;; 	SERVICE <http://localhost:2021/sparql> {
+;; 		?iri <pasi:pred/type> "FrshrReusedMaterial";
+;;              <pasi:pred/from> ?from;
+;;              <pasi:pred/to> ?to;
+;;              <pasi:pred/material> ?materialIri;
+;;              <pasi:pred/batchKg> ?batchKg
+;; 	}
+;; }
+
+
+
+
+
+
 ;; ----------------- New stuff... -----------------
-
-
-
 

@@ -2,6 +2,12 @@
  :juxt.http.alpha/methods #{:get :post}
  :juxt.pass.alpha/classification "PUBLIC"
 
+ :juxt.site.alpha/access-control-allow-origins
+ {#regex "http://localhost:\\p{Digit}+"
+  {:juxt.site.alpha/access-control-allow-methods #{:post :options}
+   :juxt.site.alpha/access-control-allow-headers #{"authorization" "content-type"}
+   :juxt.site.alpha/access-control-allow-credentials true}}
+
  ;; For GETing SPARQL queries
  ;TODO :juxt.site.alpha/get-fn site-mod.sparql/get-handler
 

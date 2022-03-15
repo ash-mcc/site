@@ -465,7 +465,7 @@
 ;; Now copy the below defn into the REPL and <enter>
 ;; to monkey-patch the function
 (defn ^org.eclipse.rdf4j.model.Value clj->rdf [x]
-  (let [s "\n\n*** clj->rdf ***\n"
+  #_(let [s "\n\n*** clj->rdf ***\n"
         s (str s "x = " x "\n")
         s (str s "(c/valid-id? x) = " (c/valid-id? x) "\n")
         s (str s "\n\n")]
@@ -486,15 +486,15 @@
 
 ;;;; For Alloa Community Enterprises (a nil category/subcategory is causing a failure so ignoring category/subcategory for now)
 ;;
-;; PREFIX dummy: <dummy:blah/>
+;; PREFIX pasi: <pasi:pred/>
 ;; SELECT ?iri ?from ?to ?itemKg ?itemCount
 ;; WHERE {
 ;; 	SERVICE <http://localhost:2021/sparql> {
-;; 		?iri <pasi:pred/type> "AceReusedFurniture";
-;;             <pasi:pred/from> ?from;
-;;              <pasi:pred/to> ?to;
-;;              <pasi:pred/description>/<pasi:pred/itemKg> ?itemKg;
-;;              <pasi:pred/itemCount> ?itemCount
+;; 		?iri pasi:type "AceReusedFurniture";
+;;              pasi:from ?from;
+;;              pasi:to ?to;
+;;              pasi:description/pasi:itemKg ?itemKg;
+;;              pasi:itemCount ?itemCount
 ;; 	}
 ;; }
 

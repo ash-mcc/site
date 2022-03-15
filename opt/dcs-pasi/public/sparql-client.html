@@ -1,0 +1,81 @@
+<head>
+  <link href="https://unpkg.com/@triply/yasgui/build/yasgui.min.css" rel="stylesheet" type="text/css" />
+  <script src="https://unpkg.com/@triply/yasgui/build/yasgui.min.js"></script>
+  <style>
+    .yasgui .autocompleteWrapper {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="yasgui"></div>
+  <script>
+    const yasgui = new Yasgui(document.getElementById("yasgui"), {
+      requestConfig: { endpoint: "http://localhost:2021/sparql" },
+      copyEndpointOnNewTab: true,
+     });
+
+    yasgui.getTab().close();
+
+    let tab1 = yasgui.addTab(
+      true, // set as active tab
+      { ...Yasgui.Tab.getDefaults(), name: "AceReusedFurniture" }
+    );
+    tab1.setEndpoint("http://localhost:2021/sparql");
+    tab1.setQuery(`PREFIX pasi: <pasi:pred/>
+SELECT ?iri ?from ?to ?itemKg ?itemCount
+WHERE {
+  ?iri pasi:type "AceReusedFurniture";
+       pasi:from ?from;
+       pasi:to ?to;
+       pasi:description/pasi:itemKg ?itemKg;
+       pasi:itemCount ?itemCount
+}`);
+
+let tab2 = yasgui.addTab(
+      true, // set as active tab
+      { ...Yasgui.Tab.getDefaults(), name: "StcmfRedistributedFood" }
+    );
+    tab2.setEndpoint("http://localhost:2021/sparql");
+    tab2.setQuery(`PREFIX pasi: <pasi:pred/>
+SELECT ?iri ?from ?to ?destination ?batchKg
+WHERE {
+  ?iri pasi:type "StcmfRedistributedFood";
+       pasi:from ?from;
+       pasi:to ?to;
+       pasi:destination/pasi:name ?destination;
+       pasi:batchKg ?batchKg
+}`);
+
+let tab3 = yasgui.addTab(
+      true, // set as active tab
+      { ...Yasgui.Tab.getDefaults(), name: "FrshrReusedMaterial" }
+    );
+    tab3.setEndpoint("http://localhost:2021/sparql");
+    tab3.setQuery(`PREFIX pasi: <pasi:pred/>
+SELECT ?iri ?from ?to ?materialIri ?batchKg
+WHERE {
+  ?iri pasi:type "FrshrReusedMaterial";
+       pasi:from ?from;
+       pasi:to ?to;
+       pasi:material ?materialIri;
+       pasi:batchKg ?batchKg
+}`);
+
+let tab4 = yasgui.addTab(
+      true, // set as active tab
+      { ...Yasgui.Tab.getDefaults(), name: "StcilKerbsideRecycling" }
+    );
+    tab4.setEndpoint("http://localhost:2021/sparql");
+    tab4.setQuery(`PREFIX pasi: <pasi:pred/>
+SELECT ?iri ?from ?to ?binIri ?batchTonnes
+WHERE {
+  ?iri pasi:type "StcilKerbsideRecycling";
+       pasi:from ?from;
+       pasi:to ?to;
+       pasi:bin ?binIri;
+       pasi:batchTonnes ?batchTonnes
+}`);
+
+  </script>
+</body>

@@ -84,6 +84,8 @@
 ;;
 ;; 
 
+;; *** NOTE: if you're going to use SPARQL-over-HTTP then you'll probably need to apply the monkey-patch below!
+;;
 ;; Alternatively, start via...
 ;;
 ;;  $ cd site

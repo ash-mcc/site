@@ -68,13 +68,25 @@ let tab4 = yasgui.addTab(
     );
     tab4.setEndpoint("http://localhost:2021/sparql");
     tab4.setQuery(`PREFIX pasi: <pasi:pred/>
-SELECT ?iri ?from ?to ?binIri ?batchTonnes
+SELECT ?iri ?from ?to ?batchTonnes
 WHERE {
   ?iri pasi:type "StcilKerbsideRecycling";
        pasi:from ?from;
        pasi:to ?to;
-       pasi:bin ?binIri;
        pasi:batchTonnes ?batchTonnes
+}`);
+
+let tab5 = yasgui.addTab(
+      true, // set as active tab
+      { ...Yasgui.Tab.getDefaults(), name: "ZwsCarbonMetric" }
+    );
+    tab5.setEndpoint("http://localhost:2021/sparql");
+    tab5.setQuery(`PREFIX pasi: <pasi:pred/>
+SELECT ?iri ?wasteStream ?carbonWeighting
+WHERE {
+  ?iri pasi:type "ZwsCarbonMetric";
+       pasi:wasteStream ?wasteStream;
+       pasi:carbonWeighting ?carbonWeighting
 }`);
 
   </script>

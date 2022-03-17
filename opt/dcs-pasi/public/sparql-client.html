@@ -89,5 +89,19 @@ WHERE {
        pasi:carbonWeighting ?carbonWeighting
 }`);
 
+let tab6 = yasgui.addTab(
+      true, // set as active tab
+      { ...Yasgui.Tab.getDefaults(), name: "DcsAceToRefData" }
+    );
+    tab6.setEndpoint("http://localhost:2021/sparql");
+    tab6.setQuery(`PREFIX pasi: <pasi:pred/>
+SELECT ?iri ?descriptionIri ?wasteStream ?fraction
+WHERE {
+  ?iri pasi:type "DcsAceToRefData";
+       pasi:description ?descriptionIri;
+       pasi:refMaterial/pasi:wasteStream ?wasteStream;
+       pasi:fraction ?fraction
+}`);
+
   </script>
 </body>

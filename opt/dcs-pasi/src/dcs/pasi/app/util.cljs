@@ -78,4 +78,10 @@
      (.scroll js/window 0 0))))
 
 
-
+(defn open-tab [event tab-group-suffix tab-id]
+  (doseq [tab-content (.getElementsByClassName js/document (str "tab-content-" tab-group-suffix))]
+    (set! (.-display (.-style tab-content)) "none"))
+  (doseq [tab (.getElementsByClassName js/document (str "tab-" tab-group-suffix))]
+    (set! (.-className tab) (str/replace (.-className tab) " is-active" "")))
+  (set! (.-display (.-style (.getElementById js/document (str tab-id "-" tab-group-suffix)))) "block")
+  (set! (.-className (.-currentTarget event)) (str (.-className (.-currentTarget event)) " is-active")))

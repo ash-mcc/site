@@ -11,7 +11,7 @@
                                             :stcmf nil
                                             :zws   nil
                                             :x     nil}
-                       :type-kw            {:ace   :aceReusedFurniture
+                       :type-kw            {:ace   :aceFurnitureDescription
                                             :anon  :dcsWasteReduction
                                             :dcs   :dcsWasteReduction
                                             :frshr :frshrReusedMaterial

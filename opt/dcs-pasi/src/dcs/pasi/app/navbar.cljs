@@ -67,7 +67,7 @@
 
          ;; Participants
          [:div.navbar-item.has-dropdown.is-hoverable
-          [:label.navbar-link "Participants"]
+          [:label.navbar-link "Participant"]
           [:div.navbar-dropdown.is-right
            
            [:div.navbar-item

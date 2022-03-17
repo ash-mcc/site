@@ -32,7 +32,7 @@
 (def types 
   {:zwsCarbonMetric         {:editable-fields #{:carbonWeighting}}
    :aceFurnitureDescription {:editable-fields #{:itemKg}}
-   :aceReusedFurniture      {:editable-fields #{:itemCount}}
+   ;:aceReusedFurniture      {:editable-fields #{:itemCount}}
    :stcmfSource             {:editable-fields #{}}
    :stcmfDestination        {:editable-fields #{}}
    :stcmfIncomingFood       {:editable-fields #{:batchKg}}
@@ -63,7 +63,7 @@
 (def labels
   {:zwsCarbonMetric         "The carbon metric"
    :aceFurnitureDescription "Furniture categories"
-   :aceReusedFurniture      "Batches of resold/reused furniture"
+   ;:aceReusedFurniture      "Batches of resold/reused furniture"
    :stcmfSource             "Food sources"
    :stcmfDestination        "Food destinations"
    :stcmfIncomingFood       "Batches of incoming food"

@@ -10,8 +10,7 @@
             [dcs.pasi.app.view.dcs :as dcs-view]
             [dcs.pasi.app.view.frshr :as frshr-view]
             [dcs.pasi.app.view.stcmf :as stcmf-view]
-            [dcs.pasi.app.view.zws :as zws-view]
-            [dcs.pasi.app.view.experiment :as experiment-view]))
+            [dcs.pasi.app.view.zws :as zws-view]))
 
 (def routes
   [["/"
@@ -38,9 +37,6 @@
    ["/zws"
     {:name ::zws-view
      :view zws-view/root}]
-   ["/x"
-    {:name ::experiment-view
-     :view experiment-view/root}]
    ["*path"
     {:name ::catch-all
      :view unauthenticated-view/root}]])

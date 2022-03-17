@@ -41,7 +41,7 @@ function initMarkers(mymap, markerclusters, geojson, fitBounds) {
     });
     markerclusters.clearLayers(); // remove any previous, I was using:  markerclusters.eachLayer(layer => markerclusters.removeLayer(layer));
     markerclusters.addLayer(markers);
-    if (fitBounds) mymap.fitBounds(markers.getBounds());
+    if (fitBounds && markers!=null && markers.length>0) mymap.fitBounds(markers.getBounds());
 
     return [mymap, markerclusters, markers];
 }

@@ -291,7 +291,8 @@
                                               })
                       ds)
         geojson (assoc geojson-template :features features)]
-    ;;(js/console.log (str "geojson: " geojson))
+    #_(when (= 0 (count ds))
+      (js/console.log (str "geojson (with zero features): " geojson)))
     geojson))
 
 

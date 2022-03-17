@@ -56,7 +56,11 @@
                            distinct 
                            count
                            int-comma)
-        comments      0]
+        waste-streams      (->> ds
+                                (map :wasteStream)
+                                distinct
+                                count
+                                int-comma)]
     [:nav.level
      [:div.level-item.has-text-centered
       [:div
@@ -80,8 +84,8 @@
        [:p.title organisations]]]
      [:div.level-item.has-text-centered
       [:div
-       [:p.heading "📝 Comments"]
-       [:p.title comments]]]]))
+       [:p.heading "🗂️ Waste streams"]
+       [:p.title waste-streams]]]]))
 
 
 (defn root []

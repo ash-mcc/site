@@ -26,9 +26,9 @@
           [:h2.subtitle.is-6.has-text-black "A mock-up of a webapp which Data Commons Scotland might use to access PASI"]]]]]]]]
 
    [:div.container.is-fullhd.mt-2.mb-6
-    [datagrid/root @state/participant-cursor 500]]
+    [datagrid/root @state/participant-cursor 700]]
    
-   [:div.container.is-fullhd
+   #_[:div.container.is-fullhd
     [:div.columns
      [:div.column.is-6 
       [:figcaption [:span "Reuse/recycling rates"]]

@@ -26,7 +26,7 @@
           [:h2.subtitle.is-6.has-text-white "A mock-up of a webapp which Zero Waste Scotland might use to access PASI"]]]]]]]]
 
     [:div.container.is-fullhd.mt-2.mb-6
-     [datagrid/root @state/participant-cursor 800]]])
+     [datagrid/root @state/participant-cursor 700]]])
 
 
 

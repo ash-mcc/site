@@ -15,11 +15,12 @@
       copyEndpointOnNewTab: true,
      });
 
-    yasgui.getTab().close();
+    //yasgui.getTab().close();
 
     let tab1 = yasgui.addTab(
       true, // set as active tab
-      { ...Yasgui.Tab.getDefaults(), name: "AceReusedFurniture" }
+      { name: "AceReusedFurniture", id: "AceReusedFurniture" },
+      { avoidDuplicateTabs: true }
     );
     tab1.setEndpoint("http://localhost:2021/sparql");
     tab1.setQuery(`PREFIX pasi: <pasi:pred/>
@@ -34,7 +35,8 @@ WHERE {
 
 let tab2 = yasgui.addTab(
       true, // set as active tab
-      { ...Yasgui.Tab.getDefaults(), name: "StcmfRedistributedFood" }
+      { name: "StcmfRedistributedFood", id: "StcmfRedistributedFood" },
+      { avoidDuplicateTabs: true }
     );
     tab2.setEndpoint("http://localhost:2021/sparql");
     tab2.setQuery(`PREFIX pasi: <pasi:pred/>
@@ -49,7 +51,8 @@ WHERE {
 
 let tab3 = yasgui.addTab(
       true, // set as active tab
-      { ...Yasgui.Tab.getDefaults(), name: "FrshrReusedMaterial" }
+      { name: "FrshrReusedMaterial", id: "FrshrReusedMaterial" },
+      { avoidDuplicateTabs: true }
     );
     tab3.setEndpoint("http://localhost:2021/sparql");
     tab3.setQuery(`PREFIX pasi: <pasi:pred/>
@@ -64,7 +67,8 @@ WHERE {
 
 let tab4 = yasgui.addTab(
       true, // set as active tab
-      { ...Yasgui.Tab.getDefaults(), name: "StcilKerbsideRecycling" }
+      { name: "StcilKerbsideRecycling", id: "StcilKerbsideRecycling" }, 
+      { avoidDuplicateTabs: true }
     );
     tab4.setEndpoint("http://localhost:2021/sparql");
     tab4.setQuery(`PREFIX pasi: <pasi:pred/>
@@ -78,7 +82,8 @@ WHERE {
 
 let tab5 = yasgui.addTab(
       true, // set as active tab
-      { ...Yasgui.Tab.getDefaults(), name: "ZwsCarbonMetric" }
+      { name: "ZwsCarbonMetric", id: "ZwsCarbonMetric" },
+      { avoidDuplicateTabs: true }
     );
     tab5.setEndpoint("http://localhost:2021/sparql");
     tab5.setQuery(`PREFIX pasi: <pasi:pred/>
@@ -91,7 +96,8 @@ WHERE {
 
 let tab6 = yasgui.addTab(
       true, // set as active tab
-      { ...Yasgui.Tab.getDefaults(), name: "DcsAceToRefData" }
+      { name: "DcsAceToRefData", id: "DcsAceToRefData" },
+      { avoidDuplicateTabs: true }
     );
     tab6.setEndpoint("http://localhost:2021/sparql");
     tab6.setQuery(`PREFIX pasi: <pasi:pred/>

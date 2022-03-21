@@ -10,17 +10,76 @@
                [dcs.pasi.app.state :as state]
                [dcs.pasi.model :as model]
                [dcs.pasi.app.query :as query]
-               [dcs.pasi.app.mutation :as mutation]
-               [dcs.pasi.app.view.datagrid :as datagrid]))
+               [dcs.pasi.app.mutation :as mutation]))
+
+(defn load-from-server-AceFurnitureDescription []
+  (let [model (:aceFurnitureDescription model/queries)
+        graphql (:graphql model)
+        results-parser    (:results-parser model)
+        field-order       (:field-order model)
+        response-handler (fn [response]
+                           (let [status (:status response)]
+                             (when (not= 200 status)
+                               (throw (ex-info (str "Error code: " status) {})))
+                             (let [coll (-> response
+                                            :body
+                                                          ;; assume that it was an application/json response 
+                                                          ;; which will have prompted cljs-http to have 
+                                                          ;; converted the JSON data in the body, to Clojure data
+                                            :data
+                                                          ;; assume a map with a single entry: get the value of that entry
+                                            vals
+                                            first
+                                                          ;; parse each possibly nested map to surface the wanted data in the top map
+                                            results-parser
+                                            (->>
+                                                           ;; add a status column
+                                             (map #(assoc % :status "loaded from server"))
+                                             (sort-by (juxt :category :subcategory))))]
+                               (reset! state/ace-fd-ds-cursor coll))))]
+    (query/http-call query/graphql-url graphql response-handler)))
+
+(defn grid-AceFurnitureDescription [ds]
+  (let [spec {:defaultColDef {:resizable true}
+              :columnDefs (->> model/queries
+                               :aceFurnitureDescription
+                               :field-order
+                               (map #(merge {:field (name %)}
+                                              ;; hack in some maxWidth settings
+                                            ;(when (contains? #{:from :to :process :refProcess :batchKg :itemCount :itemKg :fraction :abbr :qid :source} %) {:maxWidth 100})
+                                            ;(when (contains? #{:category :furnitureCategory :materialCategory :carbonWeighting} %) {:maxWidth 130})
+                                            ;(when (contains? #{:carbonSavingCo2eKg} %) {:maxWidth 160})
+                                            (when (contains? #{:fraction :batchKg :batchTonnes :carbonSavingCo2eKg :carbonWeighting :itemCount} %) {:type "rightAligned"})
+                                            (when (contains? #{:fraction :batchKg :batchTonnes :carbonSavingCo2eKg :carbonWeighting} %) {:valueFormatter (fn [^js params] (let [v (.-value params)] (if (number? v) (.toFixed v 2) v)))})
+                                            (when (contains? #{:to :enabler :batchKg :carbonSavingCo2eKg} %) {:sortable true})))
+                               vec)
+              :immutableData true
+              :animateRows   true
+              :rowData       ds
+              :getRowNodeId  #(get (js->clj %) "id")
+              :onGridReady   (fn [e]
+                               (let [grid-api (.-api e)
+                                     col-api  (.-columnApi e)
+                                     ;col-ids  (vec (map #(.-colId %) (.getAllColumns col-api)))
+                                     ]
+                                 (.sizeColumnsToFit grid-api)
+                                 ;(.autoSizeColumns col-api (clj->js col-ids) true) ; no point without data in the grid
+                                 (reset! state/ace-fd-grid-api-cursor grid-api)))}]
+    (js/console.log "columnDefs =" (str (:columnDefs spec)))
+    [:div.ag-theme-balham {:style {:height "100%"
+                                   :width  "100%"
+                                   :color  "purple"}}
+     [:> ag-grid/AgGridReact
+      {:gridOptions spec}]]))
 
 
 (defn counts-per-month-spec
   [data]
   {:schema    "https://vega.github.io/schema/vega/v5.json"
-   ;:width      500
-   :height     500
+   :width      900
+   :height     350
    ;:background "#f2dfce"
-   :title     "counts per quarter"
+   :title     "Counts per quarter"
    :data      {:values data}
    :transform [{:timeUnit "yearquarter"
                 :field    "to"
@@ -28,31 +87,41 @@
                {:aggregate [{:op    "sum" ;; TODO calc this properly
                              :field "itemCount"
                              :as    "itemCount"}]
-                :groupby   ["quarter"]}]
+                :groupby   ["quarter" "category"]}]
    :layer     [{:mark     {:type                 "bar"
                            :cornerRadiusTopLeft  3
                            :cornerRadiusTopRight 3}
-                :encoding {:x       {:title "year quarter"
+                :encoding {:x       {:title "Year quarter"
                                      :field "quarter"
                                      :type  "temporal"
                                      :axis  {:labelExpr  "timeFormat(datum.value, '%q') == '1' ? timeFormat(datum.value, 'Q%q %Y') : timeFormat(datum.value, 'Q%q')"
                                              :labelAngle 90
-                                             :tickCount  {:interval "month"
+                                             #_:tickCount  #_{:interval "month"
                                                           :step     3
                                                           :start    0}}
+                                     :timeUnit "yearquarter"
                                      :scale {:domain ["2016-01-01T00:00:00" {:expr "now()"}]}}
-                           :y       {:title "item count"
+                           :y       {:title "Item count"
                                      :field "itemCount"
                                      :type  "quantitative"
-                                     :scale {:domain [0 200]}}
-                           :tooltip [{:title  "year quarter"
+                                     ;:scale {:domain [0 200]}
+                                     }
+                           :color   {:title "Category"
+                                     :field "category"
+                                     :type "nominal"
+                                     :scale :PLACEHOLDER
+                                     :legend nil #_{:columns 2}}
+                           :tooltip [{:title  "Year quarter"
                                       :field  "quarter"
                                       :type   "temporal"
                                       :format "Q%q %Y"}
-                                     {:title  "item count"
+                                     {:title  "Item count"
                                       :field  "itemCount"
                                       :type   "quantitative"
-                                      :format ".0f"}]}}]
+                                      :format ".0f"}
+                                     {:title "Category"
+                                      :field "category"
+                                      :type "nominal"}]}}]
    :config    {:axisX {:grid false}}})
 
 (defn editable [e]
@@ -128,25 +197,28 @@
                (some? (:category row-map))
                (some? (:subcategory row-map))
                (int? (js/parseInt (:itemCount row-map))))
-      (swap! state/x-ds-cursor upsert row-map))
+      (swap! state/ace-rf-ds-cursor upsert row-map))
     ))
 
-(def category->subcategories
-  {"Furniture "      ["Chair, Kitchen, Dining or Wooden"
-                     "Chest-of-Drawers, Tallboy"
-                     "Small Desk, Computer Table"]
-   "Soft Furniture " ["Mattress, single"
-                     "Chaise Longue "]
-   "Bathroom Items " ["Bath (metal) "
-                      "Shower equipment/tray "]})
+(defn dropdown-categories []
+  (->> @state/ace-fd-ds-cursor
+       (map :category)
+       distinct
+       sort
+       (#(clj->js {:values %}))))
 
-(defn subcategories [e]
-  (js/console.log e)
-  (let [row-map   (js->clj (.-data e) :keywordize-keys true)]
-    (clj->js {:values (get category->subcategories (:category row-map))})))
+(defn dropdown-subcategories [e]
+  (let [row-map   (js->clj (.-data e) :keywordize-keys true)
+        category (:category row-map)]
+    (->> @state/ace-fd-ds-cursor
+         (filter #(= category (:category %)))
+         (map :subcategory)
+         distinct
+         sort
+         (#(clj->js {:values %})))))
 
 
-(defn grid [ds]
+(defn grid-AceReusedFurniture [ds]
   (let [spec {:defaultColDef {:resizable true}
               :components {:datePicker (js/getDatePicker)}
               :columnDefs    [{:field "id"}
@@ -165,13 +237,13 @@
                                :onCellValueChanged onCellValueChanged
                                :cellEditor         "agPopupSelectCellEditor" ;"agRichSelectCellEditor" but need enterprise edition 
                                :cellEditorPopup    true
-                               :cellEditorParams   {:values (keys category->subcategories)}}
+                               :cellEditorParams   dropdown-categories}
                               {:field              "subcategory"
                                :editable           editable
                                :onCellValueChanged onCellValueChanged
                                :cellEditor         "agPopupSelectCellEditor" ;"agRichSelectCellEditor" but need enterprise edition 
                                :cellEditorPopup    true
-                               :cellEditorParams   subcategories}
+                               :cellEditorParams   dropdown-subcategories}
                               {:field              "itemCount"
                                :type               "rightAligned"
                                :editable           true
@@ -188,7 +260,7 @@
                                      ]
                                  (.sizeColumnsToFit grid-api)
                                  ;(.autoSizeColumns col-api (clj->js col-ids) true) ; no point without data in the grid
-                                 (reset! state/x-grid-api-component-cursor grid-api)))
+                                 (reset! state/ace-rf-grid-api-cursor grid-api)))
               }]
     [:div.ag-theme-balham {:style {:height "100%"
                                    :width  "100%"
@@ -196,51 +268,50 @@
      [:> ag-grid/AgGridReact
       {:gridOptions spec}]]))
 
-
-
-(defn load-from-server []
-  [:button.button 
-   {:on-click (fn [_e]
-                (let [url (str "http://" js/window.location.hostname ":2021/pasi/graphql")
-                      model (:aceReusedFurniture model/queries)
-                      graphql (:graphql model)
-                      results-parser    (:results-parser model)
-                      field-order       (:field-order model)
-                      response-handler (fn [response] 
-                                         (let [status (:status response)]
-                                           (when (not= 200 status)
-                                             (throw (ex-info (str "Error code: " status) {})))
-                                           (let [coll (-> response
-                                                          :body
+(defn load-from-server-AceReusedFurniture []
+  (let [model (:aceReusedFurniture model/queries)
+        graphql (:graphql model)
+        results-parser    (:results-parser model)
+        field-order       (:field-order model)
+        response-handler (fn [response]
+                           (let [status (:status response)]
+                             (when (not= 200 status)
+                               (throw (ex-info (str "Error code: " status) {})))
+                             (let [coll (-> response
+                                            :body
                                                           ;; assume that it was an application/json response 
                                                           ;; which will have prompted cljs-http to have 
                                                           ;; converted the JSON data in the body, to Clojure data
-                                                          :data
+                                            :data
                                                           ;; assume a map with a single entry: get the value of that entry
-                                                          vals
-                                                          first
+                                            vals
+                                            first
                                                           ;; parse each possibly nested map to surface the wanted data in the top map
-                                                          results-parser
-                                                          (->> 
+                                            results-parser
+                                            (->>
                                                            ;; add a status column
-                                                           (map #(assoc % :status "loaded from server"))
-                                                           (sort-by :to)
-                                                           reverse))]
-                                             (reset! state/x-ds-cursor coll))))]
-                  (query/http-call url graphql response-handler)))} 
+                                             (map #(assoc % :status "loaded from server"))
+                                             (sort-by :to)
+                                             reverse))]
+                               (reset! state/ace-rf-ds-cursor coll))))]
+    (query/http-call query/graphql-url graphql response-handler)))
+
+(defn load-from-server-btn []
+  [:button.button 
+   {:on-click (fn [_e] (load-from-server-AceReusedFurniture))} 
    "Load from server"])
 
-(defn new-row []
+(defn new-row-btn []
   [:button.button
    {:on-click (fn [_e]
-                (swap! state/x-ds-cursor add-new {:placeholder :not-used}))}
+                (swap! state/ace-rf-ds-cursor add-new {:placeholder :not-used}))}
    "New row"])
 
-(defn save-to-server []
+(defn save-to-server-btn []
   [:button.button
    {:on-click (fn [_e]
                 (let [;;TODO flag up and don't server-to-server, any would-be duplicates
-                      changed-rows (remove #(contains? #{"loaded from server" "saved to server"} (:status %)) @state/x-ds-cursor)]
+                      changed-rows (remove #(contains? #{"loaded from server" "saved to server"} (:status %)) @state/ace-rf-ds-cursor)]
                   (js/console.log (count changed-rows) "changed rows")
                   (doseq [m changed-rows]
                     (js/console.log "processing changed row" (str m))
@@ -269,16 +340,17 @@
                                                         vals
 first
                                                         :id)]
-                                             (swap! state/x-ds-cursor update-id (:id m) id))))]
+                                             (swap! state/ace-rf-ds-cursor update-id (:id m) id))))]
                   (mutation/http-call url graphql response-handler)))))}
    "Save to server"])
 
-(defn root []
+
+(defn ele [fd-ds rf-ds]
   (r/after-render (util/scroll-fn))
   (reset! state/participant-cursor :ace)
-
+  
   [:<>
-   
+
    [:section.hero.is-small.is-info
     [:div.hero-body
      [:div.container.is-max-desktop
@@ -292,47 +364,47 @@ first
          [:div.content
           [:h1.title.is-5 "Alloa Community Enterprises"]
           [:h2.subtitle.is-6.has-text-black "A mock-up of a webapp which Alloa Community Enterprises might use to access PASI"]]]]]]]]
-   
+
 
 
    [:div.tabs
     [:ul
-     [:li.tab-aceTabs.is-active {:on-click (fn [e] (util/open-tab e "aceTabs" "A"))} [:a "Furniture categories"]]
-     [:li.tab-aceTabs {:on-click (fn [e] (util/open-tab e "aceTabs" "B"))} [:a "Batches of resold/reused furniture"]]]]
+     [:li.tab-aceTabs {:on-click (fn [e] (util/open-tab e "aceTabs" "A"))} [:a "Furniture categories"]]
+     [:li.tab-aceTabs.is-active {:on-click (fn [e] (util/open-tab e "aceTabs" "B"))} [:a "Batches of resold/reused furniture"]]]]
+
+
+   ;; ----------- AceFurnitureDescription ----------------
    
+   [:div#A-aceTabs.tab-content-aceTabs {:style {:display "none"}}
 
-
-   [:div#A-aceTabs.tab-content-aceTabs 
-    
     [:div.container.is-fullhd.mt-2.mb-6
-     [datagrid/root @state/participant-cursor 700]]]
+     [:div {:style {:height 350}}
+      [grid-AceFurnitureDescription fd-ds]]]]
+
+
+
+   ;; ----------- AceReusedFurniture ----------------
    
+   [:div#B-aceTabs.tab-content-aceTabs 
 
-
-
-   [:div#B-aceTabs.tab-content-aceTabs {:style {:display "none"}}
-    
     [:div.container.is-fullhd.mt-2
-     [load-from-server]
-     [new-row]
-     [save-to-server]]
+     [load-from-server-btn]
+     [new-row-btn]
+     [save-to-server-btn]]
 
     [:div.container.is-fullhd.mt-2.mb-6
      [:div {:style {:height 400}}
-      [grid @state/x-ds-cursor]]]
+      [grid-AceReusedFurniture rf-ds]]]
 
-    [:div.container.is-fullhd
-     [:div.columns
-      [:div.column.is-4
-       (let [raw    @state/x-ds-cursor
+    [:div.container.is-fullhd.has-text-centered
+     (let [raw    rf-ds
              counts raw]
-         [oz/vega-lite (counts-per-month-spec counts) util/vega-embed-opts])]
-      [:div.column.is-4
-       [:figcaption [:span "Trends"]]
-       [:figure.image.is-5by3
-        [:img {:src "img/ace-trend.png"
-               :alt "graph for the grid data - TODO"}]]]]]]
+         [oz/vega-lite (counts-per-month-spec counts) util/vega-embed-opts])]]])
 
-   ])
+
+(defn root []
+  [ele
+   @state/ace-fd-ds-cursor
+   @state/ace-rf-ds-cursor])
 
 

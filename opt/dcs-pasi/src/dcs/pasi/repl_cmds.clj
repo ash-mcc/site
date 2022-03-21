@@ -23,6 +23,7 @@
 (alias 'pass (create-ns 'juxt.pass.alpha))
 (alias 'site (create-ns 'juxt.site.alpha))
 
+
 (defn delete-local-access-token
   "Until access tokens are stored in the database, restarting a server will clear
   tokens out of memory causing the local access token to be invalid. Delete it
@@ -39,7 +40,6 @@
   (delete-local-access-token)
   (log/info "Starting development system")
 
-
   (alter-var-root #'main/profile (constantly :dev))
   (let [system-config (main/system-config)
         sys (ig/init system-config)]
@@ -50,7 +50,9 @@
   (println "Welcome to Site!")
   (status)
 
-  (println (ansi/yellow "Enter (help) for help"))
+  (println (ansi/red "NB: If using SPARQL-over-HTTP then monkey-patch XTDB to workaround that it is not correctly differentiating between an IRI and a value. (See repl_cmds.clj for details.)"))
+
+  (println (ansi/yellow "\nEnter (help) for help"))
 
   :ready)
 
@@ -449,7 +451,7 @@
 ;; But I can't get a UNION of the two queries above (when their ?value names have been sync'd), to work  :-(
 
 
-;; ----------------- Monkey-patch XTDB to workaround it not correctly differentiating between an IRI and a value -----------------
+;; ----------------- Monkey-patch XTDB to workaround that it is not correctly differentiating between an IRI and a value -----------------
 
 ;; For background see the Github issue: 
 ;;    SPARQL-over-http should be able to return string values
@@ -464,16 +466,17 @@
 ;; Run this to have the REPL enter the namespace
 (ns xtdb.rdf)
 
-;; Now copy the below defn into the REPL and <enter>
+;; Now copy the defn of clj->rdf (below) into the REPL and <enter>
 ;; to monkey-patch the function
+
 (defn ^org.eclipse.rdf4j.model.Value clj->rdf [x]
   #_(let [s "\n\n*** clj->rdf ***\n"
-        s (str s "x = " x "\n")
-        s (str s "(c/valid-id? x) = " (c/valid-id? x) "\n")
-        s (str s "\n\n")]
-    (log/info s))
+          s (str s "x = " x "\n")
+          s (str s "(c/valid-id? x) = " (c/valid-id? x) "\n")
+          s (str s "\n\n")]
+      (log/info s))
   (let [factory (SimpleValueFactory/getInstance)]
-    (if (and (c/valid-id? x) 
+    (if (and (c/valid-id? x)
              (str/starts-with? x "pasi:")) ;; monkey-patched !
       (if (and (keyword? x) (= "_" (namespace x)))
         (.createBNode factory (name x))

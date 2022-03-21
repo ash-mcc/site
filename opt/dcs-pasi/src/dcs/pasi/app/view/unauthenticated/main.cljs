@@ -1,6 +1,5 @@
 (ns dcs.pasi.app.view.unauthenticated.main
   (:require [dcs.pasi.app.state :as state]
-            [dcs.pasi.app.view.unauthenticated.tmp :as tmp]
             [dcs.pasi.app.view.unauthenticated.headline :as headline]
             [dcs.pasi.app.view.unauthenticated.control :as control]
             [dcs.pasi.app.view.unauthenticated.map :as map]
@@ -14,8 +13,7 @@
 (defn root []
   ;(r/after-render (util/scroll-fn))
   (reset! state/participant-cursor :anon)
-  (when (nil? @state/unauthn-wr-ds-cursor)
-    (tmp/load-from-server))
+
   
   [:div
 

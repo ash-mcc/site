@@ -4,21 +4,18 @@
 
 (defonce root (r/atom {:route-match        nil
                        :participant        nil
-                       :grid-api-component {:ace   nil
-                                            :anon  nil
-                                            :dcs   nil
+                       :grid-api-component {:dcs   nil
                                             :frshr nil
                                             :stcmf nil
-                                            :zws   nil
-                                            :x     nil}
-                       :type-kw            {:ace   :aceFurnitureDescription
-                                            :anon  :dcsWasteReduction
-                                            :dcs   :dcsWasteReduction
+                                            :zws   nil}
+                       :type-kw            {:dcs   :dcsWasteReduction
                                             :frshr :frshrReusedMaterial
                                             :stcmf :stcmfRedistributedFood
                                             :zws   :zwsCarbonMetric}
-                       
-                       :x-ds               nil
+                       :ace                {:fd-ds       nil
+                                            :rf-ds       nil
+                                            :fd-grid-api nil
+                                            :rf-grid-api nil}
                        :unauthn            {:wr-ds        nil
                                             :selected     {:period    []
                                                            :orgs      #{}
@@ -27,7 +24,6 @@
                                                            :groupby   "Waste stream"
                                                            :charttype "Bar chart"}
                                             :grid-api     nil
-                                            :geojson      nil
                                             :stcil-routes nil}}))
 
 (defonce route-match-cursor (r/cursor root [:route-match]))
@@ -48,7 +44,10 @@
 (def stcmf-type-kw-cursor (r/cursor root [:type-kw :stcmf]))
 (def zws-type-kw-cursor (r/cursor root [:type-kw :zws]))
 
-(def x-ds-cursor (r/cursor root [:x-ds]))
+(def ace-rf-ds-cursor (r/cursor root [:ace :rf-ds]))
+(def ace-fd-ds-cursor (r/cursor root [:ace :fd-ds]))
+(def ace-fd-grid-api-cursor (r/cursor root [:ace :fd-grid-api]))
+(def ace-rf-grid-api-cursor (r/cursor root [:ace :rf-grid-api]))
 
 (def unauthn-wr-ds-cursor (r/cursor root [:unauthn :wr-ds]))
 (def unauthn-selected-period-cursor (r/cursor root [:unauthn :selected :period]))
@@ -58,7 +57,6 @@
 (def unauthn-selected-groupby-cursor (r/cursor root [:unauthn :selected :groupby]))
 (def unauthn-selected-charttype-cursor (r/cursor root [:unauthn :selected :charttype]))
 (def unauthn-grid-api-cursor (r/cursor root [:unauthn :grid-api]))
-(def geojson-cursor (r/cursor root [:unauthn :geojson]))
 (def stcil-routes-cursor (r/cursor root [:unauthn :stcil-routes]))
 
 

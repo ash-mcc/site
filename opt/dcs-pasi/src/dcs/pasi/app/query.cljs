@@ -71,3 +71,4 @@
       (http-call url graphql response-handler'))))
 
 
+(def graphql-url (str "http://" js/window.location.hostname ":2021/pasi/graphql"))

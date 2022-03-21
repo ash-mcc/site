@@ -171,7 +171,7 @@
       xt/db
       (xt/q `{:find  [?e]
               :where [[?e :pasi:pred/type "AceReusedFurniture"]
-                      [?e :pasi:pred/from "2022-03-10"]]})
+                      [?e :pasi:pred/from "2020-12-01"]]})
       (->>
        (map #(xt/submit-tx (xt-node) [[::xt/delete (first %)]]))))
 

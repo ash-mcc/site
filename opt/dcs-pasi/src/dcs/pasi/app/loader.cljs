@@ -3,7 +3,9 @@
             [cljs-http.client :as http]
             [cljs.core.async :refer [<!]]
             [testdouble.cljs.csv :as csv]
-            [dcs.pasi.app.state :as state])
+            [dcs.pasi.app.state :as state]
+            [dcs.pasi.app.view.unauthenticated.tmp :as tmp]
+            [dcs.pasi.app.view.ace :as ace])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 
@@ -24,6 +26,7 @@
   []
   (js/console.log "Loading data files")
   
+  ;; The latlng coords in StcilRoutes, will be used to overwrite the org coords in DcsWasteReduction where the record is based on an Stcil record.  
   (fetch "StcilRoutes.csv"
          (fn [stcil-routes] (->> stcil-routes
                                  (drop 1)
@@ -32,4 +35,14 @@
                                                {:latitude (js/parseFloat (second %))
                                                 :longitude (js/parseFloat (nth % 2))}))
                                  (into {})
-                                 (reset! state/stcil-routes-cursor)))))
+                                 (reset! state/stcil-routes-cursor))))
+  
+  ;; DcsWasteReduction
+  (tmp/load-from-server)
+  
+  ;; AceFurnitureDescription
+  (ace/load-from-server-AceFurnitureDescription)
+
+  ;; AceReusedFurniture
+  (ace/load-from-server-AceReusedFurniture))
+

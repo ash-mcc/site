@@ -138,40 +138,42 @@
       ds)))
 
   
+(defn response-handler-DcsWasteReduction [results-parser response]
+  (let [status (:status response)]
+      (when (not= 200 status)
+        (throw (ex-info (str "Error code: " status) {})))
+      (let [coll (-> response
+                     :body
+                     ;; assume that it was an application/json response 
+                     ;; which will have prompted cljs-http to have 
+                     ;; converted the JSON data in the body, to Clojure data
+                     :data
+                     ;; assume a map with a single entry: get the value of that entry
+                     vals
+                     first
+                     ;; parse each possibly nested map to surface the wanted data in the top map
+                     results-parser
+                     (->>
+                      ;; add a status column
+                      (map #(assoc % :status "loaded from server"))
+                      (sort-by :to)
+                      reverse))
+            coll (apply-stcil-route-latlngs-to-ds coll) ;; super hacky - substitute-in the STCIL route latlngs
+            #_coll #_(filter (fn [m] (and (= "The Fair Share" (:enabler m))
+                                          (= "2021-07-01" (:from m))
+                                          (= "Food and Drink Waste (wet AD)" (:wasteStream m)))) coll)]
+        (reset! state/unauthn-wr-ds-cursor coll))))
 
 (defn load-from-server []
-  (let [url (str "http://" js/window.location.hostname ":2021/pasi/graphql")
-                      model (:dcsWasteReduction model/queries)
-                      graphql (:graphql model)
-                      results-parser    (:results-parser model)
-                      field-order       (:field-order model)
-                      response-handler (fn [response] 
-                                         (let [status (:status response)]
-                                           (when (not= 200 status)
-                                             (throw (ex-info (str "Error code: " status) {})))
-                                           (let [coll (-> response
-                                                          :body
-                                                          ;; assume that it was an application/json response 
-                                                          ;; which will have prompted cljs-http to have 
-                                                          ;; converted the JSON data in the body, to Clojure data
-                                                          :data
-                                                          ;; assume a map with a single entry: get the value of that entry
-                                                          vals
-                                                          first
-                                                          ;; parse each possibly nested map to surface the wanted data in the top map
-                                                          results-parser
-                                                          (->> 
-                                                           ;; add a status column
-                                                           (map #(assoc % :status "loaded from server"))
-                                                           (sort-by :to)
-                                                           reverse))
-                                                 coll (apply-stcil-route-latlngs-to-ds coll) ;; super hacky - substitute-in the STCIL route latlngs
-                                                 #_coll #_(filter (fn [m] (and (= "The Fair Share" (:enabler m))
-                                                                           (= "2021-07-01" (:from m))
-                                                                           (= "Food and Drink Waste (wet AD)" (:wasteStream m)))) coll)
-                                                 ]
-                                             (reset! state/unauthn-wr-ds-cursor coll))))]
-                  (query/http-call url graphql response-handler)))
+  (let [type-kw :dcsWasteReduction
+        model (type-kw model/queries)]
+    (when (nil? model)
+      (throw (ex-info (str "No such model for: " type-kw) {})))
+    (let [graphql (:graphql model)
+          results-parser    (:results-parser model)
+          field-order       (:field-order model)
+          response-handler' (partial response-handler-DcsWasteReduction results-parser)]
+                  (query/http-call query/graphql-url graphql response-handler'))))
 
 
 (defn filter-ds 

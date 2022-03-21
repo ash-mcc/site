@@ -402,6 +402,7 @@
                                                                                    :batchKg (* (:batchKg m3)
                                                                                                (decimal (:fraction refdata-mapping))))]
                                                                      (assoc m4
+                                                                            :id (str (:id m4) "/" (:wasteStream m4)) ;; augment the id to allow for situations where the original is fraction-ed over several wasteStreams
                                                                             :carbonSavingCo2eKg (* (:batchKg m4)
                                                                                                    (decimal (get-in refdata-mapping [:refMaterial :carbonWeighting])))))))
                                                                (catch #?(:clj Exception :cljs js/Error) e 

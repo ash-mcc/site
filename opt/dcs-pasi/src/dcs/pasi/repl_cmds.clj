@@ -144,6 +144,11 @@
      "pasi:ent/DcsAceToRefData/Soft Furniture/Mattress, single/Textiles and Footwear")
     pp/pprint)
 
+(-> (xt-node)
+    xt/db
+    (xt/entity
+     "pasi:ent/StcmfRedistributedFood/2021-04-15/2021-04-16/Council compost, Energen biogas, etc."))
+
 ;; Remove all PASI ents
 #_(-> (xt-node)
       xt/db
@@ -539,4 +544,8 @@
 
 
 ;; ----------------- New stuff... -----------------
+
+
+
+
 

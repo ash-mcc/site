@@ -539,12 +539,17 @@
 ;; }
 
 
+;; ----------------- Set logger levels -----------------
 
+(for [[logger level] [["xtdb.query" "info"]
+                      ["xtdb.memory" "info"]]]
+  (doto
+   (org.slf4j.LoggerFactory/getLogger logger)
+    (.setLevel (ch.qos.logback.classic.Level/valueOf level))))
 
 
 
 ;; ----------------- New stuff... -----------------
-
 
 
 

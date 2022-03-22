@@ -3,8 +3,13 @@
          reagent/reagent              {:mvn/version "1.0.0"} ; was "0.8.1"
          cljs-http/cljs-http          {:mvn/version "0.1.46"}
          cljsjs/ag-grid-react         {:mvn/version "25.0.1-0"}
-         ;cljsjs/ag-grid-community     {:mvn/version "25.0.1-0"}
-         cljsjs/ag-grid-enterprise    {:mvn/version "25.0.1-0"} ;tried to use enterprise for master-detail but still can't get master-detail to work
+         ;; Using ag-grid's enterprise edition instead of its community edition, 
+         ;; because I want to use the master-detail functionality which is available only in the enterprise edition.
+         ;; However, I still can't get master-detail to work.
+         ;; I think that this is because ag-grid-react is wired to call into the community edition.
+         ;; 
+         ;; cljsjs/ag-grid-community     {:mvn/version "25.0.1-0"}
+         cljsjs/ag-grid-enterprise    {:mvn/version "25.0.1-0"} 
          metosin/reitit-frontend      {:mvn/version "0.5.12"}
          metosin/reitit-spec          {:mvn/version "0.5.12"}
 

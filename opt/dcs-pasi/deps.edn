@@ -3,8 +3,8 @@
          reagent/reagent              {:mvn/version "1.0.0"} ; was "0.8.1"
          cljs-http/cljs-http          {:mvn/version "0.1.46"}
          cljsjs/ag-grid-react         {:mvn/version "25.0.1-0"}
-         cljsjs/ag-grid-community     {:mvn/version "25.0.1-0"}
-         ;cljsjs/ag-grid-enterprise     {:mvn/version "25.0.1-0"} tried to use this for master-detail but didn't get master-detail to work
+         ;cljsjs/ag-grid-community     {:mvn/version "25.0.1-0"}
+         cljsjs/ag-grid-enterprise    {:mvn/version "25.0.1-0"} ;tried to use enterprise for master-detail but still can't get master-detail to work
          metosin/reitit-frontend      {:mvn/version "0.5.12"}
          metosin/reitit-spec          {:mvn/version "0.5.12"}
 

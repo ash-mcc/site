@@ -18,7 +18,9 @@
 
 
 (defn grid [ds]
-  (let [spec {:defaultColDef {:resizable true}
+  (let [spec {#_:masterDetail #_true
+              :defaultColDef {:resizable true
+                              :flex 1}
               :columnDefs (->> model/queries
                                :dcsWasteReduction
                                :field-order
@@ -29,8 +31,18 @@
                                             ;(when (contains? #{:carbonSavingCo2eKg} %) {:maxWidth 160})
                                             (when (contains? #{:fraction :batchKg :batchTonnes :carbonSavingCo2eKg :carbonWeighting :itemCount} %) {:type "rightAligned"})
                                             (when (contains? #{:fraction :batchKg :batchTonnes :carbonSavingCo2eKg :carbonWeighting} %) {:valueFormatter (fn [^js params] (let [v (.-value params)] (if (number? v) (.toFixed v 2) v)))})
-                                            (when (contains? #{:to :enabler :batchKg :carbonSavingCo2eKg} %) {:sortable true})))
-                               vec)    
+                                            (when (contains? #{:to :enabler :batchKg :carbonSavingCo2eKg} %) {:sortable true})
+                                            #_(when (= :from %) {:cellRenderer "agGroupCellRenderer"})))
+                               vec)   
+              #_:detailCellRendererParams #_{:refreshStrategy "nothing"
+                                         :detailGridOptions {:columnDefs [:field "a"
+                                                                          :field "b"]
+                                                             :defaultColDef {:flex 1}}
+                                         :getDetailRowData (fn [params] (.successCallback
+                                                                         ^js params
+                                                                         (clj->js [{"a" 1 "b" 2}])
+                                                                         (clj->js (count [{"a" 1 "b" 2}]))))
+              } 
               :immutableData true
               :animateRows   true
               :rowData       ds

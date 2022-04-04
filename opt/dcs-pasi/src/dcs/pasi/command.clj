@@ -49,6 +49,33 @@
   (pp/print-table header-row rows))
 
 
+(->> (report/query :dcsWasteReduction url)
+    second
+    (filter #(and
+              (= "Chair, Kitchen, Dining or Wooden" (:furnitureSubcategory %))
+              (= 55 (:itemCount %)))))
 
 
 
+
+
+{:__typename "AceReusedFurniture",
+ :batchKg 385.0,
+ :carbonSavingCo2eKg 3349.50,
+ :enabler "Alloa Community Enterprises",
+ :fraction 1,
+  :refMaterial {:carbonWeighting "8.7", :wasteStream "Wood"},
+                 :refProcess {:name "reusing"},
+ :enabler "Alloa Community Enterprises",
+ :from "2017-03-01",
+ :furnitureCategory "Furniture ",
+ :furnitureItemCount 55,
+ :furnitureItemKg 7.0,
+ :furnitureSubcategory "Chair, Kitchen, Dining or Wooden",
+ :id "pasi:ent/AceReusedFurniture/2017-03-01/2018-02-28/Furniture /Chair, Kitchen, Dining or Wooden/Wood",
+ :itemCount 55,
+ :latitude "56.122913",
+ :longitude "-3.781621",
+ :process "reusing",
+ :to "2018-02-28",
+ :wasteStream "Wood"}

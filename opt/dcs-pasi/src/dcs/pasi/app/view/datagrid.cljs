@@ -117,7 +117,8 @@
 
 (defn grid []
   (let [participant @state/participant-cursor
-        grid-options {:rowModelType "infinite" ;; define with otherwise :datasource with :getRows won't work
+        grid-options {:defaultColDef {:resizable true}
+                      :rowModelType "infinite" ;; define with otherwise :datasource with :getRows won't work
                       :datasource   {:getRows get-rows}
                       :onGridReady  #(reset! (lookup-grid-api-component-cursor) (.-api %))}]
     [:div.ag-theme-balham {:style {:height "100%"

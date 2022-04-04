@@ -453,6 +453,38 @@
                   :ref_carbonSavingCo2eKg (round (:ref_carbonSavingCo2eKg %) 2)))
      (pp/print-table [:enabler :from :to :batchKg :foodDestination :ref_process :ref_wasteStream :ref_carbonSavingCo2eKg])))
 
+(comment
+  ;; = clojure.pprint/print-table - Example 1 = 
+
+  (use 'clojure.pprint)
+  ;=> nil
+
+  ;; By default, columns are in the order returned by (keys (first rows))
+  (print-table [{:a 1 :b 2 :c 3} {:b 5 :a 7 :c "dog"}])
+  ;; =============
+  ;; :a | :c  | :b
+  ;; =============
+  ;; 1  | 3   | 2 
+  ;; 7  | dog | 5 
+  ;; =============
+  ;=> nil
+
+  ;; If there are keys not in the first row, and/or you want to specify only
+  ;; some, or in a particular order, give the desired keys as the first arg.
+  (print-table [:b :a] [{:a 1 :b 2 :c 3} {:b 5 :a 7 :c "dog"}])
+  ;; =======
+  ;; :b | :a
+  ;; =======
+  ;; 2  | 1 
+  ;; 5  | 7 
+  ;; =======
+  ;=> nil
+
+  ;; See also:
+  clojure.pprint/pprint
+  clojure.inspector/inspect-table
+  )
+
 ;; But I can't get a UNION of the two queries above (when their ?value names have been sync'd), to work  :-(
 
 
@@ -553,4 +585,33 @@
 
 
 
+
+
+(let [db (xt/db (xt-node))
+      eid (ffirst (xt/q db `{:find  [?e]
+                     :where [[?e :pasi:pred/type "AceFurnitureDescription"]
+                             [?e :pasi:pred/category "Furniture "]
+                             [?e :pasi:pred/subcategory "Chair, Kitchen, Dining or Wooden"]]}))]
+    (xt/entity db eid))
+
+
+(let [db (xt/db (xt-node))
+      eid (ffirst (xt/q db `{:find  [?e]
+                             :where [[?e :pasi:pred/type "AceReusedFurniture"]
+                                     [?e :pasi:pred/category "Furniture "]
+                                     [?e :pasi:pred/subcategory "Chair, Kitchen, Dining or Wooden"]]}))]
+  (xt/entity db eid))
+
+(let [db (xt/db (xt-node))
+      eid (ffirst (xt/q db `{:find  [?e]
+                             :where [[?e :pasi:pred/type "ZwsCarbonMetric"]
+                                     [?e :pasi:pred/wasteStream "Wood"]]}))]
+  (xt/entity db eid))
+
+
+(let [db (xt/db (xt-node))
+      eid (ffirst (xt/q db `{:find  [?e]
+                             :where [[?e :pasi:pred/type "DcsAceToRefData"]
+                                     [?e :pasi:pred/description "pasi:ent/AceFurnitureDescription/Furniture /Chair, Kitchen, Dining or Wooden"]]}))]
+  (xt/entity db eid))
 
